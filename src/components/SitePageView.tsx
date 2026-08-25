@@ -20,11 +20,12 @@ import {
   Image as ImageIcon,
   Check,
   Eye,
-  FileCode2
+  FileCode2,
+  ExternalLink
 } from "lucide-react";
 import { SwitchItem } from "../types";
 import { extractSiteCode, formatSiteDisplayName } from "../utils/siteHierarchy";
-import { findDiagramForSiteOrSwitch } from "../data/siteDiagramsData";
+import { findDiagramForSiteOrSwitch, getDiagramPngPathForSite } from "../data/siteDiagramsData";
 import { YORK_DIAGRAM_SVG } from "../data/yorkDiagramSvg";
 import { SITE_TOPOLOGIES, getTopologySvgForSite } from "../data/siteTopologiesData";
 import { SiteHeatMapsSection } from "./SiteHeatMapsSection";
@@ -55,10 +56,14 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
   const [diagramOpen, setDiagramOpen] = useState<boolean>(true);
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   
-  // Custom uploaded diagram state (supports PNG / SVG / JPG for test runs like York PNG)
+  // Custom uploaded diagram state (supports PNG / SVG / JPG)
   const [customDiagramUrl, setCustomDiagramUrl] = useState<string | null>(null);
   const [customDiagramName, setCustomDiagramName] = useState<string>("");
-  const [activeDiagramMode, setActiveDiagramMode] = useState<"vector" | "image">("vector");
+  
+  // Automatically discover if we have an uploaded PNG file for this site
+  const bundledPngUrl = getDiagramPngPathForSite(siteCode) || getDiagramPngPathForSite(displayName);
+  
+  const [activeDiagramMode, setActiveDiagramMode] = useState<"vector" | "image">(bundledPngUrl ? "image" : "vector");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const siteDiagram = findDiagramForSiteOrSwitch(siteCode) || findDiagramForSiteOrSwitch(displayName);
@@ -73,6 +78,8 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
     { name: "DLL-York", link: "Core Port 42 ➔ Port 17" },
     { name: "DLC-York-MainComms-2", link: "Core Port 41 ➔ Port 48" }
   ] : []);
+
+  const effectiveImageUrl = customDiagramUrl || bundledPngUrl;
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -171,35 +178,39 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* View Mode Toggle if custom image is loaded or available */}
-            {(isYorkSite || customDiagramUrl) && (
+            {/* View Mode Toggle if image or vector is available */}
+            {(effectiveImageUrl || topologySvg) && (
               <div className="flex items-center bg-slate-950 p-0.5 rounded-lg border border-slate-800 text-xs font-mono">
-                <button
-                  onClick={() => setActiveDiagramMode("vector")}
-                  className={`px-2.5 py-1 rounded-md transition flex items-center gap-1.5 ${
-                    activeDiagramMode === "vector"
-                      ? "bg-indigo-600 text-white font-semibold"
-                      : "text-slate-400 hover:text-slate-200"
-                  }`}
-                >
-                  <FileCode2 className="w-3 h-3" />
-                  <span>Vector Topology</span>
-                </button>
-                <button
-                  onClick={() => setActiveDiagramMode("image")}
-                  className={`px-2.5 py-1 rounded-md transition flex items-center gap-1.5 ${
-                    activeDiagramMode === "image"
-                      ? "bg-purple-600 text-white font-semibold"
-                      : "text-slate-400 hover:text-slate-200"
-                  }`}
-                >
-                  <ImageIcon className="w-3 h-3" />
-                  <span>{customDiagramName ? "Custom PNG" : "PNG File"}</span>
-                </button>
+                {effectiveImageUrl && (
+                  <button
+                    onClick={() => setActiveDiagramMode("image")}
+                    className={`px-2.5 py-1 rounded-md transition flex items-center gap-1.5 ${
+                      activeDiagramMode === "image"
+                        ? "bg-purple-600 text-white font-semibold shadow-sm"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    <ImageIcon className="w-3 h-3" />
+                    <span>Diagram PNG</span>
+                  </button>
+                )}
+                {topologySvg && (
+                  <button
+                    onClick={() => setActiveDiagramMode("vector")}
+                    className={`px-2.5 py-1 rounded-md transition flex items-center gap-1.5 ${
+                      activeDiagramMode === "vector"
+                        ? "bg-indigo-600 text-white font-semibold shadow-sm"
+                        : "text-slate-400 hover:text-slate-200"
+                    }`}
+                  >
+                    <FileCode2 className="w-3 h-3" />
+                    <span>Vector Layout</span>
+                  </button>
+                )}
               </div>
             )}
 
-            {/* Upload PNG Test Button */}
+            {/* Upload/Replace PNG Button */}
             <input
               type="file"
               ref={fileInputRef}
@@ -210,10 +221,10 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
             <button
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono border border-slate-700 transition"
-              title="Upload your PNG file for York site diagram test run"
+              title={`Upload or replace PNG diagram for ${displayName}`}
             >
               <Upload className="w-3.5 h-3.5 text-indigo-400" />
-              <span>{customDiagramUrl ? "Replace PNG" : "Test Run: Add PNG"}</span>
+              <span>{effectiveImageUrl ? "Replace PNG" : "Upload PNG"}</span>
             </button>
 
             {/* Zoom Controls */}
@@ -254,29 +265,40 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
 
         {diagramOpen && (
           <div className="p-4 bg-slate-950">
-            {/* Custom Uploaded PNG View */}
-            {activeDiagramMode === "image" && customDiagramUrl ? (
-              <div className="space-y-4">
-                <div className="bg-slate-900/60 p-3 rounded-lg border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
+            {/* PNG Diagram View */}
+            {activeDiagramMode === "image" && effectiveImageUrl ? (
+              <div className="space-y-3">
+                <div className="bg-slate-900/80 p-2.5 rounded-lg border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                    <span>Loaded Custom Diagram: <strong className="text-white">{customDiagramName}</strong></span>
+                    <span>Loaded Site Diagram: <strong className="text-white">{customDiagramName || (effectiveImageUrl.split('/').pop())}</strong></span>
                   </div>
-                  <button
-                    onClick={() => fileInputRef.current?.click()}
-                    className="text-indigo-400 hover:underline text-[11px]"
-                  >
-                    Upload Another File
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <a
+                      href={effectiveImageUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-indigo-400 hover:underline flex items-center gap-1 text-[11px]"
+                    >
+                      <span>Full Resolution</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="text-slate-400 hover:text-white text-[11px]"
+                    >
+                      Replace File
+                    </button>
+                  </div>
                 </div>
 
                 <div 
-                  className="bg-white/95 rounded-xl p-4 shadow-inner border border-slate-800 overflow-x-auto flex justify-center items-center"
+                  className="bg-slate-900/50 rounded-xl p-4 shadow-inner border border-slate-800/80 overflow-x-auto flex justify-center items-center"
                   style={{ minHeight: "450px" }}
                 >
                   <img
-                    src={customDiagramUrl}
-                    alt={`${displayName} Custom Diagram`}
+                    src={effectiveImageUrl}
+                    alt={`${displayName} Topology Diagram`}
                     style={{
                       transform: `scale(${zoomLevel / 100})`,
                       transformOrigin: "top center",
@@ -284,11 +306,11 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
                       maxWidth: "100%",
                       height: "auto"
                     }}
-                    className="rounded-lg shadow-sm"
+                    className="rounded-lg shadow-md border border-slate-800"
                   />
                 </div>
               </div>
-            ) : activeDiagramMode === "image" && !customDiagramUrl ? (
+            ) : activeDiagramMode === "image" && !effectiveImageUrl ? (
               /* Drag and Drop Prompt for PNG */
               <div
                 onDragOver={(e) => e.preventDefault()}
@@ -300,7 +322,7 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
                   <Upload className="w-6 h-6" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-white">Drop your York PNG diagram file here</h4>
+                  <h4 className="text-sm font-bold text-white">Drop your {displayName} PNG diagram file here</h4>
                   <p className="text-xs text-slate-400 mt-1">or click to browse from your computer (PNG, JPG, or SVG)</p>
                 </div>
                 <div className="inline-block px-3 py-1 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-mono font-semibold">
@@ -308,7 +330,7 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
                 </div>
               </div>
             ) : topologySvg ? (
-              /* High-fidelity Vector Topology (All 29+ Discovered Sites) */
+              /* High-fidelity Vector Topology */
               <div className="space-y-4">
                 <div 
                   className="bg-white/95 rounded-xl p-4 shadow-inner border border-slate-800 overflow-x-auto flex justify-center items-center"
@@ -366,9 +388,7 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
       </div>
 
       {/* Wireless Site Heat Maps Section (Dynamic for all 130+ clubs, with full architectural blueprints) */}
-      {isYorkSite && (
-        <SiteHeatMapsSection siteDisplayName={displayName} siteCode={siteCode} switches={siteSwitches} />
-      )}
+      <SiteHeatMapsSection siteDisplayName={displayName} siteCode={siteCode} switches={siteSwitches} />
 
       {/* Grid of Switch Cards for this site */}
       <div>
