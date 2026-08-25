@@ -444,15 +444,18 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
             </div>
 
             <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-              <button
-                id="btn-hub-rollout-config"
-                onClick={() => setRolloutModalOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-600/20 transition-all shrink-0"
-                title="Rollout Configuration Change to Multiple switches"
-              >
-                <Layers className="w-3.5 h-3.5" />
-                <span>Rollout Configuration Change to Multiple switches</span>
-              </button>
+              {/* Configure Multiple Switches Rollout Button (Strictly restricted to Network Admins) */}
+              {(currentUserRole === "network_admin" || currentUser?.role === "network_admin") && (
+                <button
+                  id="btn-hub-rollout-config"
+                  onClick={() => setRolloutModalOpen(true)}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-md shadow-amber-600/20 transition-all shrink-0 cursor-pointer"
+                  title="Configure Multiple Switches (Network Admin Only)"
+                >
+                  <Sliders className="w-3.5 h-3.5" />
+                  <span>Configure Multiple Switches</span>
+                </button>
+              )}
 
               <button
                 id="btn-hub-download-portal-py"
@@ -535,6 +538,8 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
               onBackToAll={() => setActiveSite(null)}
               onSelectSwitch={(sw) => handleOpenSwitch(sw)}
               onTriggerBackup={onTriggerBackup}
+              currentUser={currentUser}
+              currentUserRole={currentUserRole}
             />
           ) : (
             <>
@@ -881,6 +886,8 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
       <RolloutConfigModal
         isOpen={rolloutModalOpen}
         switches={switches}
+        currentUserRole={currentUserRole}
+        currentUser={currentUser}
         onClose={() => setRolloutModalOpen(false)}
       />
 
@@ -896,6 +903,7 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
         isOpen={!!pingModalSwitch}
         onClose={() => setPingModalSwitch(null)}
         switchItem={pingModalSwitch}
+        currentUser={currentUser}
       />
 
       {/* Switch Replacement Modal / Workspace */}
@@ -1409,14 +1417,6 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
           </div>
         </div>
       )}
-
-      {/* Rollout Configuration Change Modal */}
-      <RolloutConfigModal
-        isOpen={rolloutModalOpen}
-        switches={switches}
-        currentUserRole={currentUserRole}
-        onClose={() => setRolloutModalOpen(false)}
-      />
 
       {/* Advanced Backup Options Modal */}
       <BackupOptionsModal

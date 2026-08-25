@@ -11,7 +11,7 @@ import {
   ExternalLink,
   Terminal
 } from "lucide-react";
-import { SwitchItem } from "../types";
+import { SwitchItem, AuthUser } from "../types";
 
 export interface PingResult {
   ip: string;
@@ -32,12 +32,14 @@ interface SwitchPingModalProps {
   isOpen: boolean;
   onClose: () => void;
   switchItem: SwitchItem | null;
+  currentUser?: AuthUser | null;
 }
 
 export const SwitchPingModal: React.FC<SwitchPingModalProps> = ({
   isOpen,
   onClose,
   switchItem,
+  currentUser
 }) => {
   const [targetIp, setTargetIp] = useState<string>("");
   const [targetHostname, setTargetHostname] = useState<string>("");
@@ -70,6 +72,9 @@ export const SwitchPingModal: React.FC<SwitchPingModalProps> = ({
           ip: targetIp,
           hostname: targetHostname || "Switch",
           count: packetCount,
+          username: currentUser?.username || "operator",
+          fullName: currentUser?.fullName || "Operator",
+          role: currentUser?.role || "service_desk"
         }),
       });
 
@@ -336,10 +341,13 @@ export const SwitchPingModal: React.FC<SwitchPingModalProps> = ({
 
         {/* Footer */}
         <div className="px-6 py-3 border-t border-slate-800 bg-slate-950/60 flex items-center justify-between text-xs font-mono">
-          <span className="text-slate-500">Reachability Probe: ICMP Echo / Telnet Socket</span>
+          <div className="flex items-center gap-1.5 text-emerald-400 text-[11px]">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Accountability audit logging active: Stored to CSV spreadsheet</span>
+          </div>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white transition"
+            className="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white transition cursor-pointer"
           >
             Close
           </button>

@@ -32,16 +32,16 @@ export function EstateBackupScheduleCard({
   onOpenScheduleModal
 }: EstateBackupScheduleCardProps) {
   const schedule: BackupScheduleInfo = liveStatus?.schedule || {
-    lastRunTimestamp: "Today at 02:00:15 UTC",
+    lastRunTimestamp: "Today at 02:00:15 GMT",
     lastRunStatus: "SUCCESS",
     lastRunDuration: "3m 42s",
     lastRunTotalSwitches: totalSwitches,
     lastRunSuccessCount: totalSwitches,
     lastRunMethod: "BackupSave.py (Save Config + TFTP/SSH)",
-    nextScheduledTimestamp: "Tomorrow at 02:00:00 UTC",
-    nextScheduledLabel: "Tonight @ 02:00 UTC",
+    nextScheduledTimestamp: "Tomorrow at 02:00:00 GMT",
+    nextScheduledLabel: "Tonight @ 02:00 GMT",
     nextScheduledCountdown: "in ~5h 30m",
-    scheduleFrequency: "Daily Nightly Backup (02:00 UTC / 02:00 AM)",
+    scheduleFrequency: "Daily Nightly Backup (02:00 GMT / 02:00 AM)",
     scheduleEngine: "Systemd Timer (switch-backup.timer) / Linux Cron",
     scheduleRetentionDays: 30,
     autoSaveConfigEnabled: true
@@ -187,7 +187,7 @@ export function EstateBackupScheduleCard({
                 </span>
               </div>
               <div className="text-lg md:text-xl font-bold text-indigo-300 font-mono flex items-center gap-2 pt-1">
-                <span>{schedule.nextScheduledLabel || "Tonight @ 02:00 UTC"}</span>
+                <span>{schedule.nextScheduledLabel || "Tonight @ 02:00 GMT"}</span>
               </div>
             </div>
 

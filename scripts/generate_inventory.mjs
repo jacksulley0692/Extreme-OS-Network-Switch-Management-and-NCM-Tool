@@ -3,17 +3,11 @@ import path from 'path';
 
 // Load switches from mockSwitches and siteDiagramsData to build comprehensive switches_inventory.json
 const inventory = [
-  // York Switches (Primary subnet 10.32.221.x and secondary 10.32.81.x)
-  { id: "sw-york-core", hostname: "DLC-York-Core", ip: "10.32.221.253", os: "VOSS", model: "VSP 4450GSX-PWR+", format: "cfg" },
-  { id: "sw-york-spa", hostname: "DLC-York-Spa-SW1", ip: "10.32.221.252", os: "EXOS", model: "Summit X440-G2-48p-10G", format: "xsf" },
+  // York Switches (Real 4 switches verified from DLC-York topology)
+  { id: "sw-york-spa", hostname: "DLC-York-Spa-SW1", ip: "10.32.221.252", os: "EXOS", model: "Summit X440-G2-24p-10G", format: "xsf" },
   { id: "sw-york-gym", hostname: "DLC-York-Gym", ip: "10.32.221.250", os: "EXOS", model: "Summit X440-G2-24p-10G", format: "xsf" },
-  { id: "sw-york-dll", hostname: "DLL-York", ip: "10.32.221.249", os: "EXOS", model: "Summit X440-G2-48p-10G", format: "xsf" },
+  { id: "sw-york-dll", hostname: "DLL-York", ip: "10.32.221.249", os: "EXOS", model: "Summit X450-G2-48p-10G", format: "xsf" },
   { id: "sw-york-maincomms-2", hostname: "DLC-York-MainComms-2", ip: "10.32.221.248", os: "EXOS", model: "Summit X440-G2-48p-10G", format: "xsf" },
-  { id: "sw-york-maincomms-1", hostname: "DLC-York-MainComms-1", ip: "10.32.221.247", os: "EXOS", model: "Summit X440-G2-48p-10G", format: "xsf" },
-  { id: "sw-york-outdoor", hostname: "DLC-York-Outdoor", ip: "10.32.221.246", os: "EXOS", model: "Summit X435-8p-4S", format: "xsf" },
-  { id: "sw-york-alt-gym", hostname: "DLC-York-Gym", ip: "10.32.81.252", os: "EXOS", model: "Summit X440-G2-24p-10G", format: "xsf" },
-  { id: "sw-york-alt-spa", hostname: "DLC-York-Spa-SW1", ip: "10.32.81.250", os: "EXOS", model: "Summit X440-G2-48p-10G", format: "xsf" },
-  { id: "sw-york-alt-maincomms", hostname: "DLC-York-MainComms-2", ip: "10.32.81.251", os: "EXOS", model: "Summit X440-G2-48p-10G", format: "xsf" },
 
   // Lichfield Switches
   { id: "sw-lichfield-core", hostname: "DLC-Lichfield-Core", ip: "10.32.214.253", os: "VOSS", model: "VSP 4450GSX-PWR+", format: "cfg" },

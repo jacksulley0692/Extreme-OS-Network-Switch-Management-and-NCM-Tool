@@ -25,7 +25,7 @@ import {
   Cpu,
   RefreshCw
 } from "lucide-react";
-import { SwitchItem } from "../types";
+import { SwitchItem, AuthUser, UserRole } from "../types";
 import { extractSiteCode, formatSiteDisplayName } from "../utils/siteHierarchy";
 import { findDiagramForSiteOrSwitch, getDiagramPngPathForSite } from "../data/siteDiagramsData";
 import { YORK_DIAGRAM_SVG } from "../data/yorkDiagramSvg";
@@ -39,6 +39,8 @@ interface SitePageViewProps {
   onSelectSwitch: (sw: SwitchItem) => void;
   onTriggerBackup?: (scriptName: string, targetSwitch: string) => void;
   onOpenDiagramTab?: (siteName: string) => void;
+  currentUser?: AuthUser | null;
+  currentUserRole?: UserRole;
 }
 
 export const SitePageView: React.FC<SitePageViewProps> = ({
@@ -47,16 +49,40 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
   onBackToAll,
   onSelectSwitch,
   onTriggerBackup,
-  onOpenDiagramTab
+  onOpenDiagramTab,
+  currentUser,
+  currentUserRole
 }) => {
-  // Filter for only this site's switches
+  const displayName = formatSiteDisplayName(siteCode);
+
+  const siteDiagram = useMemo(() => {
+    return findDiagramForSiteOrSwitch(siteCode) || findDiagramForSiteOrSwitch(displayName);
+  }, [siteCode, displayName]);
+
+  // Filter for only this site's switches with strict deduplication
   const siteSwitches = useMemo(() => {
-    return switches.filter((sw) => extractSiteCode(sw.hostname || sw.ip) === siteCode);
-  }, [switches, siteCode]);
+    const raw = switches.filter((sw) => {
+      const detectedCode = extractSiteCode(sw.hostname || sw.ip);
+      if (detectedCode === siteCode) return true;
+      if (siteDiagram?.associatedHostnames?.includes(sw.hostname)) return true;
+      if (siteDiagram?.switchIps?.includes(sw.ip)) return true;
+      return false;
+    });
+
+    const seen = new Set<string>();
+    const unique: SwitchItem[] = [];
+    for (const sw of raw) {
+      const key = sw.ip ? sw.ip.trim() : sw.hostname.trim();
+      if (!seen.has(key)) {
+        seen.add(key);
+        unique.push(sw);
+      }
+    }
+    return unique;
+  }, [switches, siteCode, siteDiagram]);
 
   const backedUpCount = siteSwitches.filter((sw) => sw.lastBackupStatus === "Success").length;
   const healthPercent = siteSwitches.length > 0 ? Math.round((backedUpCount / siteSwitches.length) * 100) : 100;
-  const displayName = formatSiteDisplayName(siteCode);
 
   const [diagramOpen, setDiagramOpen] = useState<boolean>(true);
   const [zoomLevel, setZoomLevel] = useState<number>(100);
@@ -69,10 +95,6 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
   // Automatically discover if we have a bundled PNG file for this site
   const bundledPngUrl = useMemo(() => {
     return getDiagramPngPathForSite(siteCode) || getDiagramPngPathForSite(displayName);
-  }, [siteCode, displayName]);
-  
-  const siteDiagram = useMemo(() => {
-    return findDiagramForSiteOrSwitch(siteCode) || findDiagramForSiteOrSwitch(displayName);
   }, [siteCode, displayName]);
 
   const isYorkSite = siteCode.toUpperCase() === "YORK" || displayName.toLowerCase().includes("york");

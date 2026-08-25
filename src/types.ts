@@ -290,9 +290,9 @@ export interface BackupScheduleConfig {
   enabled: boolean;
   /** Frequency preset or cron */
   frequency: BackupFrequencyPreset;
-  /** Scheduled execution time in UTC/Local (e.g. "02:00") for daily / weekly runs */
+  /** Scheduled execution time in GMT/Local (e.g. "02:00") for daily / weekly runs */
   dailyTimeUtc: string;
-  /** Second run time for twice daily runs (e.g. "14:00") */
+  /** Second run time for twice daily runs in GMT (e.g. "14:00") */
   twiceDailySecondTimeUtc?: string;
   /** Selected days of week for weekly runs (e.g. ["SUN", "WED"]) */
   weeklyDays?: string[];

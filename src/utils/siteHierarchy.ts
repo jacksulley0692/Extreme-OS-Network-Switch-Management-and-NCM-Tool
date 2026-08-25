@@ -25,7 +25,7 @@ export function extractSiteCode(hostnameOrIp: string): string {
   
   // Known IP subnet mappings
   if (clean.startsWith("10.32.224.")) return "ABERDEEN";
-  if (clean.startsWith("10.32.221.") || clean.startsWith("10.32.81.")) return "YORK";
+  if (clean.startsWith("10.32.221.")) return "YORK";
   if (clean.startsWith("10.32.214.")) return "LICHFIELD";
   if (clean.startsWith("10.32.54.")) return "LEEDS";
   if (clean.startsWith("10.32.61.")) return "LEICESTER";

@@ -100,8 +100,12 @@ export function AuditTrailViewer({ currentUserRole }: AuditTrailViewerProps) {
 
   const getCategoryBadge = (cat: string) => {
     switch (cat) {
+      case "PORT_OPERATIONS":
       case "PORT_BOUNCE":
         return <span className="px-2 py-0.5 text-[10px] font-mono rounded bg-amber-950/80 text-amber-300 border border-amber-800">PORT BOUNCE</span>;
+      case "DIAGNOSTIC":
+        return <span className="px-2 py-0.5 text-[10px] font-mono rounded bg-cyan-950/80 text-cyan-300 border border-cyan-800">PING / DIAGNOSTIC</span>;
+      case "CONFIGURATION_MANAGEMENT":
       case "ROLLOUT_CONFIG":
         return <span className="px-2 py-0.5 text-[10px] font-mono rounded bg-purple-950/80 text-purple-300 border border-purple-800">MULTI ROLLOUT</span>;
       case "BACKUP":
@@ -175,8 +179,9 @@ export function AuditTrailViewer({ currentUserRole }: AuditTrailViewerProps) {
             className="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500"
           >
             <option value="ALL">All Categories</option>
-            <option value="PORT_BOUNCE">Port Bounces</option>
-            <option value="ROLLOUT_CONFIG">Multi-Switch Rollouts</option>
+            <option value="DIAGNOSTIC">Ping & Reachability Tests</option>
+            <option value="PORT_OPERATIONS">Port Bounces</option>
+            <option value="CONFIGURATION_MANAGEMENT">Multi-Switch Rollouts</option>
             <option value="BACKUP">Backup Triggers</option>
             <option value="CONFIG_CUSTOMIZE">Config Customizations</option>
             <option value="AUTH">Logins & Sessions</option>

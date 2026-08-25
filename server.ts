@@ -208,7 +208,7 @@ function getBackupScheduleInfo(lastStatus?: any) {
   
   // Calculate next scheduled run based on active schedule configuration
   let nextRun = new Date(now);
-  let frequencyLabel = "Daily Nightly Backup (02:00 UTC)";
+  let frequencyLabel = "Daily Nightly Backup (02:00 GMT)";
   let engineLabel = "Systemd Timer (switch-backup.timer) / Linux Cron";
 
   if (scheduleConfig.engine === "cron") {
@@ -248,7 +248,7 @@ function getBackupScheduleInfo(lastStatus?: any) {
   } else if (scheduleConfig.frequency === "twice_daily") {
     const [h1, m1] = scheduleConfig.dailyTimeUtc.split(":").map(Number);
     const [h2, m2] = (scheduleConfig.twiceDailySecondTimeUtc || "14:00").split(":").map(Number);
-    frequencyLabel = `Twice Daily (${scheduleConfig.dailyTimeUtc} & ${scheduleConfig.twiceDailySecondTimeUtc || "14:00"} UTC)`;
+    frequencyLabel = `Twice Daily (${scheduleConfig.dailyTimeUtc} & ${scheduleConfig.twiceDailySecondTimeUtc || "14:00"} GMT)`;
     
     const t1 = new Date(now); t1.setUTCHours(h1, m1 || 0, 0, 0);
     const t2 = new Date(now); t2.setUTCHours(h2, m2 || 0, 0, 0);
@@ -263,7 +263,7 @@ function getBackupScheduleInfo(lastStatus?: any) {
     }
   } else if (scheduleConfig.frequency === "weekly") {
     const [h, m] = scheduleConfig.dailyTimeUtc.split(":").map(Number);
-    frequencyLabel = `Weekly (${(scheduleConfig.weeklyDays || ["SUN"]).join(",")} @ ${scheduleConfig.dailyTimeUtc} UTC)`;
+    frequencyLabel = `Weekly (${(scheduleConfig.weeklyDays || ["SUN"]).join(",")} @ ${scheduleConfig.dailyTimeUtc} GMT)`;
     const dayMap: Record<string, number> = { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 };
     const dayNums = (scheduleConfig.weeklyDays || ["SUN"]).map(d => dayMap[d] ?? 0);
     
@@ -281,7 +281,7 @@ function getBackupScheduleInfo(lastStatus?: any) {
   } else {
     // Default Daily
     const [h, m] = scheduleConfig.dailyTimeUtc.split(":").map(Number);
-    frequencyLabel = `Daily Nightly (${scheduleConfig.dailyTimeUtc} UTC)`;
+    frequencyLabel = `Daily Nightly (${scheduleConfig.dailyTimeUtc} GMT)`;
     nextRun = new Date(now);
     if (now.getUTCHours() > h || (now.getUTCHours() === h && now.getUTCMinutes() >= (m || 0))) {
       nextRun.setUTCDate(nextRun.getUTCDate() + 1);
@@ -295,7 +295,7 @@ function getBackupScheduleInfo(lastStatus?: any) {
   const countdownStr = scheduleConfig.enabled ? `in ${diffHours}h ${diffMins}m` : "Paused";
 
   // Calculate last run
-  let lastRunStr = "Today at 02:00:15 UTC";
+  let lastRunStr = "Today at 02:00:15 GMT";
   let lastRunStatus: "SUCCESS" | "WARNING" | "FAILED" | "IN_PROGRESS" | "IDLE" = "SUCCESS";
   
   if (lastStatus && lastStatus.updated_at) {
@@ -313,7 +313,7 @@ function getBackupScheduleInfo(lastStatus?: any) {
       prevRun.setUTCDate(prevRun.getUTCDate() - 1);
     }
     prevRun.setUTCHours(2, 0, 15, 0);
-    lastRunStr = prevRun.toISOString().replace("T", " ").substring(0, 19) + " UTC";
+    lastRunStr = prevRun.toISOString().replace("T", " ").substring(0, 19) + " GMT";
   }
 
   // Count switches in Switches.txt
@@ -457,12 +457,13 @@ app.post("/api/save-switches-txt", (req, res) => {
 
 // Route to fetch project script from workspace
 app.post("/api/ping", (req, res) => {
-  const { ip, hostname, count } = req.body;
+  const { ip, hostname, count, username, fullName, role } = req.body || {};
   const targetIp = ip || "10.36.226.11";
   const targetHost = hostname || "Switch";
   const packetCount = Number(count) || 4;
   const rtt = Math.floor(Math.random() * 15) + 3;
-  const timestamp = new Date().toLocaleTimeString();
+  const now = new Date();
+  const timestamp = now.toISOString().replace("T", " ").slice(0, 19) + " GMT";
 
   const rawCli = `PING ${targetIp} (${targetIp}) 56(84) bytes of data.\n` +
     Array.from({ length: packetCount }).map((_, i) => 
@@ -471,6 +472,25 @@ app.post("/api/ping", (req, res) => {
     `\n\n--- ${targetIp} ping statistics ---\n` +
     `${packetCount} packets transmitted, ${packetCount} received, 0% packet loss, time ${packetCount * 1000}ms\n` +
     `rtt min/avg/max/mdev = ${(rtt - 1.2).toFixed(3)}/${rtt.toFixed(3)}/${(rtt + 2.5).toFixed(3)}/0.784 ms`;
+
+  // Accountability logging to spreadsheet & audit json
+  const clientIp = (req.ip || req.socket.remoteAddress || "127.0.0.1") as string;
+  const opUser = username || "operator";
+  const opName = fullName || username || "Operator";
+  const opRole = role || "service_desk";
+
+  logAuditAction({
+    username: opUser,
+    fullName: opName,
+    role: opRole,
+    action: "PING_TEST",
+    category: "DIAGNOSTIC",
+    switchIp: targetIp,
+    switchHostname: targetHost,
+    details: `ICMP Ping test sent to ${targetHost} (${targetIp}) with ${packetCount} packets. Result: ONLINE (${rtt}ms RTT)`,
+    clientIp,
+    status: "SUCCESS"
+  });
 
   return res.json({
     success: true,
@@ -540,7 +560,8 @@ function logAuditAction(entry: {
     logs = [];
   }
 
-  const timestamp = new Date().toISOString().replace("T", " ").slice(0, 19);
+  const now = new Date();
+  const timestamp = now.toISOString().replace("T", " ").slice(0, 19) + " GMT";
   const username = entry.username || "anonymous";
   const fullName = entry.fullName || entry.username || "Operator";
   const role = entry.role || "service_desk";
@@ -577,7 +598,7 @@ function logAuditAction(entry: {
     const csvExists = fs.existsSync(auditCsv);
     let csvLine = "";
     if (!csvExists) {
-      csvLine = `Timestamp,Username,Operator Full Name,Role,Action Type,Category,Target Switch IP,Switch Hostname,Details / Command,Client IP,Status\n`;
+      csvLine = `Timestamp (GMT),Username,Operator Full Name,Role,Action Type,Category,Target Switch IP,Switch Hostname,Details / Command,Client IP,Status\n`;
     }
     const cleanDetails = `"${details.replace(/"/g, '""')}"`;
     csvLine += `${timestamp},${username},"${fullName.replace(/"/g, '""')}",${role},${entry.action},${entry.category || "OPERATIONS"},${switchIp},${switchHostname},${cleanDetails},${clientIp},${status}\n`;
@@ -1278,6 +1299,22 @@ ROLLOUT SUMMARY:
 Total Switches: ${targetSwitches.length} | Success: ${successCount} | Failed: ${failedCount}
 Status: ALL COMMANDS SUCCESSFULLY APPLIED ACROSS TARGET FLEET.
 =============================================================================`;
+
+  const clientIp = (req.ip || req.socket.remoteAddress || "127.0.0.1") as string;
+  const opUser = (req.body?.username || "netadmin").toString();
+  const opName = (req.body?.fullName || "IT Network Team").toString();
+  const opRole = (req.body?.role || "network_admin").toString();
+
+  logAuditAction({
+    username: opUser,
+    fullName: opName,
+    role: opRole,
+    action: "FLEET_CONFIG_ROLLOUT",
+    category: "CONFIGURATION_MANAGEMENT",
+    details: `Rollout executed across ${targetSwitches.length} switches: [${rawCmdLines.join("; ")}] (Success: ${successCount}, Failed: ${failedCount})`,
+    clientIp,
+    status: failedCount > 0 ? "WARNING" : "SUCCESS"
+  });
 
   return res.json({
     success: true,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
-import { SwitchItem, SwitchOS, RolloutExecutionResponse, SwitchRolloutResult, UserRole } from "../types";
+import { SwitchItem, SwitchOS, RolloutExecutionResponse, SwitchRolloutResult, UserRole, AuthUser } from "../types";
 import { 
   ShieldAlert, 
   Lock, 
@@ -32,6 +32,7 @@ interface RolloutConfigModalProps {
   isOpen: boolean;
   switches: SwitchItem[];
   currentUserRole?: UserRole;
+  currentUser?: AuthUser | null;
   onClose: () => void;
 }
 
@@ -62,7 +63,7 @@ const COMMON_TEMPLATES = [
   }
 ];
 
-export function RolloutConfigModal({ isOpen, switches, currentUserRole, onClose }: RolloutConfigModalProps) {
+export function RolloutConfigModal({ isOpen, switches, currentUserRole, currentUser, onClose }: RolloutConfigModalProps) {
   // Password Authentication State
   const [passwordInput, setPasswordInput] = useState<string>("");
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
@@ -193,7 +194,10 @@ export function RolloutConfigModal({ isOpen, switches, currentUserRole, onClose 
           commands: cleanCmds,
           targetSwitches,
           autoSave: autoSaveConfig,
-          stopOnError
+          stopOnError,
+          username: currentUser?.username || "netadmin",
+          fullName: currentUser?.fullName || "IT Network Team",
+          role: currentUser?.role || currentUserRole || "network_admin"
         })
       });
 

@@ -62,6 +62,30 @@ export function BackupScheduleModal({
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"frequency" | "engine" | "advanced">("frequency");
+  const [currentGmtTime, setCurrentGmtTime] = useState<string>("");
+
+  // Update current GMT time every second for live accurate scheduling
+  useEffect(() => {
+    const updateGmt = () => {
+      const d = new Date();
+      const hh = String(d.getUTCHours()).padStart(2, "0");
+      const mm = String(d.getUTCMinutes()).padStart(2, "0");
+      const ss = String(d.getUTCSeconds()).padStart(2, "0");
+      setCurrentGmtTime(`${hh}:${mm}:${ss} GMT`);
+    };
+    updateGmt();
+    const interval = setInterval(updateGmt, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Quick Future Time Helper (e.g. +1 minute for fast testing)
+  const setQuickFutureTime = (minutesToAdd: number) => {
+    const d = new Date();
+    const target = new Date(d.getTime() + minutesToAdd * 60 * 1000);
+    const hh = String(target.getUTCHours()).padStart(2, "0");
+    const mm = String(target.getUTCMinutes()).padStart(2, "0");
+    setConfig(prev => ({ ...prev, dailyTimeUtc: `${hh}:${mm}` }));
+  };
 
   // Load existing schedule config from liveStatus or API when modal opens
   useEffect(() => {
@@ -104,31 +128,31 @@ export function BackupScheduleModal({
       for (let i = 1; i <= 5; i++) {
         const next = new Date(now.getTime() + i * 60 * 60 * 1000);
         next.setMinutes(0, 0, 0);
-        runs.push(next.toUTCString().replace("GMT", "UTC"));
+        runs.push(next.toUTCString());
       }
     } else if (config.frequency === "every_2h") {
       for (let i = 1; i <= 5; i++) {
         const next = new Date(now.getTime() + i * 2 * 60 * 60 * 1000);
         next.setMinutes(0, 0, 0);
-        runs.push(next.toUTCString().replace("GMT", "UTC"));
+        runs.push(next.toUTCString());
       }
     } else if (config.frequency === "every_4h") {
       for (let i = 1; i <= 5; i++) {
         const next = new Date(now.getTime() + i * 4 * 60 * 60 * 1000);
         next.setMinutes(0, 0, 0);
-        runs.push(next.toUTCString().replace("GMT", "UTC"));
+        runs.push(next.toUTCString());
       }
     } else if (config.frequency === "every_6h") {
       for (let i = 1; i <= 5; i++) {
         const next = new Date(now.getTime() + i * 60 * 60 * 1000 * 6);
         next.setMinutes(0, 0, 0);
-        runs.push(next.toUTCString().replace("GMT", "UTC"));
+        runs.push(next.toUTCString());
       }
     } else if (config.frequency === "every_12h") {
       for (let i = 1; i <= 5; i++) {
         const next = new Date(now.getTime() + i * 12 * 60 * 60 * 1000);
         next.setMinutes(0, 0, 0);
-        runs.push(next.toUTCString().replace("GMT", "UTC"));
+        runs.push(next.toUTCString());
       }
     } else if (config.frequency === "daily") {
       for (let i = 0; i < 5; i++) {
@@ -136,7 +160,7 @@ export function BackupScheduleModal({
         runDate.setUTCDate(runDate.getUTCDate() + i);
         runDate.setUTCHours(targetHour, targetMin || 0, 0, 0);
         if (runDate.getTime() > now.getTime() || i > 0) {
-          runs.push(runDate.toUTCString().replace("GMT", "UTC"));
+          runs.push(runDate.toUTCString());
         }
       }
     } else if (config.frequency === "twice_daily") {
@@ -150,8 +174,8 @@ export function BackupScheduleModal({
         t2.setUTCDate(t2.getUTCDate() + dayOffset);
         t2.setUTCHours(secondHour, secondMin || 0, 0, 0);
 
-        if (t1.getTime() > now.getTime()) runs.push(t1.toUTCString().replace("GMT", "UTC"));
-        if (t2.getTime() > now.getTime() && runs.length < 5) runs.push(t2.toUTCString().replace("GMT", "UTC"));
+        if (t1.getTime() > now.getTime()) runs.push(t1.toUTCString());
+        if (t2.getTime() > now.getTime() && runs.length < 5) runs.push(t2.toUTCString());
       }
     } else if (config.frequency === "weekly") {
       const dayMap: Record<string, number> = { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 };
@@ -166,11 +190,11 @@ export function BackupScheduleModal({
         if (selectedDayNums.includes(cur.getUTCDay())) {
           const runDate = new Date(cur);
           runDate.setUTCHours(targetHour, targetMin || 0, 0, 0);
-          runs.push(runDate.toUTCString().replace("GMT", "UTC"));
+          runs.push(runDate.toUTCString());
         }
       }
     } else {
-      runs.push(`Evaluated from Cron "${config.customCron || "0 2 * * *"}" (e.g. Daily @ ${config.dailyTimeUtc} UTC)`);
+      runs.push(`Evaluated from Cron "${config.customCron || "0 2 * * *"}" (e.g. Daily @ ${config.dailyTimeUtc} GMT)`);
     }
 
     return runs.slice(0, 5);
@@ -197,18 +221,18 @@ WantedBy=multi-user.target`;
   }, [config.scriptName]);
 
   const systemdTimerCode = useMemo(() => {
-    let onCalendar = "*-*-* 02:00:00 UTC";
-    if (config.frequency === "hourly") onCalendar = "*-*-* *:00:00 UTC";
-    else if (config.frequency === "every_2h") onCalendar = "*-*-* 0/2:00:00 UTC";
-    else if (config.frequency === "every_4h") onCalendar = "*-*-* 0/4:00:00 UTC";
-    else if (config.frequency === "every_6h") onCalendar = "*-*-* 0/6:00:00 UTC";
-    else if (config.frequency === "every_12h") onCalendar = "*-*-* 0/12:00:00 UTC";
-    else if (config.frequency === "daily") onCalendar = `*-*-* ${config.dailyTimeUtc}:00 UTC`;
-    else if (config.frequency === "twice_daily") onCalendar = `*-*-* ${config.dailyTimeUtc},${config.twiceDailySecondTimeUtc || "14:00"}:00 UTC`;
-    else if (config.frequency === "weekly") onCalendar = `${(config.weeklyDays || ["SUN"]).join(",")} *-*-* ${config.dailyTimeUtc}:00 UTC`;
+    let onCalendar = "*-*-* 02:00:00";
+    if (config.frequency === "hourly") onCalendar = "*-*-* *:00:00";
+    else if (config.frequency === "every_2h") onCalendar = "*-*-* 0/2:00:00";
+    else if (config.frequency === "every_4h") onCalendar = "*-*-* 0/4:00:00";
+    else if (config.frequency === "every_6h") onCalendar = "*-*-* 0/6:00:00";
+    else if (config.frequency === "every_12h") onCalendar = "*-*-* 0/12:00:00";
+    else if (config.frequency === "daily") onCalendar = `*-*-* ${config.dailyTimeUtc}:00`;
+    else if (config.frequency === "twice_daily") onCalendar = `*-*-* ${config.dailyTimeUtc},${config.twiceDailySecondTimeUtc || "14:00"}:00`;
+    else if (config.frequency === "weekly") onCalendar = `${(config.weeklyDays || ["SUN"]).join(",")} *-*-* ${config.dailyTimeUtc}:00`;
 
     return `[Unit]
-Description=Extreme Switch Automated Backup Trigger (${config.frequency.toUpperCase()})
+Description=Extreme Switch Automated Backup Trigger (${config.frequency.toUpperCase()} - GMT)
 Requires=switch-backup.service
 
 [Timer]
@@ -435,9 +459,17 @@ Register-ScheduledTask -TaskName "ExtremeSwitchBackup" -Action $Action -Trigger 
 
               {/* Time Configuration Based on Frequency */}
               <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-4">
-                <div className="flex items-center gap-2 font-semibold text-slate-200 text-xs">
-                  <Clock className="w-4 h-4 text-indigo-400" />
-                  <span>Execution Trigger Timing</span>
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-900 pb-3">
+                  <div className="flex items-center gap-2 font-semibold text-slate-200 text-xs">
+                    <Clock className="w-4 h-4 text-indigo-400" />
+                    <span>Execution Trigger Timing (GMT Timezone)</span>
+                  </div>
+                  {currentGmtTime && (
+                    <div className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-indigo-950/60 border border-indigo-500/30 text-indigo-300 text-xs font-mono">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>Current System Time: <strong>{currentGmtTime}</strong></span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Daily / Twice Daily / Weekly Target Time */}
@@ -447,35 +479,88 @@ Register-ScheduledTask -TaskName "ExtremeSwitchBackup" -Action $Action -Trigger 
                  config.frequency !== "every_6h" && 
                  config.frequency !== "every_12h" && 
                  config.frequency !== "custom_cron" && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs text-slate-400 mb-1">
-                        Primary Scheduled Execution Time (UTC)
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <input
-                          type="time"
-                          value={config.dailyTimeUtc}
-                          onChange={(e) => setConfig(prev => ({ ...prev, dailyTimeUtc: e.target.value }))}
-                          className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:border-indigo-500"
-                        />
-                        <span className="text-xs text-slate-500 font-mono">UTC (Default: 02:00)</span>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs text-slate-400 mb-1 font-medium">
+                          Primary Scheduled Execution Time (GMT)
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="time"
+                            step="60"
+                            value={config.dailyTimeUtc}
+                            onChange={(e) => setConfig(prev => ({ ...prev, dailyTimeUtc: e.target.value }))}
+                            className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:border-indigo-500 font-bold"
+                          />
+                          <span className="text-xs text-slate-400 font-mono">GMT (Default: 02:00)</span>
+                        </div>
                       </div>
+
+                      {config.frequency === "twice_daily" && (
+                        <div>
+                          <label className="block text-xs text-slate-400 mb-1 font-medium">
+                            Secondary Scheduled Execution Time (GMT)
+                          </label>
+                          <input
+                            type="time"
+                            step="60"
+                            value={config.twiceDailySecondTimeUtc || "14:00"}
+                            onChange={(e) => setConfig(prev => ({ ...prev, twiceDailySecondTimeUtc: e.target.value }))}
+                            className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:border-indigo-500 font-bold"
+                          />
+                        </div>
+                      )}
                     </div>
 
-                    {config.frequency === "twice_daily" && (
-                      <div>
-                        <label className="block text-xs text-slate-400 mb-1">
-                          Secondary Scheduled Execution Time (UTC)
-                        </label>
-                        <input
-                          type="time"
-                          value={config.twiceDailySecondTimeUtc || "14:00"}
-                          onChange={(e) => setConfig(prev => ({ ...prev, twiceDailySecondTimeUtc: e.target.value }))}
-                          className="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono focus:outline-none focus:border-indigo-500"
-                        />
+                    {/* Quick 1-Minute Testing Preset Bar */}
+                    <div className="p-3 bg-slate-900/90 rounded-xl border border-slate-800 space-y-2">
+                      <div className="flex items-center justify-between text-xs text-slate-300">
+                        <span className="font-semibold text-slate-200 flex items-center gap-1.5">
+                          <Zap className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                          <span>Quick Timing Tester (Test Schedule in Future):</span>
+                        </span>
+                        <span className="text-[11px] text-slate-400 font-mono">Instant 1-Click Trigger Setup</span>
                       </div>
-                    )}
+                      <div className="flex flex-wrap items-center gap-2 pt-0.5">
+                        <button
+                          type="button"
+                          onClick={() => setQuickFutureTime(1)}
+                          className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 hover:border-amber-400 transition cursor-pointer flex items-center gap-1 shadow-sm"
+                          title="Sets schedule to run exactly 1 minute in the future for instant testing"
+                        >
+                          <span>⚡ +1 Min (Fast Test)</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setQuickFutureTime(2)}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer"
+                        >
+                          +2 Min
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setQuickFutureTime(5)}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer"
+                        >
+                          +5 Min
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setQuickFutureTime(15)}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition cursor-pointer"
+                        >
+                          +15 Min
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setConfig(prev => ({ ...prev, dailyTimeUtc: "02:00" }))}
+                          className="px-2.5 py-1.5 rounded-lg text-xs font-mono font-medium bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-slate-200 border border-slate-700 transition cursor-pointer ml-auto"
+                        >
+                          Reset to 02:00 (Nightly Default)
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
 

@@ -3,13 +3,15 @@
 #
 # Available Roles:
 #  - network_admin  : Full administrative access to all features + Rollout Multi-Switch Config + Audit Log Viewer
-#  - service_desk   : Access to all operational features (Backups, Port Bounces, Search, Ping, Monitor, Diagrams)
+#  - service_desk   : Access to operational features (Backups, Port Bounces, Search, Ping, Monitor, Diagrams)
 #                     *Restricted from mass multi-switch rollout scripts*
 #
 # You can add more users on new lines below or edit passwords anytime.
 
-# Shared IT / Network Engineering Team
+# Network Engineering & Admin Accounts (Full Access)
 netadmin:NetworkTeam2026!:network_admin:IT Network Team
+netadmins:NetworkTeam2026!:network_admin:Network Admin Team
 
-# Service Desk Team Members
+# Service Desk Accounts (Operational Access Only - Multi-Switch Configure Restricted)
+servicedesk:ServiceDesk2026!:service_desk:Service Desk Team
 bill.gates:ServiceDesk2026!:service_desk:Bill Gates (Service Desk)
