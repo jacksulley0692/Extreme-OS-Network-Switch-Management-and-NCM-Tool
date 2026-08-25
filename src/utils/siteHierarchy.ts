@@ -30,6 +30,7 @@ export function extractSiteCode(hostnameOrIp: string): string {
   const clean = hostnameOrIp.trim();
   
   // Known IP subnet mappings
+  if (clean.startsWith("10.32.224.")) return "ABERDEEN";
   if (clean.startsWith("10.32.221.") || clean.startsWith("10.32.81.")) return "YORK";
   if (clean.startsWith("10.32.214.")) return "LICHFIELD";
   if (clean.startsWith("10.32.54.")) return "LEEDS";
@@ -46,6 +47,7 @@ export function extractSiteCode(hostnameOrIp: string): string {
   }
 
   const lower = clean.toLowerCase();
+  if (lower.includes("aberdeen")) return "ABERDEEN";
   if (lower.includes("york")) return "YORK";
   if (lower.includes("lichfield")) return "LICHFIELD";
   if (lower.includes("leeds")) return "LEEDS";

@@ -1009,5 +1009,182 @@ enable ssh2
       { port: "48", name: "UPLINK-TO-DLC-YORK-CORE-PORT-41", vlan: "Trunk", status: "up", speed: "1 Gbps", isUplink: true },
       { port: "1", name: "SERVER-ILO-MGMT", vlan: "10", status: "up", speed: "1 Gbps" }
     ]
+  },
+  {
+    id: "sw-aberdeen-core",
+    hostname: "DLL-Aberdeen-Comms",
+    ip: "10.32.224.253",
+    os: "EXOS",
+    model: "Summit X460-G2-48p-10GE4",
+    firmware: "EXOS 31.7.1.4",
+    serialNumber: "2148N-88129",
+    macAddress: "08:00:27:EA:92:01",
+    primaryVlan: 10,
+    gateway: "10.32.224.1",
+    uplinkPorts: ["1", "2", "12", "32"],
+    lastBackupTime: "Today at 04:12 AM",
+    lastBackupStatus: "Success",
+    tftpPath: "10.36.226.7:/backup/DLL-Aberdeen-Comms.xsf",
+    configFormat: "xsf",
+    notes: "Aberdeen Core Switch. Trunks to Firewalls (Aberdeen-MXP, Aberdeen-MXS) and distribution switches.",
+    activeConfig: `# ExtremeXOS Configuration File (.xsf)
+# Switch: DLL-Aberdeen-Comms (Summit X460-G2-48p)
+# Site: ABERDEEN | Mgmt IP: 10.32.224.253/24
+
+configure snmp sysName "DLL-Aberdeen-Comms"
+configure snmp sysLocation "Aberdeen Main Comms Room Rack 1"
+
+create vlan "Mgmt-VR"
+configure vlan "Mgmt-VR" tag 10
+configure vlan "Mgmt-VR" ipaddress 10.32.224.253 255.255.255.0
+
+create vlan "Data-Corp"
+configure vlan "Data-Corp" tag 20
+configure vlan "Voice-VoIP" tag 30
+
+configure vlan "Mgmt-VR" add ports 1-48 tagged
+configure vlan "Data-Corp" add ports 1-48 tagged
+configure vlan "Voice-VoIP" add ports 1-48 tagged
+
+configure port 1 description-string "UPLINK-ABERDEEN-MXP-PRIMARY"
+configure port 2 description-string "UPLINK-ABERDEEN-MXS-SECONDARY"
+configure port 12 description-string "TRUNK-TO-DLC-ABERDEEN-GYM"
+configure port 32 description-string "TRUNK-TO-DLC-ABERDEEN-LYNXIGHT"
+
+configure iproute add default 10.32.224.1
+enable ssh2
+`,
+    previousRevisions: [
+      {
+        id: "rev-aberdeen-01",
+        timestamp: "Yesterday at 04:00 AM",
+        filename: "DLL-Aberdeen-Comms_2026-08-13.xsf",
+        fileSizeKb: 15.1,
+        format: "xsf",
+        author: "BackupSave.py (Automated)",
+        hash: "sha256:778899aabbcc0011",
+        changesSummary: "Nightly baseline automated backup",
+        content: `configure snmp sysName "DLL-Aberdeen-Comms"\ncreate vlan "Mgmt-VR"\n`
+      }
+    ],
+    ports: [
+      { port: "1", name: "UPLINK-ABERDEEN-MXP-PRIMARY", vlan: "Trunk", status: "up", speed: "10 Gbps", isUplink: true },
+      { port: "2", name: "UPLINK-ABERDEEN-MXS-SECONDARY", vlan: "Trunk", status: "up", speed: "10 Gbps", isUplink: true },
+      { port: "12", name: "TRUNK-TO-DLC-ABERDEEN-GYM", vlan: "Trunk", status: "up", speed: "1 Gbps", isUplink: true },
+      { port: "32", name: "TRUNK-TO-DLC-ABERDEEN-LYNXIGHT", vlan: "Trunk", status: "up", speed: "1 Gbps", isUplink: true }
+    ],
+    backupLldpNeighbors: [
+      {
+        localPort: "1",
+        remoteSystemName: "Aberdeen-MXP",
+        remotePortId: "Port 1",
+        remotePortDesc: "LAN Interface",
+        remoteChassisId: "58:21:7f:20:01:01",
+        remoteMgmtIp: "10.32.224.1",
+        remoteSystemDesc: "Meraki MX Primary Firewall",
+        remoteCapabilities: ["Router", "Bridge"],
+        portVlan: 10,
+        lastDiscovered: "Today at 04:12 AM"
+      },
+      {
+        localPort: "2",
+        remoteSystemName: "Aberdeen-MXS",
+        remotePortId: "Port 2",
+        remotePortDesc: "LAN Interface",
+        remoteChassisId: "58:21:7f:20:01:02",
+        remoteMgmtIp: "10.32.224.2",
+        remoteSystemDesc: "Meraki MX Secondary Firewall",
+        remoteCapabilities: ["Router", "Bridge"],
+        portVlan: 10,
+        lastDiscovered: "Today at 04:12 AM"
+      },
+      {
+        localPort: "12",
+        remoteSystemName: "DLC-Aberdeen-Gym",
+        remotePortId: "1",
+        remotePortDesc: "Uplink to Core",
+        remoteChassisId: "08:00:27:ea:92:03",
+        remoteMgmtIp: "10.32.224.251",
+        remoteSystemDesc: "ExtremeXOS (X440-G2-24p)",
+        remoteCapabilities: ["Bridge"],
+        portVlan: "Trunk",
+        lastDiscovered: "Today at 04:12 AM"
+      },
+      {
+        localPort: "32",
+        remoteSystemName: "DLC-Aberdeen-Lynxight",
+        remotePortId: "1",
+        remotePortDesc: "Uplink to Core",
+        remoteChassisId: "08:00:27:ea:92:02",
+        remoteMgmtIp: "10.32.224.252",
+        remoteSystemDesc: "ExtremeXOS (X440-G2-24p)",
+        remoteCapabilities: ["Bridge"],
+        portVlan: "Trunk",
+        lastDiscovered: "Today at 04:12 AM"
+      }
+    ]
+  },
+  {
+    id: "sw-aberdeen-lynxight",
+    hostname: "DLC-Aberdeen-Lynxight",
+    ip: "10.32.224.252",
+    os: "EXOS",
+    model: "Summit X440-G2-24p-10GE4",
+    firmware: "EXOS 31.5.1.8",
+    serialNumber: "2019N-44122",
+    macAddress: "08:00:27:EA:92:02",
+    primaryVlan: 10,
+    gateway: "10.32.224.1",
+    uplinkPorts: ["1"],
+    lastBackupTime: "Today at 04:14 AM",
+    lastBackupStatus: "Success",
+    tftpPath: "10.36.226.7:/backup/DLC-Aberdeen-Lynxight.xsf",
+    configFormat: "xsf",
+    notes: "Aberdeen Lynxight Pool Monitoring Switch. Uplink Port 1 connects to Core Port 32.",
+    activeConfig: `# ExtremeXOS Configuration File (.xsf)
+# Switch: DLC-Aberdeen-Lynxight
+configure snmp sysName "DLC-Aberdeen-Lynxight"
+configure snmp sysLocation "Aberdeen Pool Plant Room"
+configure port 1 description-string "UPLINK-TO-DLL-ABERDEEN-COMMS-PORT-32"
+enable inline-power ports 1-24
+enable ssh2
+`,
+    previousRevisions: [],
+    ports: [
+      { port: "1", name: "UPLINK-TO-DLL-ABERDEEN-COMMS-PORT-32", vlan: "Trunk", status: "up", speed: "1 Gbps", isUplink: true },
+      { port: "2", name: "LYNXIGHT-CAMERA-01", vlan: "40", status: "up", speed: "100 Mbps", poeEnabled: true, poeWattage: 14.2 },
+      { port: "3", name: "LYNXIGHT-CAMERA-02", vlan: "40", status: "up", speed: "100 Mbps", poeEnabled: true, poeWattage: 13.8 }
+    ]
+  },
+  {
+    id: "sw-aberdeen-gym",
+    hostname: "DLC-Aberdeen-Gym",
+    ip: "10.32.224.251",
+    os: "EXOS",
+    model: "Summit X440-G2-24p-10GE4",
+    firmware: "EXOS 31.5.1.8",
+    serialNumber: "2019N-44123",
+    macAddress: "08:00:27:EA:92:03",
+    primaryVlan: 10,
+    gateway: "10.32.224.1",
+    uplinkPorts: ["1"],
+    lastBackupTime: "Today at 04:16 AM",
+    lastBackupStatus: "Success",
+    tftpPath: "10.36.226.7:/backup/DLC-Aberdeen-Gym.xsf",
+    configFormat: "xsf",
+    notes: "Aberdeen Gym Distribution Switch. Uplink Port 1 connects to Core Port 12.",
+    activeConfig: `# ExtremeXOS Configuration File (.xsf)
+# Switch: DLC-Aberdeen-Gym
+configure snmp sysName "DLC-Aberdeen-Gym"
+configure snmp sysLocation "Aberdeen Gym Subrack"
+configure port 1 description-string "UPLINK-TO-DLL-ABERDEEN-COMMS-PORT-12"
+enable inline-power ports 1-24
+enable ssh2
+`,
+    previousRevisions: [],
+    ports: [
+      { port: "1", name: "UPLINK-TO-DLL-ABERDEEN-COMMS-PORT-12", vlan: "Trunk", status: "up", speed: "1 Gbps", isUplink: true },
+      { port: "2", name: "GYM-WIFI-AP505", vlan: "20", status: "up", speed: "1 Gbps", poeEnabled: true, poeWattage: 12.5 }
+    ]
   }
 ];
