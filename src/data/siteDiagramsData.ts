@@ -224,12 +224,15 @@ export const SITE_DIAGRAM_FILES: Record<string, string> = {
   "dundee": "DLC-Dundee.png",
   "eastbourne": "DLC-Eastbourne.png",
   "edinburgh": "DLC-Edinburgh.png",
+  "edinburghnewhaven": "DLC_-_Edinburgh_Newhaven_Harbour.png",
   "eindhoven": "DLC-Eindhoven.png",
-  "emersonsgreen": "DLC_-_Emersons_Green.png",
+  "emersonsgreen": "DLC-EmersonsGreen.png",
+  "emersongreen": "DLC_-_Emersons_Green.png",
   "epsom": "DLC-Epsom.png",
   "exeter": "DLC-Exeter.png",
   "gavamar": "DLC-GavaMar.png",
   "genevacc": "DLC-Geneva-CC.png",
+  "genevacitygreen": "DLC_-_Geneva_City_Green.png",
   "harlow": "DLC-Harlow.png",
   "kingston": "DLC-Kingston.png",
   "lincoln": "DLC-Lincoln.png",
@@ -243,6 +246,8 @@ export const SITE_DIAGRAM_FILES: Record<string, string> = {
   "raynespark": "DLC-Raynes_Park.png",
   "reading": "DLC-Reading.png",
   "sterrebeek": "DLC-Sterrebeek.png",
+  "ster": "DLC-Sterrebeek.png",
+  "sterr": "DLC-Sterrebeek.png",
   "wickwoods": "DLC-Wickwoods.png",
   "colchester": "DLC-_Colchester.png",
   "acton": "DLC_-_Acton.png",
@@ -252,6 +257,7 @@ export const SITE_DIAGRAM_FILES: Record<string, string> = {
   "basildon": "DLC_-_Basildon.png",
   "beaconsfield": "DLC_-_Beaconsfield.png",
   "beckenham": "DLC_-_Beckenham.png",
+  "blijdorp": "DLC-Blijdorp_Rotterdam.png",
   "bolton": "DLC_-_Bolton.png",
   "brighton": "DLC_-_Brighton.png",
   "burystedmunds": "DLC_-_Bury_St_Edmunds.png",
@@ -261,13 +267,15 @@ export const SITE_DIAGRAM_FILES: Record<string, string> = {
   "farnham": "DLC_-_Farnham.png",
   "finchley": "DLC_-_Finchley.png",
   "fulham": "DLC_-_Fulham.png",
-  "genevacitygreen": "DLC_-_Geneva_City_Green.png",
   "gideapark": "DLC_-_Gidea_Park.png",
+  "glasgow": "DLC_-_Glasgow_Renfrew.png",
   "glasgowrenfrew": "DLC_-_Glasgow_Renfrew.png",
   "glasgowroukenglen": "DLC_-_Glasgow_Rouken_Glen.png",
+  "roukenglen": "DLC_-_Glasgow_Rouken_Glen.png",
   "glasgowwestend": "DLC_-_Glasgow_West_End.png",
   "gloucestshire": "DLC_-_Gloucestshire.png",
   "gloucestershire": "DLC_-_Gloucestshire.png",
+  "gloucester": "DLC_-_Gloucestshire.png",
   "hamilton": "DLC_-_Hamilton.png",
   "hampton": "DLC_-_Hampton.png",
   "harrogate": "DLC_-_Harrogate.png",
@@ -330,6 +338,7 @@ export const SITE_DIAGRAM_FILES: Record<string, string> = {
   "worcester": "DLC_-_Worcester.png",
   "worthing": "DLC_-_Worthing.png",
   "york": "DLC_-_York.png",
+  "yorktopology": "York_Topology.png",
   "zaragoza": "DLC_-_Zaragoza.png",
   "enfield": "DLL-Enfield.png"
 };
@@ -339,15 +348,31 @@ export const SITE_DIAGRAM_FILES: Record<string, string> = {
  */
 export function getDiagramPngPathForSite(siteCodeOrName: string): string | null {
   if (!siteCodeOrName) return null;
-  const clean = siteCodeOrName.toLowerCase().replace(/^(dlc|dll|dl)[-_ ]*/, "").replace(/[^a-z0-9]/g, "");
+  
+  const raw = String(siteCodeOrName).trim();
+  const clean = raw.toLowerCase().replace(/^(dlc|dll|dl)[-_ ]*/i, "").replace(/[^a-z0-9]/g, "");
   
   if (SITE_DIAGRAM_FILES[clean]) {
     return `/diagrams/${SITE_DIAGRAM_FILES[clean]}`;
   }
 
+  // Check direct key in mapping
+  const rawKey = raw.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (SITE_DIAGRAM_FILES[rawKey]) {
+    return `/diagrams/${SITE_DIAGRAM_FILES[rawKey]}`;
+  }
+
   // Check substring matches
   for (const [key, filename] of Object.entries(SITE_DIAGRAM_FILES)) {
-    if (clean.includes(key) || key.includes(clean)) {
+    if (clean.length >= 3 && (clean.includes(key) || key.includes(clean))) {
+      return `/diagrams/${filename}`;
+    }
+  }
+
+  // Check if filename contains the clean string directly
+  for (const filename of Object.values(SITE_DIAGRAM_FILES)) {
+    const fileClean = filename.toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (clean.length >= 4 && fileClean.includes(clean)) {
       return `/diagrams/${filename}`;
     }
   }

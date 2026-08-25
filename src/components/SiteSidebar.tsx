@@ -1,8 +1,20 @@
 // src/components/SiteSidebar.tsx
-import React, { useState } from "react";
-import { Server, ChevronRight, ChevronDown, Building2, CheckCircle2, AlertCircle, Sparkles, ChevronsLeft, ChevronsRight, Layers, ExternalLink } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { 
+  Building2, 
+  ChevronRight, 
+  ChevronDown, 
+  Search, 
+  ChevronsRight, 
+  ChevronsLeft, 
+  ExternalLink,
+  Image as ImageIcon,
+  CheckCircle2,
+  Layers,
+  Sparkles
+} from "lucide-react";
 import { SwitchItem } from "../types";
-import { groupSwitchesBySite } from "../utils/siteHierarchy";
+import { getAllEstateSites } from "../utils/siteHierarchy";
 
 interface SiteSidebarProps {
   switches: SwitchItem[];
@@ -23,9 +35,24 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
   isCollapsed,
   onToggleCollapse,
 }) => {
-  const siteGroups = groupSwitchesBySite(switches);
-  const siteCodes = Object.keys(siteGroups).sort();
+  const [filterQuery, setFilterQuery] = useState<string>("");
+  const siteGroups = useMemo(() => getAllEstateSites(switches), [switches]);
+  const allSiteCodes = useMemo(() => Object.keys(siteGroups).sort((a, b) => siteGroups[a].siteName.localeCompare(siteGroups[b].siteName)), [siteGroups]);
   
+  // Filter sites based on search input
+  const filteredSiteCodes = useMemo(() => {
+    const q = filterQuery.toLowerCase().trim();
+    if (!q) return allSiteCodes;
+    return allSiteCodes.filter(code => {
+      const g = siteGroups[code];
+      return (
+        code.toLowerCase().includes(q) ||
+        g.siteName.toLowerCase().includes(q) ||
+        g.switches.some(sw => (sw.hostname || "").toLowerCase().includes(q) || (sw.ip || "").includes(q))
+      );
+    });
+  }, [allSiteCodes, siteGroups, filterQuery]);
+
   // Track open/closed state per folder
   const [openFolders, setOpenFolders] = useState<Record<string, boolean>>({});
 
@@ -34,7 +61,7 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
     setOpenFolders((prev) => ({ ...prev, [siteCode]: !prev[siteCode] }));
   };
 
-  // --- COLLAPSED SLIM ICON RAIL (Matching UI Screenshot) ---
+  // --- COLLAPSED SLIM ICON RAIL ---
   if (isCollapsed) {
     return (
       <aside className="w-16 bg-slate-900 border border-slate-800 rounded-2xl p-2 shadow-xl flex flex-col items-center py-3 space-y-2 shrink-0 transition-all duration-300">
@@ -42,11 +69,11 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
         <button
           onClick={onToggleCollapse}
           className="w-10 h-10 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center shadow-lg shadow-indigo-600/30 transition group relative"
-          title="Expand Sites Hierarchy"
+          title="Expand Sites Hierarchy (130+ Sites)"
         >
           <ChevronsRight className="w-5 h-5" />
           <span className="absolute left-full ml-3 px-2 py-1 bg-slate-900 border border-slate-700 rounded text-[11px] font-semibold text-white whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-xl">
-            Expand Sites
+            Expand 130+ Sites
           </span>
         </button>
 
@@ -62,7 +89,7 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
         >
           ALL
           <span className="absolute left-full ml-3 px-2 py-1 bg-slate-900 border border-slate-700 rounded text-[11px] font-semibold text-white whitespace-nowrap opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-xl">
-            All Fleet ({switches.length})
+            All Fleet ({switches.length} Switches &bull; {allSiteCodes.length} Sites)
           </span>
         </button>
 
@@ -70,7 +97,7 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
 
         {/* Site Icon Rail */}
         <div className="w-full flex-1 overflow-y-auto space-y-1.5 custom-scrollbar pr-0.5">
-          {siteCodes.map((siteCode) => {
+          {allSiteCodes.map((siteCode) => {
             const group = siteGroups[siteCode];
             const isSelected = activeSite === siteCode;
             const initial = siteCode.length <= 3 ? siteCode : siteCode.substring(0, 2);
@@ -95,7 +122,10 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
                     <span>{group.siteName}</span>
                     <span className="text-[10px] text-slate-400">({group.totalCount} switches)</span>
                   </div>
-                  <div className="text-[10px] font-mono text-slate-400">Click to filter site</div>
+                  <div className="text-[10px] font-mono text-indigo-300 flex items-center gap-1">
+                    <ImageIcon className="w-3 h-3 text-purple-400" />
+                    <span>Visio Diagram Ready</span>
+                  </div>
                 </div>
               </div>
             );
@@ -107,7 +137,7 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
 
   // --- EXPANDED VIEW ---
   return (
-    <aside className="w-full lg:w-72 bg-slate-900 border border-slate-800 rounded-2xl p-3.5 shadow-xl flex flex-col h-full select-none text-slate-200 shrink-0 transition-all duration-300">
+    <aside className="w-full lg:w-80 bg-slate-900 border border-slate-800 rounded-2xl p-3.5 shadow-xl flex flex-col h-full select-none text-slate-200 shrink-0 transition-all duration-300">
       {/* Sidebar Header */}
       <div className="pb-3 border-b border-slate-800/80 flex items-center justify-between px-1">
         <div className="flex items-center gap-2.5">
@@ -116,8 +146,10 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
           </div>
           <div>
             <div className="text-[11px] font-bold uppercase tracking-wider text-slate-200">Sites & Locations</div>
-            <div className="text-[10px] text-slate-500 font-mono">
-              {siteCodes.length} sites &bull; {switches.length} switches
+            <div className="text-[10px] text-indigo-400 font-mono font-bold flex items-center gap-1">
+              <span>{allSiteCodes.length} sites</span>
+              <span>&bull;</span>
+              <span>{switches.length} switches</span>
             </div>
           </div>
         </div>
@@ -143,9 +175,29 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
         </div>
       </div>
 
+      {/* Quick Search Filter */}
+      <div className="mt-2.5 relative">
+        <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+        <input
+          type="text"
+          value={filterQuery}
+          onChange={(e) => setFilterQuery(e.target.value)}
+          placeholder={`Search ${allSiteCodes.length} sites...`}
+          className="w-full bg-slate-950/90 border border-slate-800 focus:border-indigo-500/80 rounded-xl pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none transition"
+        />
+        {filterQuery && (
+          <button
+            onClick={() => setFilterQuery("")}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 hover:text-white bg-slate-800 rounded px-1"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
       {/* Tree View Navigation */}
-      <div className="flex-1 overflow-y-auto mt-2 space-y-1 custom-scrollbar pr-0.5">
-        {siteCodes.map((siteCode) => {
+      <div className="flex-1 overflow-y-auto mt-2 space-y-1 custom-scrollbar pr-0.5 max-h-[calc(100vh-280px)]">
+        {filteredSiteCodes.map((siteCode) => {
           const group = siteGroups[siteCode];
           const isOpen = !!openFolders[siteCode];
           const isSelected = activeSite === siteCode;
@@ -156,7 +208,7 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
               key={siteCode} 
               className={`rounded-xl transition-all border ${
                 isSelected 
-                  ? "bg-indigo-950/40 border-indigo-500/50 shadow-sm" 
+                  ? "bg-indigo-950/50 border-indigo-500/60 shadow-md ring-1 ring-indigo-500/30" 
                   : "bg-slate-950/40 hover:bg-slate-950/80 border-slate-800/60"
               }`}
             >
@@ -164,19 +216,25 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
               <div
                 onClick={() => onSelectSite(siteCode)}
                 className={`px-2.5 py-2 flex items-center justify-between cursor-pointer group rounded-xl transition ${
-                  isSelected ? "bg-indigo-900/30 text-white" : "hover:bg-slate-900/90 text-slate-200"
+                  isSelected ? "bg-indigo-900/40 text-white" : "hover:bg-slate-900/90 text-slate-200"
                 }`}
                 title={`Open ${group.siteName} Site Page & Diagram`}
               >
                 <div className="flex items-center gap-2 min-w-0 flex-1">
-                  <button
-                    type="button"
-                    onClick={(e) => toggleFolder(siteCode, e)}
-                    className="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0"
-                    title={isOpen ? "Collapse switch list" : "Expand switch list"}
-                  >
-                    <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? "rotate-90 text-indigo-400" : "text-slate-500"}`} />
-                  </button>
+                  {group.switches.length > 0 ? (
+                    <button
+                      type="button"
+                      onClick={(e) => toggleFolder(siteCode, e)}
+                      className="w-5 h-5 rounded-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 transition shrink-0"
+                      title={isOpen ? "Collapse switch list" : "Expand switch list"}
+                    >
+                      <ChevronRight className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? "rotate-90 text-indigo-400" : "text-slate-500"}`} />
+                    </button>
+                  ) : (
+                    <div className="w-5 h-5 flex items-center justify-center text-slate-600 shrink-0">
+                      &bull;
+                    </div>
+                  )}
 
                   <div className={`w-6 h-6 rounded-lg ${isSelected ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30" : "bg-slate-900 text-slate-400 group-hover:text-slate-200 border border-slate-800"} flex items-center justify-center text-[10px] font-mono font-bold shrink-0`}>
                     {initial}
@@ -201,14 +259,26 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
                   </a>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  {group.hasDiagram && (
+                    <span 
+                      className="text-[10px] text-purple-400 px-1 py-0.5 rounded bg-purple-950/60 border border-purple-800/60 flex items-center" 
+                      title="Visio Topology Diagram available"
+                    >
+                      <ImageIcon className="w-2.5 h-2.5" />
+                    </span>
+                  )}
+
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold font-mono ${
                     isSelected 
                       ? "bg-indigo-500/30 text-indigo-200 border border-indigo-500/40" 
-                      : "bg-slate-800/80 text-slate-400 border border-slate-700/50 group-hover:border-slate-600"
+                      : group.totalCount > 0
+                        ? "bg-slate-800/80 text-slate-300 border border-slate-700/50"
+                        : "bg-slate-900/60 text-slate-500 border border-slate-800/50"
                   }`}>
                     {group.totalCount}
                   </span>
+                  
                   {isSelected && (
                     <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" title="Active Site Page"></span>
                   )}
@@ -216,7 +286,7 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
               </div>
 
               {/* Child Switches List */}
-              {isOpen && (
+              {isOpen && group.switches.length > 0 && (
                 <div className="px-2.5 pb-2 pt-1 border-t border-slate-800/60 space-y-1 bg-slate-950/60">
                   {group.switches.map((sw) => {
                     const isSwActive = selectedSwitchId === sw.id;
@@ -245,6 +315,12 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
             </div>
           );
         })}
+
+        {filteredSiteCodes.length === 0 && (
+          <div className="p-4 text-center text-xs text-slate-500 font-mono">
+            No sites match &ldquo;{filterQuery}&rdquo;
+          </div>
+        )}
       </div>
     </aside>
   );

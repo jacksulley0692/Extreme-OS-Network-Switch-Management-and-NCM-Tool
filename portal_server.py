@@ -4186,7 +4186,156 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       renderSiteTree();
     }
 
-        function extractSiteCode(hostnameOrIp) {
+        
+    const SITE_DIAGRAM_FILES = {
+      "aberdeen": "DLC-Aberdeen.png",
+      "acton": "DLC_-_Acton.png",
+      "amsterdam": "DLC_-_Amsterdam.png",
+      "aravaca": "DLC_-_Aravaca.png",
+      "badhomburg": "DLC-Bad-Homburg.png",
+      "barcelona": "DLC_-_Barcelona.png",
+      "basildon": "DLC_-_Basildon.png",
+      "beaconsfield": "DLC_-_Beaconsfield.png",
+      "beckenham": "DLC_-_Beckenham.png",
+      "belfast": "DLC-Belfast.png",
+      "bicester": "DLC-Bicester.png",
+      "birmingham": "DLC-Birmingham.png",
+      "blijdorp": "DLC-Blijdorp_Rotterdam.png",
+      "boadilla": "DLC-Boadilla.png",
+      "bolton": "DLC_-_Bolton.png",
+      "brighton": "DLC_-_Brighton.png",
+      "bristol": "DLC-Bristol-LA.png",
+      "bristolla": "DLC-Bristol-LA.png",
+      "bristolwestbury": "DLC-Bristol-Westbury.png",
+      "bromsgrove": "DLC-Bromsgrove.png",
+      "brooklands": "DLC-Brooklands.png",
+      "brussels": "DLC-Brussles.png",
+      "brussles": "DLC-Brussles.png",
+      "burystedmunds": "DLC_-_Bury_St_Edmunds.png",
+      "bushey": "DLC-Bushey.png",
+      "cambridge": "DLC-Cambridge.png",
+      "capelle": "DLC-Capelle.png",
+      "cardiff": "DLC-Cardiff.png",
+      "cheadle": "DLC-Cheadle.png",
+      "cheam": "DLC-Cheam.png",
+      "cheshireoaks": "DLC_-_Cheshire_Oaks.png",
+      "chigwell": "DLC-Chigwell.png",
+      "chorley": "DLC-Chorley.png",
+      "colchester": "DLC-_Colchester.png",
+      "collierswood": "DLC_-_Colliers_Wood.png",
+      "coventry": "DLC-Coventry.png",
+      "cricklewood": "DLC-Cricklewood.png",
+      "dartford": "DLC-Dartford.png",
+      "derby": "DLC-Derby.png",
+      "dudley": "DLC-Dudley.png",
+      "dundee": "DLC-Dundee.png",
+      "eastbourne": "DLC-Eastbourne.png",
+      "edinburgh": "DLC-Edinburgh.png",
+      "edinburghnewhaven": "DLC_-_Edinburgh_Newhaven_Harbour.png",
+      "eindhoven": "DLC-Eindhoven.png",
+      "emersonsgreen": "DLC-EmersonsGreen.png",
+      "enfield": "DLL-Enfield.png",
+      "epsom": "DLC-Epsom.png",
+      "exeter": "DLC-Exeter.png",
+      "farnham": "DLC_-_Farnham.png",
+      "finchley": "DLC_-_Finchley.png",
+      "fulham": "DLC_-_Fulham.png",
+      "gavamar": "DLC-GavaMar.png",
+      "genevacc": "DLC-Geneva-CC.png",
+      "genevacitygreen": "DLC_-_Geneva_City_Green.png",
+      "gideapark": "DLC_-_Gidea_Park.png",
+      "glasgow": "DLC_-_Glasgow_Renfrew.png",
+      "glasgowrenfrew": "DLC_-_Glasgow_Renfrew.png",
+      "glasgowroukenglen": "DLC_-_Glasgow_Rouken_Glen.png",
+      "glasgowwestend": "DLC_-_Glasgow_West_End.png",
+      "gloucestershire": "DLC_-_Gloucestshire.png",
+      "gloucestshire": "DLC_-_Gloucestshire.png",
+      "hamilton": "DLC_-_Hamilton.png",
+      "hampton": "DLC_-_Hampton.png",
+      "harlow": "DLC-Harlow.png",
+      "harrogate": "DLC_-_Harrogate.png",
+      "hernebay": "DLC_-_Herne_Bay.png",
+      "heston": "DLC_-_Heston.png",
+      "hull": "DLC_-_Hull.png",
+      "ipswich": "DLC_-_Ipswich.png",
+      "kensington": "DLC_-_Kensington.png",
+      "kidbrooke": "DLC_-_Kidbrooke.png",
+      "kingshill": "DLC_-_KingsHill.png",
+      "kingston": "DLC-Kingston.png",
+      "knowsley": "DLC_-_Knowsley.png",
+      "lafinca": "DLC_-_La_Finca.png",
+      "leeds": "DLC_-_Leeds.png",
+      "leicester": "DLC_-_Leicester.png",
+      "lichfield": "DLC_-_Lichfield.png",
+      "lincoln": "DLC-Lincoln.png",
+      "luton": "DLC_-_Luton.png",
+      "maidenhead": "DLC-Maidenhead.png",
+      "malaga": "DLC_-_Malaga.png",
+      "malaspina": "DLC_-_Malaspain.png",
+      "malaspain": "DLC_-_Malaspain.png",
+      "manchester": "DLC_-_Manchester.png",
+      "manchesternorth": "DLC_-_Manchester-North.png",
+      "miltonkeynes": "DLC_-_Milton_Keynes.png",
+      "modena": "DLC_-_Modena.png",
+      "narborough": "DLC_-_Narbourgh.png",
+      "narbourgh": "DLC_-_Narbourgh.png",
+      "newbury": "DLC_-_Newbury.png",
+      "newcastle": "DLC-Newcastle.png",
+      "northwood": "DLC_-_Northwood.png",
+      "norwich": "DLC-Norwhich.png",
+      "norwhich": "DLC-Norwhich.png",
+      "nottingham": "DLC-Nottingham.png",
+      "nottinghill": "DLC_-_Notting_Hill_Harbour_Club.png",
+      "peterborough": "DLC_-_Peterborough.png",
+      "poole": "DLC_-_Poole.png",
+      "portsolent": "DLC-PortSolent.png",
+      "purley": "DLC-Purley.png",
+      "raynespark": "DLC-Raynes_Park.png",
+      "reading": "DLC-Reading.png",
+      "ringwood": "DLC_-_Ringwood.png",
+      "rotterdam": "DLC_-_Rotterdam_-_Akragon.png",
+      "royalberkshire": "DL-RoyalBerkshire.png",
+      "rugby": "DLC_-_Rugby.png",
+      "serrano": "DLC_-_Serrano.png",
+      "shawfair": "DLC_-_Shawfair_NOT_COMPLETED.png",
+      "shrewsbury": "DLC_-_Shrewsbury.png",
+      "shresbury": "DLC_-_Shresbury.png",
+      "sidcup": "DLC_-_Sidcup.png",
+      "solihull": "DLC_-_Solihull_Cranmore.png",
+      "southampton": "DLC_-_Southampton.png",
+      "southamptonwestend": "DLC_-_Southampton_West_End.png",
+      "southend": "DLC_-_Southend.png",
+      "speke": "DLC_-_Speke.png",
+      "sterrebeek": "DLC-Sterrebeek.png",
+      "stevenage": "DLC_-_Stevenage.png",
+      "sudburyhill": "DLC_-_Sudbury_Hill.png",
+      "sunderland": "DLC_-_Sunderland.png",
+      "swansea": "DLC_-_Swansea.png",
+      "swindon": "DLC_-_Swindon.png",
+      "teesside": "DLC_-_Teeside.png",
+      "teeside": "DLC_-_Teeside.png",
+      "warrington": "DLC_-_Warrington.png",
+      "westbridgford": "DLC_-_West_Bridgeford.png",
+      "westbridgeford": "DLC_-_West_Bridgeford.png",
+      "wickwoods": "DLC-Wickwoods.png",
+      "woking": "DLC_-_Woking.png",
+      "worcester": "DLC_-_Worcester.png",
+      "worthing": "DLC_-_Worthing.png",
+      "york": "DLC_-_York.png",
+      "zaragoza": "DLC_-_Zaragoza.png"
+    };
+
+    function getDiagramPngPathForSite(site) {
+      if (!site) return null;
+      const clean = site.toLowerCase().replace(/^(dlc|dll|dl)[-_ ]*/i, "").replace(/[^a-z0-9]/g, "");
+      if (SITE_DIAGRAM_FILES[clean]) return "/diagrams/" + SITE_DIAGRAM_FILES[clean];
+      for (const [k, v] of Object.entries(SITE_DIAGRAM_FILES)) {
+        if (clean.length >= 3 && (clean.includes(k) || k.includes(clean))) return "/diagrams/" + v;
+      }
+      return null;
+    }
+    
+    function extractSiteCode(hostnameOrIp) {
       if (!hostnameOrIp) return "UNASSIGNED";
       const clean = String(hostnameOrIp).trim();
       
@@ -4221,6 +4370,11 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
 
     function groupSwitchesBySite(switches) {
       const groups = {};
+      // Seed with all known estate sites
+      for (const slug of Object.keys(SITE_DIAGRAM_FILES)) {
+        const code = extractSiteCode(slug);
+        if (!groups[code]) groups[code] = [];
+      }
       switches.forEach(sw => {
         const site = extractSiteCode(sw.hostname || sw.ip);
         if (!groups[site]) groups[site] = [];
@@ -4603,18 +4757,51 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             </div>
 
             <!-- Diagram Canvas -->
-            <div id="site-diagram-canvas" class="p-4 bg-white/95 rounded-b-xl overflow-x-auto flex justify-center items-center" style="min-height: 420px;">
-              ${isYork ? `
-                <div style="width: 100%; max-width: 1100px; transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out;">
-                  ${YORK_DIAGRAM_SVG_STR}
-                </div>
-              ` : `
-                <div class="p-12 text-center text-slate-700 font-mono">
-                  <div class="text-3xl mb-2">🏢</div>
-                  <div class="text-sm font-bold">${selectedSite} Network Schematic</div>
-                  <div class="text-xs text-slate-500 mt-1">Showing ${siteSwitches.length} connected switches for site ${selectedSite}.</div>
-                </div>
-              `}
+            <div id="site-diagram-canvas" class="p-4 bg-slate-950 rounded-b-xl overflow-x-auto flex justify-center items-center" style="min-height: 460px;">
+              ${(function() {
+                const pngPath = getDiagramPngPathForSite(selectedSite);
+                if (pngPath) {
+                  return `
+                    <div class="w-full flex flex-col items-center space-y-3">
+                      <div class="w-full bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
+                        <div class="flex items-center gap-2">
+                          <span class="text-emerald-400 font-bold">✔</span>
+                          <span>Visio Verified Diagram: <strong class="text-white">${pngPath.split("/").pop()}</strong></span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                          <a href="${pngPath}" target="_blank" class="text-indigo-400 hover:underline flex items-center gap-1 text-[11px]">
+                            <span>Full Resolution ↗</span>
+                          </a>
+                          <a href="${pngPath}" download="${selectedSite}_Topology_Diagram.png" class="text-purple-400 hover:underline flex items-center gap-1 text-[11px]">
+                            <span>Download PNG 💾</span>
+                          </a>
+                        </div>
+                      </div>
+                      <div class="bg-slate-900/40 rounded-xl p-4 shadow-inner border border-slate-800/80 overflow-x-auto w-full flex justify-center items-center">
+                        <img 
+                          src="${pngPath}" 
+                          alt="${selectedSite} Topology Diagram" 
+                          style="transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out; max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);" 
+                        />
+                      </div>
+                    </div>
+                  `;
+                } else if (isYork) {
+                  return `
+                    <div class="bg-white/95 rounded-xl p-4 shadow-inner border border-slate-800" style="width: 100%; max-width: 1100px; transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out;">
+                      ${YORK_DIAGRAM_SVG_STR}
+                    </div>
+                  `;
+                } else {
+                  return `
+                    <div class="p-12 text-center text-slate-400 font-mono">
+                      <div class="text-3xl mb-2">🏢</div>
+                      <div class="text-sm font-bold text-white">${selectedSite} Network Schematic</div>
+                      <div class="text-xs text-slate-500 mt-1">Showing ${siteSwitches.length} connected switches for site ${selectedSite}.</div>
+                    </div>
+                  `;
+                }
+              })()}
             </div>
 
             ${isYork ? `
