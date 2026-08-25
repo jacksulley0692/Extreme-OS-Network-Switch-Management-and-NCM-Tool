@@ -1378,7 +1378,7 @@ def execute_ping_live(target_ip, hostname="Switch", count=4):
             if avg_match:
                 rtt = int(avg_match.group(1))
 
-        return {
+        res_dict = {
             "success": True,
             "ip": target_ip,
             "hostname": hostname,
@@ -1394,12 +1394,41 @@ def execute_ping_live(target_ip, hostname="Switch", count=4):
             "rawCli": output,
             "details": f"{count} packets transmitted, {count if is_reachable else 0} received"
         }
+        try:
+            log_audit_action({
+                "username": "portal_operator",
+                "fullName": "Reachability Auditor",
+                "role": "service_desk",
+                "action": "PING_TEST",
+                "category": "NETWORK_AUDIT",
+                "switchIp": target_ip,
+                "switchHostname": hostname,
+                "details": f"ICMP Ping probe sent to {hostname} ({target_ip}). Status: {'ONLINE' if is_reachable else 'OFFLINE'}, RTT: {round(rtt, 2) if is_reachable else 'N/A'}ms, Loss: {0 if is_reachable else 100}%",
+                "status": "SUCCESS" if is_reachable else "FAILED"
+            })
+        except Exception:
+            pass
+        return res_dict
     except Exception as e:
         # Fallback simulation
         sim_rtt = random.randint(3, 12)
         raw_sim = f"PING {target_ip} ({target_ip}) 56(84) bytes of data.\n" + \
                   "\n".join([f"64 bytes from {target_ip}: icmp_seq={i+1} ttl=64 time={sim_rtt + round(random.random()*2, 2)} ms" for i in range(count)]) + \
                   f"\n\n--- {target_ip} ping statistics ---\n{count} packets transmitted, {count} received, 0% packet loss\nrtt min/avg/max = {sim_rtt-1.2:.3f}/{sim_rtt:.3f}/{sim_rtt+2.4:.3f} ms"
+        try:
+            log_audit_action({
+                "username": "portal_operator",
+                "fullName": "Reachability Auditor",
+                "role": "service_desk",
+                "action": "PING_TEST",
+                "category": "NETWORK_AUDIT",
+                "switchIp": target_ip,
+                "switchHostname": hostname,
+                "details": f"ICMP Ping probe simulated for {hostname} ({target_ip}). Status: ONLINE, RTT: {sim_rtt}ms",
+                "status": "SUCCESS"
+            })
+        except Exception:
+            pass
         return {
             "success": True,
             "ip": target_ip,
@@ -1452,7 +1481,7 @@ def get_backup_schedule_dict(status_data=None):
     
     # Calculate next scheduled run based on frequency
     next_run = now
-    freq_label = "Daily Nightly Backup (02:00 AM)"
+    freq_label = "Daily Nightly Backup (02:00 GMT)"
     engine_label = "Systemd Timer (switch-backup.timer) / Cron"
     
     if cfg.get("engine") == "cron":
@@ -1488,7 +1517,7 @@ def get_backup_schedule_dict(status_data=None):
         time_parts = cfg.get("dailyTimeUtc", "02:00").split(":")
         h = int(time_parts[0]) if len(time_parts) > 0 and time_parts[0].isdigit() else 2
         m = int(time_parts[1]) if len(time_parts) > 1 and time_parts[1].isdigit() else 0
-        freq_label = f"Daily Nightly Backup ({h:02d}:{m:02d})"
+        freq_label = f"Daily Nightly Backup ({h:02d}:{m:02d} GMT)"
         next_run = now.replace(hour=h, minute=m, second=0, microsecond=0)
         if now.hour > h or (now.hour == h and now.minute >= m):
             next_run += timedelta(days=1)
@@ -1498,7 +1527,7 @@ def get_backup_schedule_dict(status_data=None):
     diff_mins = int((diff.total_seconds() % 3600) // 60)
     countdown_str = f"in {diff_hours}h {diff_mins}m" if cfg.get("enabled", True) else "Paused"
     
-    last_run_str = "Today at 02:00:15 UTC"
+    last_run_str = "Today at 02:00:15 GMT"
     if status_data and isinstance(status_data, dict) and status_data.get("updated_at"):
         last_run_str = status_data.get("updated_at")
     
@@ -2237,7 +2266,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <button onclick="openSwitchesEditor()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
           <span>📋 Fleet Inventory (Switches.txt)</span>
         </button>
-        <button onclick="openRolloutAuth()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-amber-600/30 transition flex items-center gap-2">
+        <button id="btn-top-rollout" onclick="openRolloutAuth()" class="hidden bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-amber-600/30 transition flex items-center gap-2">
           <span>🛡️ Rollout Configuration Change to Multiple switches</span>
         </button>
         <button onclick="runBackup('ALL')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
@@ -2264,7 +2293,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
               <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
               <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Last Full Estate Backup Run</span>
             </div>
-            <div id="estate-last-run" class="text-base font-bold text-white truncate pt-0.5">Today at 02:00:15 UTC</div>
+            <div id="estate-last-run" class="text-base font-bold text-white truncate pt-0.5">Today at 02:00:15 GMT</div>
             <div id="estate-last-summary" class="text-xs text-emerald-400">✔ 100% Complete • Save Config &amp; TFTP Export</div>
           </div>
           <span id="estate-last-badge" class="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold shrink-0">
@@ -2287,8 +2316,8 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 <span>⚙️</span> Configure Schedule
               </button>
             </div>
-            <div id="estate-next-run" class="text-base font-bold text-indigo-300 truncate pt-0.5">Tonight @ 02:00 UTC</div>
-            <div id="estate-frequency-label" class="text-xs text-slate-400">Daily Nightly Backup &bull; switch-backup.timer</div>
+            <div id="estate-next-run" class="text-base font-bold text-indigo-300 truncate pt-0.5">Tonight @ 02:00 GMT</div>
+            <div id="estate-frequency-label" class="text-xs text-slate-400">Daily Nightly Backup &bull; switch-backup.timer (02:00 GMT)</div>
           </div>
           <span id="estate-next-countdown" class="px-2.5 py-1 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold shrink-0">
             in ~5h 30m
@@ -3653,9 +3682,14 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <!-- Time & Day Settings -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
           <div class="space-y-1.5" id="sched-time-container">
-            <label class="text-xs font-semibold text-slate-400 block">Primary Execution Time (UTC)</label>
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-semibold text-slate-400 block">Primary Execution Time (GMT)</label>
+              <button type="button" onclick="setScheduleQuickTestPlus1Min()" class="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-[10px] font-bold transition flex items-center gap-1" title="Set schedule time to +1 minute from current GMT time for instant test validation">
+                <span>⚡</span> Quick Test (+1 Min)
+              </button>
+            </div>
             <input type="time" id="sched-time-utc" value="02:00" onchange="renderSchedulePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-indigo-300 font-bold focus:outline-none focus:border-indigo-500">
-            <p class="text-[10px] text-slate-500">Scheduled in switch timezone / UTC</p>
+            <p class="text-[10px] text-slate-500">Scheduled in switch timezone / GMT (London)</p>
           </div>
 
           <div class="space-y-1.5">
@@ -6962,6 +6996,16 @@ save configuration`
           ? 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800'
           : 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800';
       }
+
+      // Rollout button is strictly restricted to Network Administrators
+      const rolloutBtn = document.getElementById('btn-top-rollout');
+      if (rolloutBtn) {
+        if (portalCurrentUser.role === 'network_admin') {
+          rolloutBtn.classList.remove('hidden');
+        } else {
+          rolloutBtn.classList.add('hidden');
+        }
+      }
     }
 
     async function handlePortalLoginSubmit(e) {
@@ -7018,6 +7062,8 @@ save configuration`
       portalCurrentUser = null;
       sessionStorage.removeItem('portal_user');
       document.getElementById('portal-user-badge').classList.add('hidden');
+      const rolloutBtn = document.getElementById('btn-top-rollout');
+      if (rolloutBtn) rolloutBtn.classList.add('hidden');
       document.getElementById('modal-portal-login').classList.remove('hidden');
       document.getElementById('portal-login-password').value = '';
     }
@@ -7033,6 +7079,21 @@ save configuration`
       alertOnFailure: true,
       scriptName: 'BackupSave.py'
     };
+
+    function setScheduleQuickTestPlus1Min() {
+      const now = new Date();
+      // Add 1 minute to current UTC/GMT time
+      const testDate = new Date(now.getTime() + 60 * 1000);
+      const hh = String(testDate.getUTCHours()).padStart(2, '0');
+      const mm = String(testDate.getUTCMinutes()).padStart(2, '0');
+      const timeStr = `${hh}:${mm}`;
+      const timeInput = document.getElementById('sched-time-utc');
+      if (timeInput) {
+        timeInput.value = timeStr;
+        renderSchedulePreview();
+        showToast(`⚡ Quick Test: Schedule time set to ${timeStr} GMT (+1 min lead time)`);
+      }
+    }
 
     async function openScheduleModal() {
       try {
@@ -7112,23 +7173,23 @@ save configuration`
         for (let i = 1; i <= 5; i++) {
           const d = new Date(now.getTime() + i * 3600 * 1000);
           d.setMinutes(0, 0, 0);
-          projected.push(`Run #${i}: ${d.toUTCString().replace('GMT', 'UTC')} (${i}h from now)`);
+          projected.push(`Run #${i}: ${d.toUTCString().replace('UTC', 'GMT')} (${i}h from now)`);
         }
         if (snippetEl) snippetEl.innerText = 'systemd: OnCalendar=hourly (switch-backup.timer)';
       } else if (activeSchedFreq === 'every_4h') {
         for (let i = 1; i <= 5; i++) {
           const d = new Date(now.getTime() + i * 4 * 3600 * 1000);
           d.setMinutes(0, 0, 0);
-          projected.push(`Run #${i}: ${d.toUTCString().replace('GMT', 'UTC')}`);
+          projected.push(`Run #${i}: ${d.toUTCString().replace('UTC', 'GMT')}`);
         }
-        if (snippetEl) snippetEl.innerText = 'systemd: OnCalendar=*-*-* 00,04,08,12,16,20:00:00 UTC';
+        if (snippetEl) snippetEl.innerText = 'systemd: OnCalendar=*-*-* 00,04,08,12,16,20:00:00 GMT';
       } else if (activeSchedFreq === 'weekly') {
         for (let i = 1; i <= 5; i++) {
           const d = new Date(now.getTime() + i * 7 * 86400 * 1000);
           d.setUTCHours(h || 2, m || 0, 0, 0);
-          projected.push(`Run #${i}: ${d.toUTCString().replace('GMT', 'UTC')}`);
+          projected.push(`Run #${i}: ${d.toUTCString().replace('UTC', 'GMT')}`);
         }
-        if (snippetEl) snippetEl.innerText = `systemd: OnCalendar=Sun *-*-* ${String(h||2).padStart(2,'0')}:${String(m||0).padStart(2,'0')}:00 UTC`;
+        if (snippetEl) snippetEl.innerText = `systemd: OnCalendar=Sun *-*-* ${String(h||2).padStart(2,'0')}:${String(m||0).padStart(2,'0')}:00 GMT`;
       } else {
         // Daily
         for (let i = 0; i < 5; i++) {
@@ -7136,9 +7197,9 @@ save configuration`
           d.setUTCDate(d.getUTCDate() + i);
           d.setUTCHours(h || 2, m || 0, 0, 0);
           if (d < now) d.setUTCDate(d.getUTCDate() + 1);
-          projected.push(`Run #${i+1}: ${d.toUTCString().replace('GMT', 'UTC')} (Daily Nightly)`);
+          projected.push(`Run #${i+1}: ${d.toUTCString().replace('UTC', 'GMT')} (Daily Nightly)`);
         }
-        if (snippetEl) snippetEl.innerText = `systemd: OnCalendar=*-*-* ${String(h||2).padStart(2,'0')}:${String(m||0).padStart(2,'0')}:00 UTC (switch-backup.timer)`;
+        if (snippetEl) snippetEl.innerText = `systemd: OnCalendar=*-*-* ${String(h||2).padStart(2,'0')}:${String(m||0).padStart(2,'0')}:00 GMT (switch-backup.timer)`;
       }
 
       if (runsContainer) {
