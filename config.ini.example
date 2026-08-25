@@ -1,0 +1,12 @@
+[credentials]
+username = admin
+password = 17support
+
+[backup]
+tftp_server = 10.36.226.7
+tftp_vr = VR-Default
+tftp_root = C:\backup
+
+[connection]
+method = telnet
+timeout = 20

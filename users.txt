@@ -1,0 +1,15 @@
+# Extreme Switch Portal User Accounts Configuration
+# Format: username:password:role:Full Name
+#
+# Available Roles:
+#  - network_admin  : Full administrative access to all features + Rollout Multi-Switch Config + Audit Log Viewer
+#  - service_desk   : Access to all operational features (Backups, Port Bounces, Search, Ping, Monitor, Diagrams)
+#                     *Restricted from mass multi-switch rollout scripts*
+#
+# You can add more users on new lines below or edit passwords anytime.
+
+# Shared IT / Network Engineering Team
+netadmin:NetworkTeam2026!:network_admin:IT Network Team
+
+# Service Desk Team Members
+bill.gates:ServiceDesk2026!:service_desk:Bill Gates (Service Desk)

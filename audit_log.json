@@ -1,0 +1,42 @@
+[
+  {
+    "id": "audit-1",
+    "timestamp": "2026-08-19 11:30:14",
+    "username": "netadmin",
+    "fullName": "IT Network Team",
+    "role": "network_admin",
+    "action": "PORT_BOUNCE",
+    "category": "PORT_BOUNCE",
+    "switchIp": "10.36.226.11",
+    "switchHostname": "LEEDS-CORE-01",
+    "details": "Admin port bounce command executed on Port 13 (disable port 13 / enable port 13)",
+    "clientIp": "192.168.1.50",
+    "status": "SUCCESS"
+  },
+  {
+    "id": "audit-2",
+    "timestamp": "2026-08-19 11:15:02",
+    "username": "bill.gates",
+    "fullName": "Bill Gates (Service Desk)",
+    "role": "service_desk",
+    "action": "BACKUP",
+    "category": "BACKUP",
+    "switchIp": "10.36.226.12",
+    "switchHostname": "LEEDS-EDGE-01",
+    "details": "Initiated individual switch backup via BackupSave.py",
+    "clientIp": "192.168.1.102",
+    "status": "SUCCESS"
+  },
+  {
+    "id": "audit-3",
+    "timestamp": "2026-08-19 10:45:20",
+    "username": "bill.gates",
+    "fullName": "Bill Gates (Service Desk)",
+    "role": "service_desk",
+    "action": "LOGIN",
+    "category": "AUTH",
+    "details": "Service desk user logged into portal session",
+    "clientIp": "192.168.1.102",
+    "status": "SUCCESS"
+  }
+]

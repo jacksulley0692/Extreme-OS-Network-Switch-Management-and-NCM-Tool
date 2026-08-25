@@ -1,0 +1,187 @@
+<svg viewBox="0 0 1600 1100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="background-color: #f8fafc; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <!-- Radial Gradients for Outdoor APs -->
+    <radialGradient id="ext-rf-ap1" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.9" />
+      <stop offset="40%" stop-color="#84cc16" stop-opacity="0.7" />
+      <stop offset="75%" stop-color="#eab308" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="ext-rf-ap2" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.85" />
+      <stop offset="40%" stop-color="#84cc16" stop-opacity="0.6" />
+      <stop offset="75%" stop-color="#eab308" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="ext-rf-ap3" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.85" />
+      <stop offset="40%" stop-color="#84cc16" stop-opacity="0.65" />
+      <stop offset="75%" stop-color="#eab308" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="ext-rf-ap4" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#84cc16" stop-opacity="0.8" />
+      <stop offset="45%" stop-color="#eab308" stop-opacity="0.6" />
+      <stop offset="80%" stop-color="#f97316" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="ext-rf-ap5" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#84cc16" stop-opacity="0.8" />
+      <stop offset="45%" stop-color="#eab308" stop-opacity="0.6" />
+      <stop offset="80%" stop-color="#f97316" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#f97316" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Parking Lines Pattern -->
+    <pattern id="car-park-pattern" width="40" height="24" patternUnits="userSpaceOnUse">
+      <rect width="40" height="24" fill="#e2e8f0" />
+      <line x1="0" y1="0" x2="0" y2="24" stroke="#94a3b8" stroke-width="1.5" />
+      <line x1="20" y1="0" x2="20" y2="24" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 2" />
+    </pattern>
+
+    <filter id="blur-heat-ext" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="34" />
+    </filter>
+
+    <g id="ap-node-ext">
+      <circle cx="0" cy="0" r="14" fill="#ffffff" stroke="#1e293b" stroke-width="2.5" />
+      <circle cx="0" cy="0" r="8" fill="#0284c7" />
+      <path d="M 0 -11 L 0 -5 M 0 5 L 0 11 M -11 0 L -5 0 M 5 0 L 11 0" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="0" cy="0" r="3" fill="#ffffff" />
+    </g>
+  </defs>
+
+  <!-- Architectural Title Block -->
+  <rect x="25" y="25" width="1550" height="70" rx="8" fill="#0f172a" />
+  <text x="50" y="65" font-size="22" font-weight="800" fill="#ffffff" letter-spacing="1">David Lloyd CLUBS</text>
+  <text x="280" y="65" font-size="18" font-weight="700" fill="#38bdf8">YORK SITE &amp; EXTERNAL PLAN</text>
+  <text x="630" y="65" font-size="14" font-weight="500" fill="#94a3b8">HADFIELD CAWKWELL DAVIDSON ARCHITECTS | DRAWING: 10584-000</text>
+  <rect x="1330" y="40" width="220" height="40" rx="6" fill="#1e293b" stroke="#334155" />
+  <text x="1440" y="65" font-size="13" font-weight="700" fill="#a78bfa" text-anchor="middle">SIGNAL STRENGTH HEAT MAP</text>
+
+  <!-- Site Boundary Background -->
+  <rect x="40" y="115" width="1520" height="945" rx="6" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+
+  <!-- ==================== 1. RF HEATMAP CONTOURS ==================== -->
+  <g filter="url(#blur-heat-ext)" opacity="0.84">
+    <!-- Outdoor Pool AP Heat -->
+    <ellipse cx="440" cy="400" rx="280" ry="220" fill="url(#ext-rf-ap1)" />
+    <!-- Outdoor Battle Box AP Heat -->
+    <ellipse cx="260" cy="680" rx="240" ry="200" fill="url(#ext-rf-ap2)" />
+    <!-- Lounge Terrace AP Heat -->
+    <ellipse cx="680" cy="400" rx="260" ry="210" fill="url(#ext-rf-ap3)" />
+    <!-- Outdoor Tennis Hub AP Heat -->
+    <ellipse cx="460" cy="850" rx="270" ry="220" fill="url(#ext-rf-ap4)" />
+    <!-- Entrance & Forecourt AP Heat -->
+    <ellipse cx="980" cy="380" rx="250" ry="200" fill="url(#ext-rf-ap5)" />
+  </g>
+
+  <!-- ==================== 2. SITE ZONES & GROUNDS ==================== -->
+  <!-- Car Parking Zone (239 spaces) -->
+  <rect x="920" y="240" width="580" height="760" fill="url(#car-park-pattern)" stroke="#334155" stroke-width="3" rx="6"/>
+  <rect x="960" y="270" width="500" height="80" rx="4" fill="#0f172a" />
+  <text x="1210" y="310" font-size="16" font-weight="800" fill="#ffffff" text-anchor="middle">MAIN CAR PARK (239 TOTAL SPACES)</text>
+  <text x="1210" y="335" font-size="12" font-weight="600" fill="#94a3b8" text-anchor="middle">10 Accessible Disabled Bays | 8 Parent &amp; Child Bays | EV Rapid Charging</text>
+
+  <!-- Substation & Service Compound -->
+  <rect x="1320" y="820" width="160" height="150" fill="#e2e8f0" stroke="#475569" stroke-width="2" rx="3"/>
+  <text x="1400" y="890" font-size="12" font-weight="800" fill="#334155" text-anchor="middle">SUB-STATION</text>
+  <text x="1400" y="915" font-size="10" font-weight="600" fill="#64748b" text-anchor="middle">&amp; COMPOUND</text>
+
+  <!-- Main Club House Building Footprint -->
+  <rect x="580" y="240" width="320" height="420" fill="#f8fafc" stroke="#1e293b" stroke-width="3.5" rx="4"/>
+  <text x="740" y="340" font-size="16" font-weight="900" fill="#0f172a" text-anchor="middle">MAIN CLUB BUILDING</text>
+  <text x="740" y="370" font-size="12" font-weight="700" fill="#475569" text-anchor="middle">Reception, Lounges, Gym &amp; Indoor Pools</text>
+  <rect x="620" y="420" width="240" height="60" rx="3" fill="#e0e7ff" stroke="#6366f1" stroke-width="1.5" />
+  <text x="740" y="455" font-size="12" font-weight="800" fill="#4338ca" text-anchor="middle">OUTDOOR LOUNGE TERRACE</text>
+
+  <!-- Outdoor Swimming Pool (25m x 10m) & Poolside Terrace -->
+  <rect x="220" y="240" width="340" height="320" fill="#f0fdf4" stroke="#334155" stroke-width="3" rx="4"/>
+  <rect x="250" y="270" width="280" height="160" rx="6" fill="#7dd3fc" stroke="#0284c7" stroke-width="3" />
+  <text x="390" y="355" font-size="17" font-weight="900" fill="#0369a1" text-anchor="middle" letter-spacing="1">OUTDOOR POOL (25m x 10m)</text>
+  <text x="390" y="385" font-size="11" font-weight="700" fill="#0284c7" text-anchor="middle">Heated Year-Round Luxury Pool</text>
+  <rect x="250" y="450" width="280" height="80" rx="3" fill="#fef3c7" stroke="#d97706" stroke-width="1.5" />
+  <text x="390" y="495" font-size="12" font-weight="800" fill="#92400e" text-anchor="middle">POOLSIDE SUN TERRACE &amp; BAR</text>
+
+  <!-- Outdoor Battle Box (Functional Fitness Zone) -->
+  <rect x="80" y="580" width="280" height="200" fill="#fef2f2" stroke="#334155" stroke-width="3" rx="4"/>
+  <rect x="100" y="600" width="240" height="150" rx="4" fill="#fee2e2" stroke="#ef4444" stroke-width="2" />
+  <text x="220" y="665" font-size="15" font-weight="900" fill="#991b1b" text-anchor="middle" letter-spacing="1">OUTDOOR BATTLE BOX</text>
+  <text x="220" y="695" font-size="11" font-weight="700" fill="#b91c1c" text-anchor="middle">Functional Training Rig &amp; Turf Tracks</text>
+
+  <!-- DL Kids External Adventure Play -->
+  <rect x="380" y="580" width="180" height="200" fill="#fefce8" stroke="#334155" stroke-width="3" rx="4"/>
+  <text x="470" y="670" font-size="13" font-weight="800" fill="#854d0e" text-anchor="middle">DL KIDS</text>
+  <text x="470" y="695" font-size="12" font-weight="800" fill="#854d0e" text-anchor="middle">EXTERNAL PLAY</text>
+
+  <!-- Outdoor Tennis Courts (Courts 1 to 6) -->
+  <rect x="80" y="800" width="820" height="210" fill="#f0fdf4" stroke="#334155" stroke-width="3" rx="4"/>
+  <g fill="#dcfce7" stroke="#16a34a" stroke-width="1.5">
+    <rect x="100" y="820" width="240" height="160" rx="3" />
+    <text x="220" y="905" font-size="13" font-weight="800" fill="#15803d" text-anchor="middle">OUTDOOR COURTS 1 &amp; 2</text>
+    <rect x="370" y="820" width="240" height="160" rx="3" />
+    <text x="490" y="905" font-size="13" font-weight="800" fill="#15803d" text-anchor="middle">OUTDOOR COURTS 3 &amp; 4</text>
+    <rect x="640" y="820" width="240" height="160" rx="3" />
+    <text x="760" y="905" font-size="13" font-weight="800" fill="#15803d" text-anchor="middle">OUTDOOR COURTS 5 &amp; 6</text>
+  </g>
+
+  <!-- ==================== 3. ACCESS POINTS ==================== -->
+  <!-- AP-EXT-01 (Outdoor Pool Terrace) -->
+  <g transform="translate(440, 400)">
+    <use href="#ap-node-ext" />
+    <rect x="-45" y="16" width="90" height="20" rx="3" fill="#0f172a" stroke="#334155" />
+    <text x="0" y="30" font-size="9" font-weight="700" fill="#38bdf8" text-anchor="middle">AP-EXT-01 (-54dBm)</text>
+  </g>
+
+  <!-- AP-EXT-02 (Battle Box) -->
+  <g transform="translate(260, 680)">
+    <use href="#ap-node-ext" />
+    <rect x="-45" y="16" width="90" height="20" rx="3" fill="#0f172a" stroke="#334155" />
+    <text x="0" y="30" font-size="9" font-weight="700" fill="#4ade80" text-anchor="middle">AP-EXT-02 (-58dBm)</text>
+  </g>
+
+  <!-- AP-EXT-03 (Lounge Terrace) -->
+  <g transform="translate(680, 400)">
+    <use href="#ap-node-ext" />
+    <rect x="-45" y="16" width="90" height="20" rx="3" fill="#0f172a" stroke="#334155" />
+    <text x="0" y="30" font-size="9" font-weight="700" fill="#4ade80" text-anchor="middle">AP-EXT-03 (-56dBm)</text>
+  </g>
+
+  <!-- AP-EXT-04 (Outdoor Tennis Hub) -->
+  <g transform="translate(460, 850)">
+    <use href="#ap-node-ext" />
+    <rect x="-45" y="16" width="90" height="20" rx="3" fill="#0f172a" stroke="#334155" />
+    <text x="0" y="30" font-size="9" font-weight="700" fill="#facc15" text-anchor="middle">AP-EXT-04 (-66dBm)</text>
+  </g>
+
+  <!-- AP-EXT-05 (Entrance & Forecourt) -->
+  <g transform="translate(980, 380)">
+    <use href="#ap-node-ext" />
+    <rect x="-45" y="16" width="90" height="20" rx="3" fill="#0f172a" stroke="#334155" />
+    <text x="0" y="30" font-size="9" font-weight="700" fill="#facc15" text-anchor="middle">AP-EXT-05 (-62dBm)</text>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(60, 1030)">
+    <rect x="0" y="0" width="1480" height="35" rx="6" fill="#0f172a" stroke="#334155" />
+    <text x="15" y="22" font-size="11" font-weight="800" fill="#e2e8f0">RF SIGNAL STRENGTH (dBm):</text>
+    
+    <rect x="220" y="10" width="80" height="15" fill="#22c55e" rx="2"/>
+    <text x="260" y="22" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">-50 to -60 (Excellent)</text>
+
+    <rect x="310" y="10" width="80" height="15" fill="#84cc16" rx="2"/>
+    <text x="350" y="22" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">-60 to -65 (Voice/Data)</text>
+
+    <rect x="400" y="10" width="80" height="15" fill="#eab308" rx="2"/>
+    <text x="440" y="22" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">-65 to -75 (Good)</text>
+
+    <rect x="490" y="10" width="80" height="15" fill="#f97316" rx="2"/>
+    <text x="530" y="22" font-size="10" font-weight="700" fill="#ffffff" text-anchor="middle">-75 to -85 (Fair)</text>
+
+    <circle cx="730" cy="17" r="7" fill="#ffffff" stroke="#000000" stroke-width="1.5"/>
+    <circle cx="730" cy="17" r="4" fill="#0284c7" />
+    <text x="745" y="22" font-size="11" font-weight="700" fill="#7dd3fc">Extreme AP5050 Outdoor IP67 (Wi-Fi 6E)</text>
+
+    <text x="1465" y="22" font-size="11" font-weight="700" fill="#94a3b8" text-anchor="end">5 APs Active | Outdoor Grounds Coverage: 92.4%</text>
+  </g>
+</svg>

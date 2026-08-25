@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "frequency": "daily",
+  "dailyTimeUtc": "02:00",
+  "twiceDailySecondTimeUtc": "14:00",
+  "weeklyDays": [
+    "SUN"
+  ],
+  "customCron": "0 2 * * *",
+  "targetScope": "ALL",
+  "autoSaveConfig": true,
+  "retentionDays": 30,
+  "engine": "systemd",
+  "scriptName": "BackupSave.py",
+  "alertOnFailure": true
+}

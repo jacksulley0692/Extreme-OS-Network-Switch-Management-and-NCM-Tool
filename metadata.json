@@ -1,0 +1,6 @@
+{
+  "name": "Extreme Switch Backup Tool",
+  "description": "Enterprise switch backup, replacement provisioning portal, and Ubuntu migration suite for EXOS and VOSS networks.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
