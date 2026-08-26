@@ -2137,9 +2137,11 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 username = data.get("username", "").strip()
                 password = data.get("password", "")
 
+                print(f"[AUTH ATTEMPT] Username: '{username}', Password length: {len(password)}, Client: {self.client_address[0] if hasattr(self, 'client_address') else 'unknown'}")
                 user = authenticate_user(username, password)
 
                 if user:
+                    print(f"[AUTH SUCCESS] User: {user.get('username')} ({user.get('role')})")
                     client_ip = self.client_address[0] if hasattr(self, 'client_address') else "127.0.0.1"
                     try:
                         log_audit_action({
@@ -2164,9 +2166,10 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                     }
                     self.send_response(200)
                 else:
+                    print(f"[AUTH FAILED] Failed authentication for '{username}'. Configured users available: {list(parse_users_txt().keys())}")
                     res = {
                         "success": False,
-                        "message": "Invalid username or password. Check users.txt configuration."
+                        "message": f"Authentication failed for user '{username}'. Please verify password or users.txt."
                     }
                     self.send_response(401)
 
