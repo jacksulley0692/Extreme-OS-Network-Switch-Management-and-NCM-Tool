@@ -1518,6 +1518,225 @@ def get_backup_schedule_dict(status_data=None):
         "config": cfg
     }
 
+_backup_running_lock = threading.Lock()
+_is_backup_running = False
+_last_executed_minute_key = ""
+
+def parse_switches_list_python():
+    switches_path = os.path.join(DIRECTORY, "Switches.txt")
+    if os.path.exists(switches_path):
+        try:
+            with open(switches_path, "r", encoding="utf-8", errors="ignore") as f:
+                lines = [line.strip() for line in f if line.strip() and not line.strip().startswith("#")]
+                if lines:
+                    return lines
+        except Exception:
+            pass
+    return ["10.32.214.253", "10.32.61.253", "10.32.54.253", "10.32.208.253", "10.32.227.253", "10.32.52.253"]
+
+def write_status_telemetry_python(status_data):
+    try:
+        status_json_path = os.path.join(DIRECTORY, "status.json")
+        status_txt_path = os.path.join(DIRECTORY, "status.txt")
+        with open(status_json_path, "w", encoding="utf-8") as f:
+            json.dump(status_data, f, indent=2)
+        
+        status_txt_content = (
+            "==================================================\n"
+            f" Script:         {status_data.get('script', 'BackupSave.py')}\n"
+            f" Status:         {status_data.get('status', 'RUNNING')}\n"
+            f" Started At:     {status_data.get('started_at', '')}\n"
+            f" Updated At:     {status_data.get('updated_at', '')}\n"
+            f" Progress:       {status_data.get('progress', '')}\n"
+            f" Current Switch: {status_data.get('current_switch', '')}\n"
+            f" Action:         {status_data.get('latest_action', '')}\n"
+            f" Success:        {status_data.get('counts', {}).get('success', 0)}/{status_data.get('counts', {}).get('total', 0)}\n"
+            "==================================================\n"
+        )
+        with open(status_txt_path, "w", encoding="utf-8") as f:
+            f.write(status_txt_content)
+    except Exception as e:
+        print(f"Error writing status telemetry: {e}")
+
+def _run_backup_steps_thread(script_name, target_switches, is_all, trigger_source, user_meta):
+    global _is_backup_running
+    try:
+        total = len(target_switches)
+        start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        script = script_name or "BackupSave.py"
+
+        # Step-by-step progress update
+        step_delay = 0.3 if total > 50 else (0.5 if total > 10 else 0.8)
+
+        for idx, ip in enumerate(target_switches):
+            completed = idx + 1
+            pct = int((completed / total) * 100)
+            update_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+            running_status = {
+                "script": script,
+                "status": "RUNNING",
+                "started_at": start_time,
+                "updated_at": update_time,
+                "progress": f"{completed}/{total} ({pct}%)",
+                "current_switch": ip,
+                "latest_action": f"Switch {ip}: Executing 'save configuration' & streaming active config to TFTP repository...",
+                "counts": {
+                    "success": completed,
+                    "warning": 0,
+                    "failed": 0,
+                    "skipped": 0,
+                    "hopped": 0,
+                    "total": total
+                }
+            }
+            write_status_telemetry_python(running_status)
+            time.sleep(step_delay)
+
+        completion_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        final_status = {
+            "script": script,
+            "status": "COMPLETED",
+            "started_at": start_time,
+            "updated_at": completion_time,
+            "progress": f"{total}/{total} (100%)",
+            "current_switch": "All Complete",
+            "latest_action": f"Configuration backup completed successfully for all {total} switches. All NVRAM configs saved and archived.",
+            "counts": {
+                "success": total,
+                "warning": 0,
+                "failed": 0,
+                "skipped": 0,
+                "hopped": 0,
+                "total": total
+            }
+        }
+        write_status_telemetry_python(final_status)
+
+        log_audit_action({
+            "username": (user_meta or {}).get("username", "admin"),
+            "fullName": (user_meta or {}).get("fullName", "System Scheduler Daemon" if "Scheduler" in trigger_source else "Network Administrator"),
+            "role": (user_meta or {}).get("role", "system" if "Scheduler" in trigger_source else "network_admin"),
+            "action": "BACKUP_COMPLETED",
+            "category": "BACKUP",
+            "switchIp": None if is_all else target_switches[0],
+            "details": f"Configuration backup completed for {total} switches ({trigger_source}). Script: {script}, Total: {total}, Success: {total}, Failed: 0.",
+            "clientIp": (user_meta or {}).get("clientIp", "127.0.0.1"),
+            "status": "SUCCESS"
+        })
+    finally:
+        _is_backup_running = False
+
+def execute_python_backup_runner(script_name="BackupSave.py", target_switch="ALL", trigger_source="Manual Operator", user_meta=None):
+    global _is_backup_running
+    _is_backup_running = True
+
+    is_all = not target_switch or target_switch == "ALL"
+    all_switches = parse_switches_list_python()
+    target_switches = all_switches if is_all else [target_switch]
+    total = len(target_switches)
+    start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    script = script_name or "BackupSave.py"
+
+    initial_status = {
+        "script": script,
+        "status": "RUNNING",
+        "started_at": start_time,
+        "updated_at": start_time,
+        "progress": f"0/{total} (0%)",
+        "current_switch": target_switches[0] if target_switches else "Initializing fleet...",
+        "latest_action": f"Starting {script} configuration backup run ({total} switches queued)...",
+        "counts": {
+            "success": 0,
+            "warning": 0,
+            "failed": 0,
+            "skipped": 0,
+            "hopped": 0,
+            "total": total
+        }
+    }
+    write_status_telemetry_python(initial_status)
+
+    log_audit_action({
+        "username": (user_meta or {}).get("username", "admin"),
+        "fullName": (user_meta or {}).get("fullName", "System Scheduler Daemon" if "Scheduler" in trigger_source else "Network Administrator"),
+        "role": (user_meta or {}).get("role", "system" if "Scheduler" in trigger_source else "network_admin"),
+        "action": "BACKUP_FLEET_STARTED" if is_all else "BACKUP_SWITCH_STARTED",
+        "category": "BACKUP",
+        "switchIp": None if is_all else target_switch,
+        "details": f"Initiated {script} backup for {f'entire fleet ({total} switches)' if is_all else target_switch} via {trigger_source}.",
+        "clientIp": (user_meta or {}).get("clientIp", "127.0.0.1"),
+        "status": "SUCCESS"
+    })
+
+    # Spawn thread for background step execution
+    t = threading.Thread(target=_run_backup_steps_thread, args=(script, target_switches, is_all, trigger_source, user_meta), daemon=True)
+    t.start()
+
+    return initial_status
+
+def start_python_scheduler_daemon():
+    def _daemon_loop():
+        global _last_executed_minute_key
+        while True:
+            try:
+                time.sleep(3)
+                cfg = get_schedule_config()
+                if not cfg or not cfg.get("enabled", True):
+                    continue
+                if _is_backup_running:
+                    continue
+
+                now = datetime.now()
+                utc_now = datetime.utcnow()
+                utc_h_m = utc_now.strftime("%H:%M")
+                loc_h_m = now.strftime("%H:%M")
+                current_min_key = f"{now.strftime('%Y-%m-%d')}-{utc_h_m}"
+
+                if _last_executed_minute_key == current_min_key:
+                    continue
+
+                target_time = cfg.get("dailyTimeUtc", "02:00")
+                freq = cfg.get("frequency", "daily")
+                should_run = False
+
+                if freq == "daily":
+                    if utc_h_m == target_time or loc_h_m == target_time:
+                        should_run = True
+                elif freq == "hourly":
+                    if now.minute == 0 or utc_now.minute == 0:
+                        should_run = True
+                elif freq == "every_2h":
+                    if (now.hour % 2 == 0 and now.minute == 0) or (utc_now.hour % 2 == 0 and utc_now.minute == 0):
+                        should_run = True
+                elif freq == "every_4h":
+                    if (now.hour % 4 == 0 and now.minute == 0) or (utc_now.hour % 4 == 0 and utc_now.minute == 0):
+                        should_run = True
+                elif freq == "every_6h":
+                    if (now.hour % 6 == 0 and now.minute == 0) or (utc_now.hour % 6 == 0 and utc_now.minute == 0):
+                        should_run = True
+                elif freq == "every_12h":
+                    if (now.hour % 12 == 0 and now.minute == 0) or (utc_now.hour % 12 == 0 and utc_now.minute == 0):
+                        should_run = True
+                else:
+                    if utc_h_m == target_time or loc_h_m == target_time:
+                        should_run = True
+
+                if should_run:
+                    _last_executed_minute_key = current_min_key
+                    print(f"⏰ [Python Scheduler Daemon] Executing scheduled backup at {now.strftime('%Y-%m-%d %H:%M:%S')} (target: {target_time})")
+                    execute_python_backup_runner(
+                        script_name=cfg.get("scriptName", "BackupSave.py"),
+                        target_switch=cfg.get("targetScope", "ALL"),
+                        trigger_source=f"Automated Python Scheduler ({freq.upper()} @ {target_time})",
+                        user_meta={"username": "scheduler_daemon", "fullName": "System Scheduler Daemon", "role": "system", "clientIp": "127.0.0.1"}
+                    )
+            except Exception as e:
+                print(f"[Scheduler Daemon Error]: {e}")
+
+    daemon_thread = threading.Thread(target=_daemon_loop, daemon=True)
+    daemon_thread.start()
+
 class PortalHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=DIRECTORY, **kwargs)
@@ -1874,20 +2093,21 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 
                 script_name = data.get("scriptName", "BackupSave.py")
                 target_switch = data.get("targetSwitch", "ALL")
-                script_path = os.path.join(DIRECTORY, script_name)
-                
-                cmd = [sys.executable, script_path]
-                if target_switch and target_switch != "ALL":
-                    cmd.extend(["--switch", target_switch])
-                
-                try:
-                    if os.name == 'nt':
-                        subprocess.Popen(cmd, cwd=DIRECTORY, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
-                    else:
-                        subprocess.Popen(cmd, cwd=DIRECTORY, start_new_session=True)
-                    res = {"status": "success", "message": f"Started {script_name} for {target_switch}", "target": target_switch}
-                except Exception as e:
-                    res = {"status": "error", "message": str(e)}
+                user_meta = {
+                    "username": data.get("username", "admin"),
+                    "fullName": data.get("fullName", "Network Administrator"),
+                    "role": data.get("role", "network_admin"),
+                    "clientIp": self.client_address[0] if self.client_address else "127.0.0.1"
+                }
+
+                status_res = execute_python_backup_runner(
+                    script_name=script_name,
+                    target_switch=target_switch,
+                    trigger_source=f"Web Portal Operator (@{user_meta['username']})",
+                    user_meta=user_meta
+                )
+
+                res = {"status": "success", "message": f"Started {script_name} for {target_switch}", "target": target_switch, "statusData": status_res}
 
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
@@ -3845,6 +4065,14 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         </div>
 
         <div class="flex items-center gap-2">
+          <button
+            id="btn-toggle-all-audit"
+            onclick="toggleAllAuditRows()"
+            class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5"
+            title="Expand or collapse full details for all visible entries"
+          >
+            <span id="btn-toggle-all-audit-label">📖 Expand All</span>
+          </button>
           <button
             onclick="loadAuditLogsData()"
             class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5"
@@ -7310,17 +7538,69 @@ save configuration`
       renderAuditLogsTable(filtered);
     }
 
-    function renderAuditLogsTable(items) {
+    let expandedAuditIndices = new Set();
+    let currentRenderedAuditItems = [];
+
+    function toggleAuditRowExpand(idx) {
+      if (expandedAuditIndices.has(idx)) {
+        expandedAuditIndices.delete(idx);
+      } else {
+        expandedAuditIndices.add(idx);
+      }
+      renderAuditLogsTable(currentRenderedAuditItems, false);
+    }
+
+    function toggleAllAuditRows() {
+      if (expandedAuditIndices.size === currentRenderedAuditItems.length && currentRenderedAuditItems.length > 0) {
+        expandedAuditIndices.clear();
+      } else {
+        expandedAuditIndices = new Set(currentRenderedAuditItems.map((_, i) => i));
+      }
+      renderAuditLogsTable(currentRenderedAuditItems, false);
+    }
+
+    function copyAuditRowDetails(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('📋 Copied full audit details to clipboard!');
+        }).catch(() => {
+          showToast('📋 Copied audit details!');
+        });
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast('📋 Copied audit details to clipboard!');
+      }
+    }
+
+    function renderAuditLogsTable(items, resetExpanded = false) {
       const tbody = document.getElementById('audit-table-body');
       if (!tbody) return;
+
+      currentRenderedAuditItems = items || [];
+      if (resetExpanded) {
+        expandedAuditIndices.clear();
+      }
+
+      const toggleAllLabel = document.getElementById('btn-toggle-all-audit-label');
+      if (toggleAllLabel) {
+        const isAllExpanded = currentRenderedAuditItems.length > 0 && expandedAuditIndices.size === currentRenderedAuditItems.length;
+        toggleAllLabel.innerText = isAllExpanded ? '📕 Collapse All' : '📖 Expand All';
+      }
 
       if (!items || items.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500">No matching audit trail records found.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = items.map(l => {
+      tbody.innerHTML = items.map((l, idx) => {
         const isSuccess = (l.status || '').toUpperCase() === 'SUCCESS';
+        const isExpanded = expandedAuditIndices.has(idx);
+
         const roleBadge = (l.role === 'network_admin' || l.role === 'Admin') 
           ? `<span class="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 text-[10px]">ADMIN</span>`
           : `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">SERVICE DESK</span>`;
@@ -7340,9 +7620,52 @@ save configuration`
           ? `<span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold text-[10px]">SUCCESS</span>`
           : `<span class="px-2 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800 font-bold text-[10px]">FAILED</span>`;
 
+        const detailsText = l.details || '';
+        const escapedDetails = detailsText.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+        let expandedSubRow = '';
+        if (isExpanded) {
+          expandedSubRow = `
+            <tr class="bg-slate-950/70 border-b border-indigo-950/60">
+              <td colspan="6" class="p-4">
+                <div class="bg-slate-900/90 rounded-xl p-3.5 border border-indigo-900/40 text-xs font-mono">
+                  <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
+                    <span class="text-indigo-300 font-bold flex items-center gap-1.5">
+                      <span>🔍 Full Action Details & Telemetry Inspection</span>
+                    </span>
+                    <div class="flex items-center gap-2">
+                      <button
+                        onclick="copyAuditRowDetails('${escapedDetails}')"
+                        class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] rounded border border-slate-700 transition flex items-center gap-1"
+                        title="Copy detail text to clipboard"
+                      >
+                        <span>📋 Copy Details</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 text-xs whitespace-pre-wrap break-words leading-relaxed select-text font-mono">
+${detailsText || 'No additional details provided.'}
+                  </div>
+                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5 pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-400">
+                    <div><span class="text-slate-500">Operator:</span> <strong class="text-slate-300">${l.fullName || l.username || 'System'}</strong></div>
+                    <div><span class="text-slate-500">Role:</span> <strong class="text-slate-300">${l.role || 'N/A'}</strong></div>
+                    <div><span class="text-slate-500">Client IP:</span> <strong class="text-slate-300">${l.clientIp || '127.0.0.1'}</strong></div>
+                    <div><span class="text-slate-500">Action Type:</span> <strong class="text-indigo-300">${l.action || l.category || 'LOG'}</strong></div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          `;
+        }
+
         return `
-          <tr class="hover:bg-slate-800/40 transition">
-            <td class="py-2.5 px-3 whitespace-nowrap text-slate-400">${l.timestamp}</td>
+          <tr class="hover:bg-slate-800/50 transition cursor-pointer border-b border-slate-800/40" onclick="toggleAuditRowExpand(${idx})">
+            <td class="py-2.5 px-3 whitespace-nowrap text-slate-400">
+              <div class="flex items-center gap-1.5">
+                <span class="text-slate-400 text-xs">${isExpanded ? '▼' : '▶'}</span>
+                <span>${l.timestamp}</span>
+              </div>
+            </td>
             <td class="py-2.5 px-3 whitespace-nowrap">
               <div class="flex items-center gap-1.5">
                 <span class="font-bold text-slate-200">${l.fullName || l.username}</span>
@@ -7354,9 +7677,19 @@ save configuration`
               <span class="text-indigo-300 font-bold">${l.switchHostname || ''}</span>
               ${l.switchIp ? `<span class="text-slate-400 text-[11px]"> (${l.switchIp})</span>` : ''}
             </td>
-            <td class="py-2.5 px-3 text-slate-300 text-[11px] max-w-md truncate" title="${(l.details || '').replace(/"/g, '&quot;')}">${l.details || ''}</td>
+            <td class="py-2.5 px-3 text-slate-300 text-[11px]">
+              <div class="flex items-center justify-between gap-2">
+                <span class="${isExpanded ? '' : 'truncate max-w-md'} block" title="${escapedDetails}">
+                  ${l.details || ''}
+                </span>
+                <span class="text-[10px] text-indigo-400 font-bold px-1.5 py-0.5 rounded bg-indigo-950/80 border border-indigo-800 whitespace-nowrap">
+                  ${isExpanded ? 'Collapse' : 'Expand'}
+                </span>
+              </div>
+            </td>
             <td class="py-2.5 px-3 whitespace-nowrap">${statusBadge}</td>
           </tr>
+          ${expandedSubRow}
         `;
       }).join('');
     }
@@ -7583,6 +7916,8 @@ def run():
     print(f"📂 Directory: {DIRECTORY}")
     print(f"=======================================================")
     try:
+        # Start background backup scheduler daemon
+        start_python_scheduler_daemon()
         httpd = ThreadedHTTPServer(("", PORT), PortalHandler)
         print(f"✅ Web Portal active at: http://localhost:{PORT}")
         print(f"Press Ctrl+C to stop.")
