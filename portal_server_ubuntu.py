@@ -2028,8 +2028,31 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 target_ip = data.get("ip") or data.get("switchIp", "10.36.226.11")
                 hostname = data.get("hostname", "Switch")
                 count = data.get("count", 4)
+                username = data.get("username") or "operator"
+                full_name = data.get("fullName") or username
+                role = data.get("role") or "service_desk"
                 
                 res = execute_ping_live(target_ip, hostname=hostname, count=count)
+                
+                client_ip = self.client_address[0] if hasattr(self, 'client_address') else "127.0.0.1"
+                status_str = "SUCCESS" if res.get("alive") or res.get("success") else "FAILED"
+                avg_rtt = res.get("stats", {}).get("avgRttMs", 0)
+                loss_pct = res.get("stats", {}).get("packetLossPercent", 0)
+                details_str = f"ICMP Ping {count} packets sent to {target_ip} ({hostname}). Loss: {loss_pct}%, Avg Latency: {avg_rtt}ms."
+                
+                log_audit_action({
+                    "username": username,
+                    "fullName": full_name,
+                    "role": role,
+                    "action": "PING_TEST",
+                    "category": "DIAGNOSTIC",
+                    "switchIp": target_ip,
+                    "switchHostname": hostname,
+                    "details": details_str,
+                    "status": status_str,
+                    "clientIp": client_ip
+                })
+
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Access-Control-Allow-Origin", "*")
@@ -2265,6 +2288,9 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         </span>
         <button onclick="openSwitchesEditor()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
           <span>📋 Fleet Inventory (Switches.txt)</span>
+        </button>
+        <button id="btn-top-audit-trail" onclick="openAuditTrailModal()" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
+          <span>📜 Activity Audit Trail</span>
         </button>
         <button id="btn-top-rollout" onclick="openRolloutAuth()" class="hidden bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-amber-600/30 transition flex items-center gap-2">
           <span>🛡️ Rollout Configuration Change to Multiple switches</span>
@@ -3753,6 +3779,113 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <span>💾 Save Schedule &amp; Apply Policy</span>
           </button>
         </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Activity Audit Trail Modal -->
+  <div id="modal-audit-trail" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
+        <div class="flex items-center gap-3">
+          <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-base">
+            📜
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-bold text-white">Activity Audit Trail &amp; Accountability Log</h2>
+              <span id="audit-trail-count" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-mono">
+                0 Records
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 font-mono">
+              Immutable accountability logs tracking ICMP pings, configuration backups, multi-switch rollouts, and session audits.
+            </p>
+          </div>
+        </div>
+        <button onclick="closeModal('modal-audit-trail')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+      </div>
+
+      <!-- Controls & Filter Toolbar -->
+      <div class="px-6 py-3 border-b border-slate-800 bg-slate-900/60 flex flex-wrap items-center gap-3">
+        <div class="flex-1 min-w-[220px]">
+          <input
+            type="text"
+            id="audit-search-input"
+            oninput="filterAuditLogsTable()"
+            placeholder="Search by user, IP, hostname, action..."
+            class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 font-mono focus:outline-none focus:border-indigo-500"
+          />
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <span class="text-[11px] font-mono text-slate-400">Category:</span>
+          <select
+            id="audit-filter-category"
+            onchange="filterAuditLogsTable()"
+            class="bg-slate-950 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 font-mono focus:outline-none focus:border-indigo-500"
+          >
+            <option value="ALL">All Categories</option>
+            <option value="DIAGNOSTIC">Ping &amp; Reachability</option>
+            <option value="PORT_OPERATIONS">Port Operations</option>
+            <option value="CONFIGURATION_MANAGEMENT">Multi-Rollouts</option>
+            <option value="BACKUP">Backup Triggers</option>
+            <option value="AUTH">Login &amp; Auth</option>
+          </select>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button
+            onclick="loadAuditLogsData()"
+            class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5"
+          >
+            <span>🔄 Refresh</span>
+          </button>
+          <a
+            href="/api/audit/export-csv"
+            download="audit_trail.csv"
+            class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-mono font-bold rounded-lg transition flex items-center gap-1.5 shadow"
+          >
+            <span>📥 Export CSV</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Logs Table -->
+      <div class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+        <table class="w-full text-left font-mono text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-slate-800 text-[11px] text-slate-400 font-bold uppercase tracking-wider bg-slate-950/40">
+              <th class="py-2.5 px-3">Timestamp</th>
+              <th class="py-2.5 px-3">User &amp; Role</th>
+              <th class="py-2.5 px-3">Action</th>
+              <th class="py-2.5 px-3">Target Switch</th>
+              <th class="py-2.5 px-3">Details</th>
+              <th class="py-2.5 px-3">Status</th>
+            </tr>
+          </thead>
+          <tbody id="audit-table-body" class="divide-y divide-slate-800/60">
+            <tr>
+              <td colspan="6" class="text-center py-8 text-slate-500">
+                Loading audit trail records...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-6 py-3 border-t border-slate-800 bg-slate-950/90 flex items-center justify-between text-xs font-mono">
+        <span class="text-slate-500">Spreadsheet file: audit_trail.csv &bull; JSON: audit_log.json</span>
+        <button
+          onclick="closeModal('modal-audit-trail')"
+          class="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold rounded-lg transition"
+        >
+          Close
+        </button>
       </div>
 
     </div>
@@ -7068,6 +7201,105 @@ save configuration`
       document.getElementById('portal-login-password').value = '';
     }
 
+    // --- Activity Audit Trail Controller ---
+    let auditLogsCache = [];
+
+    async function openAuditTrailModal() {
+      openModal('modal-audit-trail');
+      await loadAuditLogsData();
+    }
+
+    async function loadAuditLogsData() {
+      const tbody = document.getElementById('audit-table-body');
+      if (tbody) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Loading audit records from audit_log.json...</td></tr>`;
+      }
+      try {
+        const res = await fetch('/api/audit/logs');
+        const data = await res.json();
+        auditLogsCache = data.logs || [];
+        const countEl = document.getElementById('audit-trail-count');
+        if (countEl) countEl.innerText = `${auditLogsCache.length} Records`;
+        filterAuditLogsTable();
+      } catch (err) {
+        if (tbody) {
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-rose-400">Error loading audit records: ${err.message}</td></tr>`;
+        }
+      }
+    }
+
+    function filterAuditLogsTable() {
+      const searchInput = document.getElementById('audit-search-input');
+      const catSelect = document.getElementById('audit-filter-category');
+      const q = (searchInput ? searchInput.value : '').toLowerCase().trim();
+      const cat = catSelect ? catSelect.value : 'ALL';
+
+      const filtered = auditLogsCache.filter(item => {
+        const matchesQ = !q || 
+          (item.username || '').toLowerCase().includes(q) ||
+          (item.fullName || '').toLowerCase().includes(q) ||
+          (item.details || '').toLowerCase().includes(q) ||
+          (item.switchIp || '').includes(q) ||
+          (item.switchHostname || '').toLowerCase().includes(q);
+
+        const matchesCat = cat === 'ALL' || item.category === cat;
+        return matchesQ && matchesCat;
+      });
+
+      renderAuditLogsTable(filtered);
+    }
+
+    function renderAuditLogsTable(items) {
+      const tbody = document.getElementById('audit-table-body');
+      if (!tbody) return;
+
+      if (!items || items.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500">No matching audit trail records found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = items.map(l => {
+        const isSuccess = (l.status || '').toUpperCase() === 'SUCCESS';
+        const roleBadge = (l.role === 'network_admin' || l.role === 'Admin') 
+          ? `<span class="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 text-[10px]">ADMIN</span>`
+          : `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">SERVICE DESK</span>`;
+
+        let catBadge = `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">${l.category || l.action}</span>`;
+        if (l.action === 'PING_TEST' || l.category === 'DIAGNOSTIC') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-[10px]">PING / DIAGNOSTIC</span>`;
+        } else if (l.action === 'PORT_BOUNCE' || l.category === 'PORT_OPERATIONS') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 text-[10px]">PORT BOUNCE</span>`;
+        } else if (l.category === 'CONFIGURATION_MANAGEMENT' || l.action === 'ROLLOUT_CONFIG') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 text-[10px]">MULTI ROLLOUT</span>`;
+        } else if (l.category === 'BACKUP') {
+          catBadge = `<span class="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px]">BACKUP</span>`;
+        }
+
+        const statusBadge = isSuccess
+          ? `<span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold text-[10px]">SUCCESS</span>`
+          : `<span class="px-2 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800 font-bold text-[10px]">FAILED</span>`;
+
+        return `
+          <tr class="hover:bg-slate-800/40 transition">
+            <td class="py-2.5 px-3 whitespace-nowrap text-slate-400">${l.timestamp}</td>
+            <td class="py-2.5 px-3 whitespace-nowrap">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-slate-200">${l.fullName || l.username}</span>
+                ${roleBadge}
+              </div>
+            </td>
+            <td class="py-2.5 px-3 whitespace-nowrap">${catBadge}</td>
+            <td class="py-2.5 px-3 whitespace-nowrap">
+              <span class="text-indigo-300 font-bold">${l.switchHostname || ''}</span>
+              ${l.switchIp ? `<span class="text-slate-400 text-[11px]"> (${l.switchIp})</span>` : ''}
+            </td>
+            <td class="py-2.5 px-3 text-slate-300 text-[11px] max-w-md truncate" title="${(l.details || '').replace(/"/g, '&quot;')}">${l.details || ''}</td>
+            <td class="py-2.5 px-3 whitespace-nowrap">${statusBadge}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
     // --- Backup Schedule Management & Modal Controller ---
     let activeSchedFreq = 'daily';
     let currentSchedConfig = {
@@ -7082,16 +7314,16 @@ save configuration`
 
     function setScheduleQuickTestPlus1Min() {
       const now = new Date();
-      // Add 1 minute to current UTC/GMT time
+      // Add 1 minute to current local time
       const testDate = new Date(now.getTime() + 60 * 1000);
-      const hh = String(testDate.getUTCHours()).padStart(2, '0');
-      const mm = String(testDate.getUTCMinutes()).padStart(2, '0');
+      const hh = String(testDate.getHours()).padStart(2, '0');
+      const mm = String(testDate.getMinutes()).padStart(2, '0');
       const timeStr = `${hh}:${mm}`;
       const timeInput = document.getElementById('sched-time-utc');
       if (timeInput) {
         timeInput.value = timeStr;
         renderSchedulePreview();
-        showToast(`⚡ Quick Test: Schedule time set to ${timeStr} GMT (+1 min lead time)`);
+        showToast(`⚡ Quick Test: Schedule time set to ${timeStr} (+1 min lead time)`);
       }
     }
 
@@ -7169,37 +7401,44 @@ save configuration`
       const now = new Date();
       const [h, m] = (timeVal || '02:00').split(':').map(Number);
 
+      const formatRunDate = (d) => {
+        return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) + ' @ ' + 
+               String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+      };
+
       if (activeSchedFreq === 'hourly') {
         for (let i = 1; i <= 5; i++) {
           const d = new Date(now.getTime() + i * 3600 * 1000);
           d.setMinutes(0, 0, 0);
-          projected.push(`Run #${i}: ${d.toUTCString().replace('UTC', 'GMT')} (${i}h from now)`);
+          projected.push(`Run #${i}: ${formatRunDate(d)} (${i}h from now)`);
         }
         if (snippetEl) snippetEl.innerText = 'systemd: OnCalendar=hourly (switch-backup.timer)';
       } else if (activeSchedFreq === 'every_4h') {
         for (let i = 1; i <= 5; i++) {
           const d = new Date(now.getTime() + i * 4 * 3600 * 1000);
           d.setMinutes(0, 0, 0);
-          projected.push(`Run #${i}: ${d.toUTCString().replace('UTC', 'GMT')}`);
+          projected.push(`Run #${i}: ${formatRunDate(d)}`);
         }
-        if (snippetEl) snippetEl.innerText = 'systemd: OnCalendar=*-*-* 00,04,08,12,16,20:00:00 GMT';
+        if (snippetEl) snippetEl.innerText = 'systemd: OnCalendar=*-*-* 00,04,08,12,16,20:00:00 (switch-backup.timer)';
       } else if (activeSchedFreq === 'weekly') {
         for (let i = 1; i <= 5; i++) {
           const d = new Date(now.getTime() + i * 7 * 86400 * 1000);
-          d.setUTCHours(h || 2, m || 0, 0, 0);
-          projected.push(`Run #${i}: ${d.toUTCString().replace('UTC', 'GMT')}`);
+          d.setHours(h || 2, m || 0, 0, 0);
+          projected.push(`Run #${i}: ${formatRunDate(d)}`);
         }
-        if (snippetEl) snippetEl.innerText = `systemd: OnCalendar=Sun *-*-* ${String(h||2).padStart(2,'0')}:${String(m||0).padStart(2,'0')}:00 GMT`;
+        if (snippetEl) snippetEl.innerText = `systemd: OnCalendar=Sun *-*-* ${String(h||2).padStart(2,'0')}:${String(m||0).padStart(2,'0')}:00 (switch-backup.timer)`;
       } else {
         // Daily
         for (let i = 0; i < 5; i++) {
           const d = new Date();
-          d.setUTCDate(d.getUTCDate() + i);
-          d.setUTCHours(h || 2, m || 0, 0, 0);
-          if (d < now) d.setUTCDate(d.getUTCDate() + 1);
-          projected.push(`Run #${i+1}: ${d.toUTCString().replace('UTC', 'GMT')} (Daily Nightly)`);
+          d.setDate(d.getDate() + i);
+          d.setHours(h || 2, m || 0, 0, 0);
+          if (d <= now) {
+            d.setDate(d.getDate() + 1);
+          }
+          projected.push(`Run #${i+1}: ${formatRunDate(d)} (Daily Nightly)`);
         }
-        if (snippetEl) snippetEl.innerText = `systemd: OnCalendar=*-*-* ${String(h||2).padStart(2,'0')}:${String(m||0).padStart(2,'0')}:00 GMT (switch-backup.timer)`;
+        if (snippetEl) snippetEl.innerText = `systemd: OnCalendar=*-*-* ${String(h||2).padStart(2,'0')}:${String(m||0).padStart(2,'0')}:00 (switch-backup.timer)`;
       }
 
       if (runsContainer) {
