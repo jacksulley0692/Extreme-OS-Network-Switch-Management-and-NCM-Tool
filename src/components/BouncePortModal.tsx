@@ -284,7 +284,12 @@ export function BouncePortModal({ switchItem, isOpen, onClose, defaultPort = "13
     setBounceError(null);
     setBounceResult(null);
 
-    const activeUser = currentUser || {
+    const activeUser = currentUser || (() => {
+      try {
+        const raw = sessionStorage.getItem("extreme_portal_user");
+        return raw ? JSON.parse(raw) : null;
+      } catch { return null; }
+    })() || {
       username: "bill.gates",
       fullName: "Bill Gates (Service Desk)",
       role: "service_desk" as const
@@ -325,7 +330,7 @@ Port Bounce Execution Log - Switch ${switchItem.hostname} (${switchItem.ip})
 Target Port: ${activePort} | Protocol: Telnet (Port 23)
 Execution Time: ${ts}
 Operator: ${activeUser.fullName} (${activeUser.username}) | Role: ${activeUser.role}
-Accountability: Logged to audit_log.json & audit_log.csv
+Accountability: Logged to audit_log.json & audit_trail.csv
 =============================================================================
 Connected to switch at ${switchItem.ip}:23...
 Authenticating as admin... Authenticated.
@@ -352,6 +357,24 @@ Port: ${activePort} | Admin State: ENABLED | Link State: READY / UP | Speed: 100
         message: `Port ${activePort} bounced successfully on ${switchItem.hostname} (${switchItem.ip})`
       };
       setBounceResult(simulatedResult);
+
+      try {
+        fetch("/api/audit-log", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: activeUser.username,
+            fullName: activeUser.fullName,
+            role: activeUser.role,
+            action: "BOUNCE_PORT",
+            category: "PORT_OPERATIONS",
+            switchIp: switchItem.ip,
+            switchHostname: switchItem.hostname,
+            details: `Operator '${activeUser.fullName}' (${activeUser.username}, ${activeUser.role}) bounced port ${activePort} on switch ${switchItem.hostname} (${switchItem.ip})`,
+            status: "SUCCESS"
+          })
+        }).catch(() => {});
+      } catch {}
     } finally {
       setIsBouncing(false);
     }

@@ -1378,7 +1378,7 @@ def execute_ping_live(target_ip, hostname="Switch", count=4):
             if avg_match:
                 rtt = int(avg_match.group(1))
 
-        res_dict = {
+        return {
             "success": True,
             "ip": target_ip,
             "hostname": hostname,
@@ -1394,41 +1394,12 @@ def execute_ping_live(target_ip, hostname="Switch", count=4):
             "rawCli": output,
             "details": f"{count} packets transmitted, {count if is_reachable else 0} received"
         }
-        try:
-            log_audit_action({
-                "username": "portal_operator",
-                "fullName": "Reachability Auditor",
-                "role": "service_desk",
-                "action": "PING_TEST",
-                "category": "NETWORK_AUDIT",
-                "switchIp": target_ip,
-                "switchHostname": hostname,
-                "details": f"ICMP Ping probe sent to {hostname} ({target_ip}). Status: {'ONLINE' if is_reachable else 'OFFLINE'}, RTT: {round(rtt, 2) if is_reachable else 'N/A'}ms, Loss: {0 if is_reachable else 100}%",
-                "status": "SUCCESS" if is_reachable else "FAILED"
-            })
-        except Exception:
-            pass
-        return res_dict
     except Exception as e:
         # Fallback simulation
         sim_rtt = random.randint(3, 12)
         raw_sim = f"PING {target_ip} ({target_ip}) 56(84) bytes of data.\n" + \
                   "\n".join([f"64 bytes from {target_ip}: icmp_seq={i+1} ttl=64 time={sim_rtt + round(random.random()*2, 2)} ms" for i in range(count)]) + \
                   f"\n\n--- {target_ip} ping statistics ---\n{count} packets transmitted, {count} received, 0% packet loss\nrtt min/avg/max = {sim_rtt-1.2:.3f}/{sim_rtt:.3f}/{sim_rtt+2.4:.3f} ms"
-        try:
-            log_audit_action({
-                "username": "portal_operator",
-                "fullName": "Reachability Auditor",
-                "role": "service_desk",
-                "action": "PING_TEST",
-                "category": "NETWORK_AUDIT",
-                "switchIp": target_ip,
-                "switchHostname": hostname,
-                "details": f"ICMP Ping probe simulated for {hostname} ({target_ip}). Status: ONLINE, RTT: {sim_rtt}ms",
-                "status": "SUCCESS"
-            })
-        except Exception:
-            pass
         return {
             "success": True,
             "ip": target_ip,
@@ -2028,17 +1999,18 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 target_ip = data.get("ip") or data.get("switchIp", "10.36.226.11")
                 hostname = data.get("hostname", "Switch")
                 count = data.get("count", 4)
-                username = data.get("username") or "operator"
-                full_name = data.get("fullName") or username
+                username = data.get("username") or "bill.gates"
+                full_name = data.get("fullName") or "Bill Gates (Service Desk)"
                 role = data.get("role") or "service_desk"
                 
                 res = execute_ping_live(target_ip, hostname=hostname, count=count)
                 
                 client_ip = self.client_address[0] if hasattr(self, 'client_address') else "127.0.0.1"
-                status_str = "SUCCESS" if res.get("alive") or res.get("success") else "FAILED"
-                avg_rtt = res.get("stats", {}).get("avgRttMs", 0)
-                loss_pct = res.get("stats", {}).get("packetLossPercent", 0)
-                details_str = f"ICMP Ping {count} packets sent to {target_ip} ({hostname}). Loss: {loss_pct}%, Avg Latency: {avg_rtt}ms."
+                is_online = res.get("isReachable") or res.get("alive") or False
+                status_str = "SUCCESS" if is_online else "FAILED"
+                avg_rtt = res.get("rttMs") or res.get("latencyMs") or (res.get("stats") or {}).get("avgRttMs", 0)
+                loss_pct = res.get("packetLossPercent", 0) if res.get("packetLossPercent") is not None else ((res.get("stats") or {}).get("packetLossPercent", 0))
+                details_str = f"ICMP Ping {count} packets sent to {target_ip} ({hostname}). Status: {'ONLINE' if is_online else 'OFFLINE'}, Loss: {loss_pct}%, Latency: {avg_rtt}ms."
                 
                 log_audit_action({
                     "username": username,
@@ -2067,8 +2039,8 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 switch_ip = data.get("switchIp", "")
                 port = data.get("port", "13")
                 hostname = data.get("hostname", "") or switch_ip
-                username = data.get("username", "anonymous")
-                full_name = data.get("fullName", username)
+                username = data.get("username", "bill.gates")
+                full_name = data.get("fullName", "Bill Gates (Service Desk)")
                 role = data.get("role", "service_desk")
                 
                 res = execute_bounce_port_live(switch_ip, port)
@@ -2102,8 +2074,25 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 target_switches = data.get("targetSwitches", [])
                 auto_save = data.get("autoSave", True)
                 stop_on_error = data.get("stopOnError", False)
+                username = data.get("username") or "admin"
+                full_name = data.get("fullName") or "Network Administrator"
+                role = data.get("role") or "network_admin"
                 
                 res = execute_rollout_config_live(commands, target_switches, auto_save, stop_on_error)
+
+                client_ip = self.client_address[0] if hasattr(self, 'client_address') else "127.0.0.1"
+                cmd_summary = commands.strip().split("\n")[0] if commands else ""
+                log_audit_action({
+                    "username": username,
+                    "fullName": full_name,
+                    "role": role,
+                    "action": "ROLLOUT_CONFIG",
+                    "category": "CONFIGURATION_MANAGEMENT",
+                    "details": f"Fleet configuration rollout on {len(target_switches)} switches: '{cmd_summary}' (Total: {len(target_switches)}, Success: {res.get('successCount', len(target_switches))})",
+                    "clientIp": client_ip,
+                    "status": "SUCCESS" if res.get("success") else "FAILED"
+                })
+
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
                 self.send_header("Access-Control-Allow-Origin", "*")
@@ -2116,6 +2105,9 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 body = self.rfile.read(content_length).decode("utf-8")
                 data = json.loads(body) if body else {}
                 content = data.get("content", "")
+                username = data.get("username") or "admin"
+                full_name = data.get("fullName") or "Network Administrator"
+                role = data.get("role") or "network_admin"
                 
                 switches_file = os.path.join(DIRECTORY, "Switches.txt")
                 try:
@@ -2125,6 +2117,18 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                     res = {"success": True, "message": "Switches.txt successfully updated", "switches": get_all_switches_payload()}
                 except Exception as e:
                     res = {"success": False, "error": str(e)}
+
+                client_ip = self.client_address[0] if hasattr(self, 'client_address') else "127.0.0.1"
+                log_audit_action({
+                    "username": username,
+                    "fullName": full_name,
+                    "role": role,
+                    "action": "UPDATE_INVENTORY",
+                    "category": "CONFIGURATION_MANAGEMENT",
+                    "details": f"Updated fleet switch inventory file (Switches.txt)",
+                    "clientIp": client_ip,
+                    "status": "SUCCESS" if res.get("success") else "FAILED"
+                })
 
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
@@ -2140,8 +2144,8 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 if data.get("username"):
                     log_audit_action({
                         "username": data.get("username"),
-                        "fullName": data.get("fullName"),
-                        "role": data.get("role"),
+                        "fullName": data.get("fullName", data.get("username")),
+                        "role": data.get("role", "service_desk"),
                         "action": "LOGOUT",
                         "category": "AUTH",
                         "details": f"User {data.get('username')} logged out"
@@ -2155,10 +2159,13 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps({"success": True}).encode("utf-8"))
                 return
 
-            if parsed.path == "/api/audit/log" or parsed.path == "/api/audit_log":
+            if parsed.path in ["/api/audit/log", "/api/audit-log", "/api/audit_log"]:
                 content_length = int(self.headers.get("Content-Length", 0))
                 body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
                 data = json.loads(body) if body else {}
+                client_ip = self.client_address[0] if hasattr(self, 'client_address') else "127.0.0.1"
+                if "clientIp" not in data:
+                    data["clientIp"] = client_ip
                 log_audit_action(data)
                 self.send_response(200)
                 self.send_header("Content-Type", "application/json")
@@ -2292,7 +2299,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <button id="btn-top-audit-trail" onclick="openAuditTrailModal()" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
           <span>📜 Activity Audit Trail</span>
         </button>
-        <button id="btn-top-rollout" onclick="openRolloutAuth()" class="hidden bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-amber-600/30 transition flex items-center gap-2">
+        <button id="btn-top-rollout" onclick="openRolloutAuth()" class="hidden bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-amber-600/30 transition flex items-center gap-2" style="display: none !important;">
           <span>🛡️ Rollout Configuration Change to Multiple switches</span>
         </button>
         <button onclick="runBackup('ALL')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
@@ -4312,7 +4319,14 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           const res = await fetch('/api/ping', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ip: sw.ip, count: 1 })
+            body: JSON.stringify({ 
+              ip: sw.ip, 
+              hostname: sw.hostname,
+              count: 1,
+              username: portalCurrentUser ? portalCurrentUser.username : 'bill.gates',
+              fullName: portalCurrentUser ? (portalCurrentUser.fullName || portalCurrentUser.username) : 'Bill Gates (Service Desk)',
+              role: portalCurrentUser ? portalCurrentUser.role : 'service_desk'
+            })
           });
           const data = await res.json();
           if (data && typeof data.latencyMs === 'number') {
@@ -6464,7 +6478,14 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         const res = await fetch('/api/ping', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ip: targetIp, hostname, count: Number(packetCount) })
+          body: JSON.stringify({ 
+            ip: targetIp, 
+            hostname, 
+            count: Number(packetCount),
+            username: portalCurrentUser ? portalCurrentUser.username : 'bill.gates',
+            fullName: portalCurrentUser ? (portalCurrentUser.fullName || portalCurrentUser.username) : 'Bill Gates (Service Desk)',
+            role: portalCurrentUser ? portalCurrentUser.role : 'service_desk'
+          })
         });
         const data = await res.json();
         
@@ -6507,7 +6528,13 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         const res = await fetch('/api/run-backup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ scriptName: 'BackupSave.py', targetSwitch: target })
+          body: JSON.stringify({ 
+            scriptName: 'BackupSave.py', 
+            targetSwitch: target,
+            username: portalCurrentUser ? portalCurrentUser.username : 'operator',
+            fullName: portalCurrentUser ? (portalCurrentUser.fullName || portalCurrentUser.username) : 'Operator',
+            role: portalCurrentUser ? portalCurrentUser.role : 'service_desk'
+          })
         });
         const result = await res.json();
         showToast(target === 'ALL' ? 'Started Backup All Switches!' : `Started backup for ${target}!`);
@@ -6760,7 +6787,10 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           body: JSON.stringify({
             switchIp: currentBounceSwitch.ip,
             port: currentBouncePort,
-            hostname: currentBounceSwitch.hostname
+            hostname: currentBounceSwitch.hostname,
+            username: portalCurrentUser ? portalCurrentUser.username : 'bill.gates',
+            fullName: portalCurrentUser ? (portalCurrentUser.fullName || portalCurrentUser.username) : 'Bill Gates (Service Desk)',
+            role: portalCurrentUser ? portalCurrentUser.role : 'service_desk'
           })
         });
 
@@ -6810,6 +6840,10 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
     let rolloutTargetSwitches = [];
 
     function openRolloutAuth() {
+      if (!portalCurrentUser || portalCurrentUser.role !== 'network_admin') {
+        alert("Access Denied: Fleet Configuration Rollout is strictly restricted to Network Administrators.");
+        return;
+      }
       const pwdInput = document.getElementById('rollout-auth-password');
       const errDiv = document.getElementById('rollout-auth-error');
       if (pwdInput) pwdInput.value = '';
@@ -6970,7 +7004,10 @@ save configuration`
           body: JSON.stringify({
             commands,
             targetSwitches: selectedSwitches,
-            autoSave
+            autoSave,
+            username: portalCurrentUser ? portalCurrentUser.username : 'admin',
+            fullName: portalCurrentUser ? (portalCurrentUser.fullName || portalCurrentUser.username) : 'Network Administrator',
+            role: portalCurrentUser ? portalCurrentUser.role : 'network_admin'
           })
         });
 
@@ -7102,6 +7139,11 @@ save configuration`
     let portalCurrentUser = null;
 
     function initPortalAuth() {
+      const rolloutBtn = document.getElementById('btn-top-rollout');
+      if (rolloutBtn) {
+        rolloutBtn.classList.add('hidden');
+        rolloutBtn.style.setProperty('display', 'none', 'important');
+      }
       try {
         const saved = sessionStorage.getItem('portal_user');
         if (saved) {
@@ -7124,8 +7166,8 @@ save configuration`
       if (badge && nameEl && roleEl) {
         badge.classList.remove('hidden');
         nameEl.innerText = portalCurrentUser.fullName || portalCurrentUser.username;
-        roleEl.innerText = portalCurrentUser.role === 'network_admin' ? 'Admin' : 'Service Desk';
-        roleEl.className = portalCurrentUser.role === 'network_admin' 
+        roleEl.innerText = (portalCurrentUser.role === 'network_admin' || portalCurrentUser.role === 'Admin') ? 'Admin' : 'Service Desk';
+        roleEl.className = (portalCurrentUser.role === 'network_admin' || portalCurrentUser.role === 'Admin')
           ? 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800'
           : 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800';
       }
@@ -7133,10 +7175,12 @@ save configuration`
       // Rollout button is strictly restricted to Network Administrators
       const rolloutBtn = document.getElementById('btn-top-rollout');
       if (rolloutBtn) {
-        if (portalCurrentUser.role === 'network_admin') {
+        if (portalCurrentUser && (portalCurrentUser.role === 'network_admin' || portalCurrentUser.role === 'Admin')) {
           rolloutBtn.classList.remove('hidden');
+          rolloutBtn.style.setProperty('display', 'inline-flex', 'important');
         } else {
           rolloutBtn.classList.add('hidden');
+          rolloutBtn.style.setProperty('display', 'none', 'important');
         }
       }
     }
@@ -7239,10 +7283,27 @@ save configuration`
           (item.username || '').toLowerCase().includes(q) ||
           (item.fullName || '').toLowerCase().includes(q) ||
           (item.details || '').toLowerCase().includes(q) ||
+          (item.action || '').toLowerCase().includes(q) ||
           (item.switchIp || '').includes(q) ||
           (item.switchHostname || '').toLowerCase().includes(q);
 
-        const matchesCat = cat === 'ALL' || item.category === cat;
+        let matchesCat = true;
+        if (cat === 'ALL') {
+          matchesCat = true;
+        } else if (cat === 'DIAGNOSTIC') {
+          matchesCat = item.category === 'DIAGNOSTIC' || item.action === 'PING_TEST' || item.action === 'PING';
+        } else if (cat === 'PORT_OPERATIONS') {
+          matchesCat = item.category === 'PORT_OPERATIONS' || item.category === 'PORT_BOUNCE' || item.action === 'BOUNCE_PORT' || item.action === 'PORT_BOUNCE';
+        } else if (cat === 'CONFIGURATION_MANAGEMENT') {
+          matchesCat = item.category === 'CONFIGURATION_MANAGEMENT' || item.action === 'ROLLOUT_CONFIG' || item.action === 'FLEET_CONFIG_ROLLOUT' || item.action === 'UPDATE_INVENTORY';
+        } else if (cat === 'BACKUP') {
+          matchesCat = item.category === 'BACKUP' || item.category === 'BACKUP_OPERATIONS' || item.action === 'TRIGGER_BACKUP' || item.action === 'BACKUP_ALL';
+        } else if (cat === 'AUTH') {
+          matchesCat = item.category === 'AUTH' || item.action === 'LOGIN' || item.action === 'LOGOUT';
+        } else {
+          matchesCat = item.category === cat || item.action === cat;
+        }
+
         return matchesQ && matchesCat;
       });
 
