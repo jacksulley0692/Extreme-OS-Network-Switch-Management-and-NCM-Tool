@@ -740,6 +740,148 @@ Local Port: 1:51
 -----------------------------------------------------------------------------`
   },
   {
+    id: "sw-york-core",
+    hostname: "DLC-York-Core",
+    ip: "10.32.221.253",
+    os: "EXOS",
+    model: "Summit X460-G2-48p-10GE4",
+    firmware: "EXOS 31.7.1.4",
+    serialNumber: "2019N-44101",
+    macAddress: "08:00:27:EA:91:01",
+    primaryVlan: 10,
+    gateway: "10.32.221.1",
+    uplinkPorts: ["1", "2", "9", "37", "41", "42"],
+    lastBackupTime: "Today at 04:00 AM",
+    lastBackupStatus: "Success",
+    tftpPath: "10.36.226.7:/backup/DLC-York-Core.xsf",
+    configFormat: "xsf",
+    notes: "York Core Switch. Trunks to Firewalls (York-MXP, York-MXS) and edge switches (DLC-York-Spa-SW1, DLC-York-Gym, DLL-York, DLC-York-MainComms-2).",
+    activeConfig: `# ExtremeXOS Configuration File (.xsf)
+# Switch: DLC-York-Core (Summit X460-G2-48p)
+# Site: YORK | Mgmt IP: 10.32.221.253/24
+
+configure snmp sysName "DLC-York-Core"
+configure snmp sysLocation "York Main Comms Room Rack 1"
+
+create vlan "Mgmt-VR"
+configure vlan "Mgmt-VR" tag 10
+configure vlan "Mgmt-VR" ipaddress 10.32.221.253 255.255.255.0
+
+create vlan "Data-Corp"
+configure vlan "Data-Corp" tag 20
+configure vlan "Voice-VoIP" tag 30
+
+configure vlan "Mgmt-VR" add ports 1-48 tagged
+configure vlan "Data-Corp" add ports 1-48 tagged
+configure vlan "Voice-VoIP" add ports 1-48 tagged
+
+configure port 1 description-string "UPLINK-YORK-MXP-PRIMARY"
+configure port 2 description-string "UPLINK-YORK-MXS-SECONDARY"
+configure port 9 description-string "TRUNK-TO-DLC-YORK-SPA-SW1"
+configure port 37 description-string "TRUNK-TO-DLC-YORK-GYM"
+configure port 41 description-string "TRUNK-TO-DLC-YORK-MAINCOMMS-2"
+configure port 42 description-string "TRUNK-TO-DLL-YORK"
+
+configure iproute add default 10.32.221.1
+enable ssh2
+`,
+    previousRevisions: [
+      {
+        id: "rev-york-core-01",
+        timestamp: "Yesterday at 04:00 AM",
+        filename: "DLC-York-Core_2026-08-13.xsf",
+        fileSizeKb: 15.4,
+        format: "xsf",
+        author: "BackupSave.py (Automated)",
+        hash: "sha256:1122334455667788",
+        changesSummary: "Nightly baseline automated backup",
+        content: `configure snmp sysName "DLC-York-Core"\ncreate vlan "Mgmt-VR"\n`
+      }
+    ],
+    ports: [
+      { port: "1", name: "UPLINK-YORK-MXP-PRIMARY", vlan: "Trunk", status: "up", speed: "10 Gbps", isUplink: true },
+      { port: "2", name: "UPLINK-YORK-MXS-SECONDARY", vlan: "Trunk", status: "up", speed: "10 Gbps", isUplink: true },
+      { port: "9", name: "TRUNK-TO-DLC-YORK-SPA-SW1", vlan: "Trunk", status: "up", speed: "1 Gbps", isUplink: true },
+      { port: "37", name: "TRUNK-TO-DLC-YORK-GYM", vlan: "Trunk", status: "up", speed: "1 Gbps", isUplink: true },
+      { port: "41", name: "TRUNK-TO-DLC-YORK-MAINCOMMS-2", vlan: "Trunk", status: "up", speed: "1 Gbps", isUplink: true },
+      { port: "42", name: "TRUNK-TO-DLL-YORK", vlan: "Trunk", status: "up", speed: "1 Gbps", isUplink: true }
+    ],
+    backupLldpNeighbors: [
+      {
+        localPort: "1",
+        remoteSystemName: "York-MXP",
+        remotePortId: "Port 1",
+        remotePortDesc: "LAN Interface",
+        remoteChassisId: "58:21:7f:19:01:01",
+        remoteMgmtIp: "10.32.221.1",
+        remoteSystemDesc: "Meraki MX Primary Firewall",
+        remoteCapabilities: ["Router", "Bridge"],
+        portVlan: 10,
+        lastDiscovered: "Today at 04:00 AM"
+      },
+      {
+        localPort: "2",
+        remoteSystemName: "York-MXS",
+        remotePortId: "Port 2",
+        remotePortDesc: "LAN Interface",
+        remoteChassisId: "58:21:7f:19:01:02",
+        remoteMgmtIp: "10.32.221.2",
+        remoteSystemDesc: "Meraki MX Secondary Firewall",
+        remoteCapabilities: ["Router", "Bridge"],
+        portVlan: 10,
+        lastDiscovered: "Today at 04:00 AM"
+      },
+      {
+        localPort: "9",
+        remoteSystemName: "DLC-York-Spa-SW1",
+        remotePortId: "1",
+        remotePortDesc: "Uplink to Core",
+        remoteChassisId: "08:00:27:ea:91:02",
+        remoteMgmtIp: "10.32.221.252",
+        remoteSystemDesc: "ExtremeXOS (X440-G2-24p)",
+        remoteCapabilities: ["Bridge"],
+        portVlan: "Trunk",
+        lastDiscovered: "Today at 04:00 AM"
+      },
+      {
+        localPort: "37",
+        remoteSystemName: "DLC-York-Gym",
+        remotePortId: "1",
+        remotePortDesc: "Uplink to Core",
+        remoteChassisId: "08:00:27:ea:91:03",
+        remoteMgmtIp: "10.32.221.250",
+        remoteSystemDesc: "ExtremeXOS (X440-G2-24p)",
+        remoteCapabilities: ["Bridge"],
+        portVlan: "Trunk",
+        lastDiscovered: "Today at 04:00 AM"
+      },
+      {
+        localPort: "41",
+        remoteSystemName: "DLC-York-MainComms-2",
+        remotePortId: "48",
+        remotePortDesc: "Uplink to Core",
+        remoteChassisId: "08:00:27:ea:91:04",
+        remoteMgmtIp: "10.32.221.248",
+        remoteSystemDesc: "ExtremeXOS (X440-G2-48p)",
+        remoteCapabilities: ["Bridge"],
+        portVlan: "Trunk",
+        lastDiscovered: "Today at 04:00 AM"
+      },
+      {
+        localPort: "42",
+        remoteSystemName: "DLL-York",
+        remotePortId: "17",
+        remotePortDesc: "Uplink to Core",
+        remoteChassisId: "08:00:27:ea:91:05",
+        remoteMgmtIp: "10.32.221.249",
+        remoteSystemDesc: "ExtremeXOS (X450-G2-48p)",
+        remoteCapabilities: ["Bridge"],
+        portVlan: "Trunk",
+        lastDiscovered: "Today at 04:00 AM"
+      }
+    ]
+  },
+  {
     id: "sw-york-spa",
     hostname: "DLC-York-Spa-SW1",
     ip: "10.32.221.252",
