@@ -1817,20 +1817,10 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
-        """
-        ========================================================================
-        📌 DEVELOPER GUIDE: BACKEND GET API ROUTES (portal_server.py)
-        ========================================================================
-        To add a new GET endpoint:
-          1. Add `if parsed.path == "/api/your-new-endpoint":` below.
-          2. Parse query parameters with `params.get('key', ['default'])[0]`.
-          3. Send headers with `self.send_response(200)` and `Content-Type: application/json`.
-          4. Return JSON with `self.wfile.write(json.dumps(result).encode('utf-8'))`.
-          5. Return immediately.
-        ========================================================================
-        """
         parsed = urllib.parse.urlparse(self.path)
         params = urllib.parse.parse_qs(parsed.query)
+        if parsed.path not in ["/favicon.ico"]:
+            print(f"[HTTP GET] {parsed.path}")
         
         if parsed.path == "/api/status":
             self.send_response(200)
@@ -2069,23 +2059,9 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self):
-        """
-        ========================================================================
-        📌 DEVELOPER GUIDE: BACKEND POST API ROUTES (portal_server.py)
-        ========================================================================
-        To add a new POST action endpoint:
-          1. Add `if parsed.path == "/api/your-new-action":` below.
-          2. Parse the JSON body:
-             `content_length = int(self.headers.get("Content-Length", 0))`
-             `data = json.loads(self.rfile.read(content_length).decode('utf-8'))`
-          3. Log the action to the audit trail:
-             `log_audit_action({"username": ..., "action": ..., "details": ...})`
-          4. Execute command or perform Python task.
-          5. Send response with `self.send_response(200)` and return JSON status.
-        ========================================================================
-        """
         try:
             parsed = urllib.parse.urlparse(self.path)
+            print(f"[HTTP POST] {parsed.path} from {self.client_address[0] if hasattr(self, 'client_address') else 'client'}")
 
             if parsed.path == "/api/backup-schedule":
                 content_length = int(self.headers.get("Content-Length", 0))
@@ -2537,7 +2513,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         Invalid username or password. Please check users.txt.
       </div>
 
-      <form onsubmit="handlePortalLoginSubmit(event)" class="space-y-4">
+      <form id="portal-login-form" onsubmit="event.preventDefault(); handlePortalLoginSubmit(event);" class="space-y-4">
         <div class="space-y-1.5">
           <label class="text-xs font-semibold text-slate-300 font-mono flex items-center gap-1.5">
             <span>👤 Username</span>
@@ -2569,7 +2545,8 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         </div>
 
         <button
-          type="submit"
+          type="button"
+          onclick="handlePortalLoginSubmit(event)"
           id="btn-portal-login-submit"
           class="w-full py-2.5 px-4 rounded-xl text-xs font-bold font-mono bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 cursor-pointer"
         >
