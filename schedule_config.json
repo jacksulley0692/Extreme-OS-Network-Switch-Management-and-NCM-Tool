@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "frequency": "daily",
-  "dailyTimeUtc": "11:50",
+  "dailyTimeUtc": "02:00",
   "twiceDailySecondTimeUtc": "14:00",
   "weeklyDays": [
     "SUN"

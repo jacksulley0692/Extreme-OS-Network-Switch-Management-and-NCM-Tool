@@ -125,9 +125,6 @@ def parse_users_txt():
     candidate_users_files = [
         os.path.join(DIRECTORY, "users.txt"),
         os.path.join(DIRECTORY, "Users.txt"),
-        os.path.join(os.getcwd(), "users.txt"),
-        os.path.join(os.getcwd(), "Users.txt"),
-        "/opt/switch-backup/Extreme-OS-Network-Switch-Management-and-NCM-Tool/users.txt",
         "/opt/switch-backup/users.txt"
     ]
     users_file = None
@@ -136,33 +133,9 @@ def parse_users_txt():
             users_file = uf
             break
 
-    # Built-in fallback user map with all accounts
     users_map = {
         "netadmin": {"password": "NetworkTeam2026!", "role": "network_admin", "fullName": "IT Network Team"},
-        "netadmins": {"password": "NetworkTeam2026!", "role": "network_admin", "fullName": "Network Admin Team"},
-        "portal_admin": {"password": "ExtremeAdmin2026!", "role": "network_admin", "fullName": "Portal Administrator"},
-        "admin": {"password": "Admin2026!", "role": "network_admin", "fullName": "Network Operations Admin"},
-        "servicedesk": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Service Desk Team"},
-        "bill.gates": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Bill Gates (Service Desk)"},
-        "alex.jones": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Alex Jones (Service Desk)"},
-        "emma.watson": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Emma Watson (Service Desk)"},
-        "liam.miller": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Liam Miller (Service Desk)"},
-        "olivia.davis": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Olivia Davis (Service Desk)"},
-        "lucas.taylor": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Lucas Taylor (Service Desk)"},
-        "sophia.brown": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Sophia Brown (Service Desk)"},
-        "ethan.clark": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Ethan Clark (Service Desk)"},
-        "mia.wilson": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Mia Wilson (Service Desk)"},
-        "noah.harris": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Noah Harris (Service Desk)"},
-        "mason.white": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Mason White (Service Desk)"},
-        "chloe.thomas": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Chloe Thomas (Service Desk)"},
-        "logan.moore": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Logan Moore (Service Desk)"},
-        "isabella.king": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Isabella King (Service Desk)"},
-        "james.walker": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "James Walker (Service Desk)"},
-        "lily.carter": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Lily Carter (Service Desk)"},
-        "steve.jobs": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Steve Jobs (Service Desk)"},
-        "linus.torvalds": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Linus Torvalds (Service Desk)"},
-        "ada.lovelace": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Ada Lovelace (Service Desk)"},
-        "alan.turing": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Alan Turing (Service Desk)"}
+        "bill.gates": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Bill Gates (Service Desk)"}
     }
 
     if users_file and os.path.exists(users_file):
@@ -173,74 +146,16 @@ def parse_users_txt():
                     if not line or line.startswith("#"):
                         continue
                     parts = line.split(":")
-                    if len(parts) >= 2:
+                    if len(parts) >= 3:
                         u = parts[0].strip()
                         p = parts[1].strip()
-                        r = "service_desk"
-                        if len(parts) >= 3 and parts[2].strip():
-                            r = parts[2].strip()
-                        f_name = parts[3].strip() if len(parts) > 3 and parts[3].strip() else u
+                        r = parts[2].strip()
+                        f_name = parts[3].strip() if len(parts) > 3 else u
                         users_map[u] = {"password": p, "role": r, "fullName": f_name}
-        except Exception as e:
-            print(f"[AUTH] Error reading {users_file}: {e}")
+        except Exception:
+            pass
 
     return users_map
-
-def authenticate_user(username, password):
-    """Authenticate user with case-insensitivity and guaranteed acceptance for configured usernames."""
-    if not username:
-        return None
-    users = parse_users_txt()
-    uname_clean = str(username).strip().lower()
-    pwd_clean = str(password or "").strip()
-
-    # 1. Check against loaded users dictionary
-    for u, udata in users.items():
-        if u.strip().lower() == uname_clean:
-            role = udata.get("role", "service_desk")
-            full_name = udata.get("fullName", u)
-            return {"username": u, "fullName": full_name, "role": role}
-
-    # 2. Known service desk users fallback
-    service_desk_defaults = {
-        "bill.gates": "Bill Gates (Service Desk)",
-        "servicedesk": "Service Desk Team",
-        "alex.jones": "Alex Jones (Service Desk)",
-        "emma.watson": "Emma Watson (Service Desk)",
-        "liam.miller": "Liam Miller (Service Desk)",
-        "olivia.davis": "Olivia Davis (Service Desk)",
-        "lucas.taylor": "Lucas Taylor (Service Desk)",
-        "sophia.brown": "Sophia Brown (Service Desk)",
-        "ethan.clark": "Ethan Clark (Service Desk)",
-        "mia.wilson": "Mia Wilson (Service Desk)",
-        "noah.harris": "Noah Harris (Service Desk)",
-        "mason.white": "Mason White (Service Desk)",
-        "chloe.thomas": "Chloe Thomas (Service Desk)",
-        "logan.moore": "Logan Moore (Service Desk)",
-        "isabella.king": "Isabella King (Service Desk)",
-        "james.walker": "James Walker (Service Desk)",
-        "lily.carter": "Lily Carter (Service Desk)",
-        "steve.jobs": "Steve Jobs (Service Desk)",
-        "linus.torvalds": "Linus Torvalds (Service Desk)",
-        "ada.lovelace": "Ada Lovelace (Service Desk)",
-        "alan.turing": "Alan Turing (Service Desk)"
-    }
-    if uname_clean in service_desk_defaults:
-        return {"username": uname_clean, "fullName": service_desk_defaults[uname_clean], "role": "service_desk"}
-
-    # 3. Known network admin users fallback
-    admin_defaults = {
-        "netadmin": "IT Network Team",
-        "netadmins": "Network Admin Team",
-        "portal_admin": "Portal Administrator",
-        "admin": "Network Operations Admin"
-    }
-    if uname_clean in admin_defaults:
-        return {"username": uname_clean, "fullName": admin_defaults[uname_clean], "role": "network_admin"}
-
-    # 4. If any non-empty username is passed, default to service_desk access
-    clean_display = username.strip().replace(".", " ").title()
-    return {"username": uname_clean, "fullName": f"{clean_display} (Operator)", "role": "service_desk"}
 
 def log_audit_action(entry):
     """Append structured action log to audit_log.json AND audit_trail.csv spreadsheet for accountability."""
@@ -1836,10 +1751,20 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        """
+        ========================================================================
+        📌 DEVELOPER GUIDE: BACKEND GET API ROUTES (portal_server.py)
+        ========================================================================
+        To add a new GET endpoint:
+          1. Add `if parsed.path == "/api/your-new-endpoint":` below.
+          2. Parse query parameters with `params.get('key', ['default'])[0]`.
+          3. Send headers with `self.send_response(200)` and `Content-Type: application/json`.
+          4. Return JSON with `self.wfile.write(json.dumps(result).encode('utf-8'))`.
+          5. Return immediately.
+        ========================================================================
+        """
         parsed = urllib.parse.urlparse(self.path)
         params = urllib.parse.parse_qs(parsed.query)
-        if parsed.path not in ["/favicon.ico"]:
-            print(f"[HTTP GET] {parsed.path}")
         
         if parsed.path == "/api/status":
             self.send_response(200)
@@ -2078,9 +2003,23 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self):
+        """
+        ========================================================================
+        📌 DEVELOPER GUIDE: BACKEND POST API ROUTES (portal_server.py)
+        ========================================================================
+        To add a new POST action endpoint:
+          1. Add `if parsed.path == "/api/your-new-action":` below.
+          2. Parse the JSON body:
+             `content_length = int(self.headers.get("Content-Length", 0))`
+             `data = json.loads(self.rfile.read(content_length).decode('utf-8'))`
+          3. Log the action to the audit trail:
+             `log_audit_action({"username": ..., "action": ..., "details": ...})`
+          4. Execute command or perform Python task.
+          5. Send response with `self.send_response(200)` and return JSON status.
+        ========================================================================
+        """
         try:
             parsed = urllib.parse.urlparse(self.path)
-            print(f"[HTTP POST] {parsed.path} from {self.client_address[0] if hasattr(self, 'client_address') else 'client'}")
 
             if parsed.path == "/api/backup-schedule":
                 content_length = int(self.headers.get("Content-Length", 0))
@@ -2125,35 +2064,31 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps({"success": True, "config": merged, "schedule": sched}).encode("utf-8"))
                 return
             
-            if parsed.path in ["/api/auth/login", "/api/login"]:
+            if parsed.path == "/api/auth/login":
                 content_length = int(self.headers.get("Content-Length", 0))
                 body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
                 data = json.loads(body) if body else {}
                 username = data.get("username", "").strip()
                 password = data.get("password", "")
 
-                print(f"[AUTH ATTEMPT] Username: '{username}', Password length: {len(password)}, Client: {self.client_address[0] if hasattr(self, 'client_address') else 'unknown'}")
-                user = authenticate_user(username, password)
+                users = parse_users_txt()
+                user = users.get(username)
 
-                if user:
-                    print(f"[AUTH SUCCESS] User: {user.get('username')} ({user.get('role')})")
+                if user and user.get("password") == password:
                     client_ip = self.client_address[0] if hasattr(self, 'client_address') else "127.0.0.1"
-                    try:
-                        log_audit_action({
-                            "username": user.get("username", username),
-                            "fullName": user.get("fullName", username),
-                            "role": user.get("role", "service_desk"),
-                            "action": "LOGIN",
-                            "category": "AUTH",
-                            "details": f"User {user.get('username', username)} logged into portal session ({user.get('role')})",
-                            "clientIp": client_ip
-                        })
-                    except Exception:
-                        pass
+                    log_audit_action({
+                        "username": username,
+                        "fullName": user.get("fullName", username),
+                        "role": user.get("role", "service_desk"),
+                        "action": "LOGIN",
+                        "category": "AUTH",
+                        "details": f"User {username} logged into portal session ({user.get('role')})",
+                        "clientIp": client_ip
+                    })
                     res = {
                         "success": True,
                         "user": {
-                            "username": user.get("username", username),
+                            "username": username,
                             "fullName": user.get("fullName", username),
                             "role": user.get("role", "service_desk"),
                             "token": f"session-{int(time.time()*1000)}"
@@ -2161,10 +2096,9 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                     }
                     self.send_response(200)
                 else:
-                    print(f"[AUTH FAILED] Failed authentication for '{username}'. Configured users available: {list(parse_users_txt().keys())}")
                     res = {
                         "success": False,
-                        "message": f"Authentication failed for user '{username}'. Please verify password or users.txt."
+                        "message": "Invalid username or password. Check users.txt configuration."
                     }
                     self.send_response(401)
 
@@ -2518,31 +2452,21 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
   <!-- Global Authentication Modal for Standalone Portal -->
   <div id="modal-portal-login" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/30 text-lg">
-            🔐
-          </div>
-          <div>
-            <h2 class="text-base font-bold text-white tracking-tight">Extreme Portal Sign In</h2>
-            <p class="text-xs text-slate-400 font-mono">Authentication &amp; Session Control</p>
-          </div>
+      <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
+        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/30 text-lg">
+          🔐
         </div>
-        <button
-          type="button"
-          onclick="directBypassLogin('bill.gates')"
-          class="text-xs text-slate-400 hover:text-white px-2 py-1 rounded bg-slate-800/80 hover:bg-slate-700 font-mono"
-          title="Direct Enter as Operator"
-        >
-          ✕ Bypass
-        </button>
+        <div>
+          <h2 class="text-base font-bold text-white tracking-tight">Extreme Portal Sign In</h2>
+          <p class="text-xs text-slate-400 font-mono">Authentication &amp; Session Control</p>
+        </div>
       </div>
 
       <div id="portal-login-error" class="hidden p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono">
         Invalid username or password. Please check users.txt.
       </div>
 
-      <form id="portal-login-form" onsubmit="event.preventDefault(); handlePortalLoginSubmit(event);" class="space-y-4">
+      <form onsubmit="handlePortalLoginSubmit(event)" class="space-y-4">
         <div class="space-y-1.5">
           <label class="text-xs font-semibold text-slate-300 font-mono flex items-center gap-1.5">
             <span>👤 Username</span>
@@ -2551,9 +2475,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             type="text"
             id="portal-login-username"
             required
-            autocomplete="username"
-            value="bill.gates"
-            placeholder="e.g. bill.gates or netadmin"
+            placeholder="e.g. netadmin or bill.gates"
             class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white font-mono placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
           />
         </div>
@@ -2566,47 +2488,19 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             type="password"
             id="portal-login-password"
             required
-            autocomplete="current-password"
-            value="ServiceDesk2026!"
             placeholder="••••••••••••"
             class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white font-mono placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
           />
         </div>
 
         <button
-          type="button"
-          onclick="handlePortalLoginSubmit(event)"
+          type="submit"
           id="btn-portal-login-submit"
           class="w-full py-2.5 px-4 rounded-xl text-xs font-bold font-mono bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 cursor-pointer"
         >
           <span>🚀 Sign In &amp; Start Session</span>
         </button>
       </form>
-
-      <!-- Quick 1-Click Fast Sign-In Presets -->
-      <div class="space-y-2 pt-1 border-t border-slate-800/80 font-mono">
-        <div class="text-[11px] text-slate-400 font-bold flex items-center justify-between">
-          <span>⚡ Quick 1-Click Fill &amp; Sign In:</span>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onclick="quickFillAndLogin('bill.gates', 'ServiceDesk2026!')"
-            class="px-2.5 py-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-left transition flex flex-col"
-          >
-            <span class="text-xs font-bold text-indigo-400">👤 Bill Gates</span>
-            <span class="text-[10px] text-slate-500">Service Desk (Ops)</span>
-          </button>
-          <button
-            type="button"
-            onclick="quickFillAndLogin('netadmin', 'NetworkTeam2026!')"
-            class="px-2.5 py-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-left transition flex flex-col"
-          >
-            <span class="text-xs font-bold text-emerald-400">🛡️ Network Admin</span>
-            <span class="text-[10px] text-slate-500">Full Fleet Access</span>
-          </button>
-        </div>
-      </div>
 
       <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/80 text-[11px] font-mono text-slate-400 space-y-1">
         <div class="font-bold text-slate-300 flex items-center justify-between">
@@ -5153,7 +5047,7 @@ show ip route</pre>
       if (!hostnameOrIp) return "UNASSIGNED";
       const clean = String(hostnameOrIp).trim();
       
-      // Known IP subnet mappings (York is strictly 10.32.221.x)
+      // Known IP subnet mappings (York is exclusively 10.32.221.x)
       if (clean.startsWith('10.32.221.')) return 'YORK';
       if (clean.startsWith('10.32.214.')) return 'LICHFIELD';
       if (clean.startsWith('10.32.54.')) return 'LEEDS';
@@ -5167,7 +5061,6 @@ show ip route</pre>
       if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(clean)) return "UNASSIGNED";
       
       const lower = clean.toLowerCase();
-      // If hostname has york, only match if not on another known subnet
       if (lower.includes('york')) return 'YORK';
       if (lower.includes('lichfield')) return 'LICHFIELD';
       if (lower.includes('leeds')) return 'LEEDS';
@@ -5182,15 +5075,6 @@ show ip route</pre>
         return parts[1].trim().toUpperCase();
       }
       return parts[0].trim().toUpperCase() || "GENERAL";
-    }
-
-    function isSwitchInSite(sw, siteCode) {
-      if (!sw || !sw.ip) return false;
-      const target = (siteCode || '').toUpperCase();
-      if (target === 'YORK') {
-        return sw.ip.startsWith('10.32.221.');
-      }
-      return extractSiteCode(sw.hostname || sw.ip) === target;
     }
 
     function groupSwitchesBySite(switches) {
@@ -5468,202 +5352,6 @@ show ip route</pre>
       `;
     }
 
-    let siteDiagramZoom = 100;
-    let currentSiteDiagramView = 'dynamic';
-
-    function setSiteDiagramView(viewMode) {
-      currentSiteDiagramView = viewMode;
-      const dynamicBtn = document.getElementById('btn-view-dynamic');
-      const visioBtn = document.getElementById('btn-view-visio');
-      const dynamicContainer = document.getElementById('site-dynamic-graph-view');
-      const visioContainer = document.getElementById('site-visio-diagram-view');
-
-      if (dynamicBtn && visioBtn && dynamicContainer && visioContainer) {
-        if (viewMode === 'dynamic') {
-          dynamicBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-indigo-600 text-white transition shadow text-xs flex items-center gap-1.5";
-          visioBtn.className = "px-3 py-1.5 rounded-lg font-bold text-slate-400 hover:text-white transition text-xs flex items-center gap-1.5";
-          dynamicContainer.classList.remove('hidden');
-          visioContainer.classList.add('hidden');
-          renderDynamicTopologyGraph();
-        } else {
-          visioBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-purple-600 text-white transition shadow text-xs flex items-center gap-1.5";
-          dynamicBtn.className = "px-3 py-1.5 rounded-lg font-bold text-slate-400 hover:text-white transition text-xs flex items-center gap-1.5";
-          visioContainer.classList.remove('hidden');
-          dynamicContainer.classList.add('hidden');
-        }
-      }
-    }
-
-    function renderDynamicTopologyGraph() {
-      const graphCanvas = document.getElementById('dynamic-topology-canvas');
-      if (!graphCanvas) return;
-
-      const isYork = selectedSite && (selectedSite.toUpperCase() === 'YORK' || selectedSite.toLowerCase().includes('york'));
-      const currentSiteSwitches = (allSwitches || []).filter(sw => isSwitchInSite(sw, selectedSite));
-
-      let coreSwitch = currentSiteSwitches.find(s => (s.hostname || '').toLowerCase().includes('core')) || currentSiteSwitches[0];
-      let edgeSwitches = currentSiteSwitches.filter(s => s !== coreSwitch);
-
-      const width = 1200;
-      const height = 750;
-
-      let svgHtml = `
-        <svg viewBox="0 0 ${width} ${height}" class="w-full h-auto select-none font-mono" style="background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);">
-          <defs>
-            <pattern id="graph-grid" width="30" height="30" patternUnits="userSpaceOnUse">
-              <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.6"/>
-            </pattern>
-            <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="6" result="blur"/>
-              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-            </filter>
-            <filter id="glow-indigo" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="8" result="blur"/>
-              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-            </filter>
-          </defs>
-
-          <rect width="100%" height="100%" fill="url(#graph-grid)" />
-
-          <!-- WAN / Internet Tier (Apex of Gateway) -->
-          <g transform="translate(600, 55)">
-            <rect x="-90" y="-22" width="180" height="44" rx="22" fill="#0369a1" fill-opacity="0.25" stroke="#38bdf8" stroke-width="2" />
-            <text x="0" y="5" text-anchor="middle" font-size="13" font-weight="bold" fill="#38bdf8">🌐 WAN / INTERNET</text>
-          </g>
-
-          <!-- Links from WAN to Dual Meraki MX Firewalls -->
-          <path d="M 550 77 L 460 145" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4" opacity="0.8"/>
-          <path d="M 650 77 L 740 145" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4" opacity="0.8"/>
-
-          <!-- Dual Meraki MX Appliance Cluster Tier -->
-          <!-- Primary MX-01 -->
-          <g transform="translate(460, 160)" class="cursor-pointer" onclick="showToast('Primary Security Appliance: Meraki MX-01 (Active Gateway)')">
-            <rect x="-95" y="-30" width="190" height="60" rx="12" fill="#0f172a" stroke="#10b981" stroke-width="2" filter="url(#glow-emerald)" />
-            <circle cx="-70" cy="0" r="14" fill="#047857" />
-            <text x="-70" y="4" text-anchor="middle" font-size="12" fill="#ffffff">🛡️</text>
-            <text x="-48" y="-6" text-anchor="start" font-size="12" font-weight="bold" fill="#ffffff">${selectedSite}-MX-01</text>
-            <text x="-48" y="12" text-anchor="start" font-size="10" fill="#34d399">Primary Active MX</text>
-            <rect x="52" y="-20" width="32" height="15" rx="4" fill="#065f46"/>
-            <text x="68" y="-9" text-anchor="middle" font-size="8" font-weight="bold" fill="#a7f3d0">HA-1</text>
-          </g>
-
-          <!-- Warm Spare MX-02 -->
-          <g transform="translate(740, 160)" class="cursor-pointer" onclick="showToast('Warm Spare Security Appliance: Meraki MX-02 (VRRP Standby)')">
-            <rect x="-95" y="-30" width="190" height="60" rx="12" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" />
-            <circle cx="-70" cy="0" r="14" fill="#0369a1" />
-            <text x="-70" y="4" text-anchor="middle" font-size="12" fill="#ffffff">🛡️</text>
-            <text x="-48" y="-6" text-anchor="start" font-size="12" font-weight="bold" fill="#ffffff">${selectedSite}-MX-02</text>
-            <text x="-48" y="12" text-anchor="start" font-size="10" fill="#7dd3fc">Warm Spare (VRRP)</text>
-            <rect x="52" y="-20" width="32" height="15" rx="4" fill="#075985"/>
-            <text x="68" y="-9" text-anchor="middle" font-size="8" font-weight="bold" fill="#bae6fd">HA-2</text>
-          </g>
-
-          <!-- Heartbeat VRRP sync -->
-          <line x1="555" y1="160" x2="645" y2="160" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3" />
-          <text x="600" y="153" text-anchor="middle" font-size="8" font-weight="bold" fill="#f59e0b">VRRP SYNC</text>
-
-          <!-- Uplinks from Dual MX to Core Switch (Apex) -->
-          <line x1="460" y1="190" x2="560" y2="330" stroke="#10b981" stroke-width="2.5" />
-          <rect x="475" y="240" width="80" height="18" rx="4" fill="#064e3b" stroke="#10b981" stroke-width="1" />
-          <text x="515" y="253" text-anchor="middle" font-size="9" font-weight="bold" fill="#a7f3d0">Core Port 1</text>
-
-          <line x1="740" y1="190" x2="640" y2="330" stroke="#0ea5e9" stroke-width="2.5" stroke-dasharray="5,3" />
-          <rect x="645" y="240" width="80" height="18" rx="4" fill="#0c4a6e" stroke="#0ea5e9" stroke-width="1" />
-          <text x="685" y="253" text-anchor="middle" font-size="9" font-weight="bold" fill="#bae6fd">Core Port 2 (Stby)</text>
-
-          <!-- Core Switch Node (Apex of Switch Triangle) -->
-          <g transform="translate(600, 360)" class="cursor-pointer" onclick="${coreSwitch ? `showPreviousBackups('${coreSwitch.ip}', '${coreSwitch.hostname}')` : ''}">
-            <rect x="-160" y="-45" width="320" height="90" rx="16" fill="#1e1b4b" stroke="#818cf8" stroke-width="2.5" filter="url(#glow-indigo)" />
-            
-            <!-- Top bar -->
-            <rect x="-160" y="-45" width="320" height="26" rx="14" fill="#312e81" />
-            <circle cx="-138" cy="-32" r="5" fill="#34d399" />
-            <text x="-124" y="-28" font-size="11" font-weight="bold" fill="#c7d2fe">SITE CORE SWITCH (APEX)</text>
-            <text x="138" y="-28" text-anchor="end" font-size="10" font-weight="bold" fill="#818cf8">EXOS Summit</text>
-
-            <!-- Main Body -->
-            <text x="-138" y="2" font-size="15" font-weight="bold" fill="#ffffff">${coreSwitch ? coreSwitch.hostname : 'DLC-York-Core'}</text>
-            <text x="-138" y="22" font-size="12" fill="#a5b4fc" font-family="monospace">IP: ${coreSwitch ? coreSwitch.ip : '10.32.221.253'}</text>
-            
-            <!-- Badges -->
-            <rect x="35" y="5" width="105" height="22" rx="6" fill="#065f46" stroke="#059669" stroke-width="1"/>
-            <text x="87" y="20" text-anchor="middle" font-size="10" font-weight="bold" fill="#6ee7b7">✓ NVRAM Sync</text>
-          </g>
-      `;
-
-      // Access / Distribution Fan-out Tier (Base of the Triangle)
-      const edgeCount = edgeSwitches.length;
-      if (edgeCount > 0) {
-        const spacing = width / (edgeCount + 1);
-        const yEdge = 600;
-
-        const yorkPortMap = {
-          'DLC-York-Spa-SW1': { corePort: 'Port 9', edgePort: 'Port 1', color: '#c084fc' },
-          'DLC-York-Gym': { corePort: 'Port 37', edgePort: 'Port 1', color: '#38bdf8' },
-          'DLL-York': { corePort: 'Port 42', edgePort: 'Port 17', color: '#f472b6' },
-          'DLC-York-MainComms-2': { corePort: 'Port 41', edgePort: 'Port 48', color: '#fb923c' }
-        };
-
-        edgeSwitches.forEach((sw, idx) => {
-          const xEdge = spacing * (idx + 1);
-          const portInfo = yorkPortMap[sw.hostname] || { 
-            corePort: `Port ${10 + idx * 4}`, 
-            edgePort: 'Port 1', 
-            color: '#818cf8' 
-          };
-
-          svgHtml += `
-            <path d="M 600 405 C 600 480, ${xEdge} 480, ${xEdge} 555" stroke="${portInfo.color}" stroke-width="2.5" fill="none" opacity="0.9" />
-            
-            <g transform="translate(${(600 + xEdge) / 2}, ${475 + (idx % 2 === 0 ? -12 : 12)})">
-              <rect x="-55" y="-12" width="110" height="24" rx="6" fill="#0f172a" stroke="${portInfo.color}" stroke-width="1.5" />
-              <text x="0" y="4" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">${portInfo.corePort} ➔ ${portInfo.edgePort}</text>
-            </g>
-
-            <g transform="translate(${xEdge}, ${yEdge})" class="cursor-pointer" onclick="showPreviousBackups('${sw.ip}', '${sw.hostname}')">
-              <rect x="-105" y="-45" width="210" height="90" rx="14" fill="#0f172a" stroke="#334155" stroke-width="2" class="hover:stroke-indigo-400 transition" />
-              
-              <rect x="-105" y="-45" width="210" height="22" rx="12" fill="#1e293b" />
-              <circle cx="-88" cy="-34" r="4.5" fill="#10b981" />
-              <text x="-76" y="-30" font-size="9" font-weight="bold" fill="#94a3b8">EDGE ACCESS SWITCH</text>
-              <text x="90" y="-30" text-anchor="end" font-size="8" font-weight="bold" fill="${portInfo.color}">1 GbE</text>
-
-              <text x="0" y="-2" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">${sw.hostname}</text>
-              <text x="0" y="16" text-anchor="middle" font-size="10" fill="#94a3b8" font-family="monospace">${sw.ip}</text>
-              
-              <rect x="-60" y="24" width="120" height="16" rx="4" fill="#064e3b" />
-              <text x="0" y="35" text-anchor="middle" font-size="8" font-weight="bold" fill="#6ee7b7">⚡ Backup Available</text>
-            </g>
-
-            <line x1="${xEdge}" y1="645" x2="${xEdge}" y2="685" stroke="#475569" stroke-width="1.5" stroke-dasharray="2,2"/>
-            <circle cx="${xEdge}" cy="695" r="9" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
-            <text x="${xEdge}" y="698" text-anchor="middle" font-size="8" fill="#ffffff">📶</text>
-            <text x="${xEdge}" y="718" text-anchor="middle" font-size="8" font-weight="bold" fill="#64748b">PoE APs</text>
-          `;
-        });
-      }
-
-      svgHtml += `
-        <g transform="translate(40, 40)">
-          <rect x="0" y="0" width="220" height="65" rx="10" fill="#0f172a" fill-opacity="0.85" stroke="#334155" stroke-width="1.5" />
-          <text x="12" y="18" font-size="10" font-weight="bold" fill="#e2e8f0">ESTATE TOPOLOGY STATUS</text>
-          <circle cx="20" cy="35" r="4" fill="#10b981"/>
-          <text x="32" y="38" font-size="9" fill="#a7f3d0">Dual MX Gateway Active</text>
-          <circle cx="20" cy="50" r="4" fill="#10b981"/>
-          <text x="32" y="53" font-size="9" fill="#a7f3d0">All 4 Edge Uplinks Operational</text>
-        </g>
-
-        <g transform="translate(940, 40)">
-          <rect x="0" y="0" width="220" height="65" rx="10" fill="#0f172a" fill-opacity="0.85" stroke="#334155" stroke-width="1.5" />
-          <text x="12" y="18" font-size="10" font-weight="bold" fill="#e2e8f0">INTERACTION GUIDE</text>
-          <text x="12" y="35" font-size="9" fill="#94a3b8">👉 Click any Switch to view config</text>
-          <text x="12" y="50" font-size="9" fill="#94a3b8">👉 Real-time port assignment links</text>
-        </g>
-      </svg>`;
-
-      graphCanvas.innerHTML = svgHtml;
-    }
-
     function renderSitePage() {
       const container = document.getElementById('site-page-container');
       const fleetToolbar = document.getElementById('fleet-toolbar');
@@ -5678,6 +5366,7 @@ show ip route</pre>
         return;
       }
 
+      // Hide fleet toolbar & global fleet grid when on a specific site page
       if (fleetToolbar) fleetToolbar.classList.add('hidden');
       if (switchesGrid) switchesGrid.classList.add('hidden');
 
@@ -5686,18 +5375,16 @@ show ip route</pre>
         if (!sw || !sw.ip) return false;
         const normalizedIp = sw.ip.trim();
         if (seenSiteIps.has(normalizedIp)) return false;
-        const matches = isSwitchInSite(sw, selectedSite);
+        const matches = extractSiteCode(sw.hostname || sw.ip) === selectedSite;
         if (matches) {
           seenSiteIps.add(normalizedIp);
           return true;
         }
         return false;
       });
-
       const isYork = selectedSite.toUpperCase() === 'YORK' || selectedSite.toLowerCase().includes('york');
       const backedUpCount = siteSwitches.filter(s => s.hasBackup).length;
       const coveragePct = siteSwitches.length > 0 ? Math.round((backedUpCount / siteSwitches.length) * 100) : 100;
-      const pngDiagramPath = getDiagramPngPathForSite(selectedSite);
 
       container.classList.remove('hidden');
       container.innerHTML = `
@@ -5753,85 +5440,75 @@ show ip route</pre>
             </div>
           </div>
 
-          <!-- Interactive Topology Section with View Toggle (Dynamic Graph vs Visio Schematic) -->
+          <!-- Interactive Topology Diagram Section for York & Site Blueprints -->
           <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
             <div class="p-3.5 bg-slate-900/90 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="flex items-center gap-2.5">
                 <span class="text-indigo-400 font-mono text-sm">🗺️</span>
                 <div>
                   <div class="flex items-center gap-2">
-                    <h3 class="text-xs font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
-                      <span>${selectedSite} Network Topology</span>
-                      <span class="px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 text-[10px]">Interactive Live View</span>
+                    <h3 class="text-xs font-bold text-white uppercase font-mono tracking-wider">
+                      ${selectedSite} Physical & Logical Topology Diagram
                     </h3>
+                    ${isYork ? `
+                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-bold">
+                        Visio Verified: DLC 3.vsdx (DLC - York)
+                      </span>
+                    ` : `
+                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">
+                        Network Blueprint
+                      </span>
+                    `}
                   </div>
-                  <p class="text-[11px] text-slate-400 font-mono mt-0.5">
-                    Switch hierarchy, dual Meraki MX security gateways, and real-time inter-switch uplinks
+                  <p class="text-[11px] text-slate-400 mt-0.5">
+                    Core VSP/EXOS switch uplinks, firewall interconnects, and IDF distribution layouts.
                   </p>
                 </div>
               </div>
 
               <div class="flex items-center gap-2">
-                <!-- View Mode Switcher -->
-                <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 font-mono text-xs">
-                  <button
-                    id="btn-view-dynamic"
-                    onclick="setSiteDiagramView('dynamic')"
-                    class="px-3 py-1.5 rounded-lg font-bold bg-indigo-600 text-white transition shadow text-xs flex items-center gap-1.5"
-                  >
-                    <span>📊 Interactive Graph</span>
-                  </button>
-                  <button
-                    id="btn-view-visio"
-                    onclick="setSiteDiagramView('visio')"
-                    class="px-3 py-1.5 rounded-lg font-bold text-slate-400 hover:text-white transition text-xs flex items-center gap-1.5"
-                  >
-                    <span>🗺️ Visio Schematic</span>
-                  </button>
-                </div>
-
-                <!-- Zoom Controls for Visio View -->
-                <div class="flex items-center bg-slate-950 rounded-lg border border-slate-800 p-1 font-mono text-xs text-slate-300">
-                  <button onclick="changeDiagramZoom(-20)" class="px-2 py-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Zoom Out">−</button>
-                  <span id="diagram-zoom-level" class="px-2 text-[11px] text-slate-300 font-bold">${siteDiagramZoom}%</span>
-                  <button onclick="changeDiagramZoom(20)" class="px-2 py-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Zoom In">+</button>
-                  <button onclick="resetDiagramZoom()" class="px-2 py-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white text-[10px]" title="Reset Zoom">↺</button>
+                <div class="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800 text-xs font-mono">
+                  <button onclick="changeDiagramZoom(-20)" class="px-1.5 text-slate-400 hover:text-white" title="Zoom Out">-</button>
+                  <span id="diagram-zoom-level" class="text-slate-200 text-[11px] px-1">${siteDiagramZoom}%</span>
+                  <button onclick="changeDiagramZoom(20)" class="px-1.5 text-slate-400 hover:text-white" title="Zoom In">+</button>
+                  <button onclick="resetDiagramZoom()" class="px-1.5 text-slate-400 hover:text-white border-l border-slate-800 pl-1.5" title="Reset Zoom">100%</button>
                 </div>
               </div>
             </div>
 
-            <!-- 1. Interactive Dynamic Graph View (Default) -->
-            <div id="site-dynamic-graph-view" class="p-2 sm:p-4 bg-slate-950/90 overflow-auto flex items-center justify-center min-h-[500px]">
-              <div id="dynamic-topology-canvas" class="w-full max-w-5xl">
-                <!-- Graph rendered via renderDynamicTopologyGraph() -->
-              </div>
-            </div>
-
-            <!-- 2. Original Visio Schematic View (Secondary) -->
-            <div id="site-visio-diagram-view" class="hidden p-4 bg-slate-950/80 overflow-auto flex flex-col items-center justify-center min-h-[480px]">
-              ${isYork ? `
-                <div class="w-full pb-3 flex items-center justify-between text-xs font-mono text-slate-400 border-b border-slate-800 mb-3">
-                  <span class="text-purple-300 font-bold">Visio Source: DLC 3.vsdx (DLC - York)</span>
-                  <span class="text-slate-500">Original static engineering blueprint</span>
-                </div>
-              ` : ''}
-
-              ${(() => {
-                if (pngDiagramPath) {
+            <!-- Diagram Canvas -->
+            <div id="site-diagram-canvas" class="p-4 bg-slate-950 rounded-b-xl overflow-x-auto flex justify-center items-center" style="min-height: 460px;">
+              ${(function() {
+                const pngPath = getDiagramPngPathForSite(selectedSite);
+                if (pngPath) {
                   return `
-                    <div style="overflow: auto; width: 100%; display: flex; justify-content: center;">
-                      <div style="display: inline-block; transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out;">
+                    <div class="w-full flex flex-col items-center space-y-3">
+                      <div class="w-full bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
+                        <div class="flex items-center gap-2">
+                          <span class="text-emerald-400 font-bold">✔</span>
+                          <span>Visio Verified Diagram: <strong class="text-white">${pngPath.split("/").pop()}</strong></span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                          <a href="${pngPath}" target="_blank" class="text-indigo-400 hover:underline flex items-center gap-1 text-[11px]">
+                            <span>Full Resolution ↗</span>
+                          </a>
+                          <a href="${pngPath}" download="${selectedSite}_Topology_Diagram.png" class="text-purple-400 hover:underline flex items-center gap-1 text-[11px]">
+                            <span>Download PNG 💾</span>
+                          </a>
+                        </div>
+                      </div>
+                      <div class="bg-slate-900/40 rounded-xl p-4 shadow-inner border border-slate-800/80 overflow-x-auto w-full flex justify-center items-center">
                         <img 
-                          src="${pngDiagramPath}" 
-                          alt="${selectedSite} Visio Diagram" 
-                          style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);" 
+                          src="${pngPath}" 
+                          alt="${selectedSite} Topology Diagram" 
+                          style="transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out; max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);" 
                         />
                       </div>
                     </div>
                   `;
                 } else if (isYork) {
                   return `
-                    <div style="width: 100%; max-width: 1100px; transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out;">
+                    <div class="bg-white/95 rounded-xl p-4 shadow-inner border border-slate-800" style="width: 100%; max-width: 1100px; transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out;">
                       ${YORK_DIAGRAM_SVG_STR}
                     </div>
                   `;
@@ -5900,8 +5577,6 @@ show ip route</pre>
         </div>
       `;
       
-      // Render topology dynamic graph and heatmaps
-      renderDynamicTopologyGraph();
       if (isYork) {
         renderYorkHeatMaps();
       }
@@ -8227,19 +7902,16 @@ save configuration`
         rolloutBtn.style.setProperty('display', 'none', 'important');
       }
       try {
-        const saved = localStorage.getItem('portal_user') || sessionStorage.getItem('portal_user');
+        const saved = sessionStorage.getItem('portal_user');
         if (saved) {
           portalCurrentUser = JSON.parse(saved);
           applyPortalUserUI();
-          const modal = document.getElementById('modal-portal-login');
-          if (modal) modal.classList.add('hidden');
+          document.getElementById('modal-portal-login').classList.add('hidden');
         } else {
-          const modal = document.getElementById('modal-portal-login');
-          if (modal) modal.classList.remove('hidden');
+          document.getElementById('modal-portal-login').classList.remove('hidden');
         }
       } catch (e) {
-        const modal = document.getElementById('modal-portal-login');
-        if (modal) modal.classList.remove('hidden');
+        document.getElementById('modal-portal-login').classList.remove('hidden');
       }
     }
 
@@ -8270,36 +7942,6 @@ save configuration`
       }
     }
 
-    function directBypassLogin(u) {
-      const targetUser = u || 'bill.gates';
-      const userObj = {
-        username: targetUser,
-        fullName: targetUser.includes('admin') ? 'IT Network Team' : 'Bill Gates (Service Desk)',
-        role: targetUser.includes('admin') ? 'network_admin' : 'service_desk',
-        token: `session-bypass-${Date.now()}`
-      };
-      portalCurrentUser = userObj;
-      try {
-        localStorage.setItem('portal_user', JSON.stringify(userObj));
-        sessionStorage.setItem('portal_user', JSON.stringify(userObj));
-      } catch (e) {}
-      applyPortalUserUI();
-      const modal = document.getElementById('modal-portal-login');
-      if (modal) {
-        modal.classList.add('hidden');
-        modal.style.display = 'none';
-      }
-      showToast(`Welcome, ${userObj.fullName}!`);
-    }
-
-    function quickFillAndLogin(u, p) {
-      const usernameInput = document.getElementById('portal-login-username');
-      const passwordInput = document.getElementById('portal-login-password');
-      if (usernameInput) usernameInput.value = u;
-      if (passwordInput) passwordInput.value = p;
-      directBypassLogin(u);
-    }
-
     async function handlePortalLoginSubmit(e) {
       if (e) e.preventDefault();
       const usernameInput = document.getElementById('portal-login-username');
@@ -8310,57 +7952,34 @@ save configuration`
       const username = usernameInput ? usernameInput.value.trim() : '';
       const password = passwordInput ? passwordInput.value : '';
 
-      if (errorEl) errorEl.classList.add('hidden');
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = `<span>⏳ Authenticating...</span>`;
-      }
+      errorEl.classList.add('hidden');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>⏳ Authenticating...</span>`;
 
       try {
         const res = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username: username || 'bill.gates', password: password || 'ServiceDesk2026!' })
+          body: JSON.stringify({ username, password })
         });
         const data = await res.json();
 
         if (res.ok && data.success && data.user) {
           portalCurrentUser = data.user;
           sessionStorage.setItem('portal_user', JSON.stringify(data.user));
-          localStorage.setItem('portal_user', JSON.stringify(data.user));
           applyPortalUserUI();
-          const modal = document.getElementById('modal-portal-login');
-          if (modal) modal.classList.add('hidden');
+          document.getElementById('modal-portal-login').classList.add('hidden');
           showToast(`Welcome, ${data.user.fullName || data.user.username}!`);
-          return;
-        } else if (data && data.message) {
-          if (errorEl) {
-            errorEl.innerText = data.message;
-            errorEl.classList.remove('hidden');
-          }
+        } else {
+          errorEl.innerText = data.message || 'Invalid username or password. Check users.txt on the server.';
+          errorEl.classList.remove('hidden');
         }
       } catch (err) {
-        console.warn('Backend login request error, applying client-side fallback:', err);
-        // Client-side fallback authentication so UI is never blocked
-        const fallbackUser = {
-          username: username || 'bill.gates',
-          fullName: (username && username.includes('admin')) ? 'IT Network Team' : 'Bill Gates (Service Desk)',
-          role: (username && username.includes('admin')) ? 'network_admin' : 'service_desk',
-          token: `client-session-${Date.now()}`
-        };
-        portalCurrentUser = fallbackUser;
-        sessionStorage.setItem('portal_user', JSON.stringify(fallbackUser));
-        localStorage.setItem('portal_user', JSON.stringify(fallbackUser));
-        applyPortalUserUI();
-        const modal = document.getElementById('modal-portal-login');
-        if (modal) modal.classList.add('hidden');
-        showToast(`Welcome, ${fallbackUser.fullName}!`);
-        return;
+        errorEl.innerText = `Authentication connection failed: ${err.message}`;
+        errorEl.classList.remove('hidden');
       } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = `<span>🚀 Sign In &amp; Start Session</span>`;
-        }
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>🚀 Sign In &amp; Start Session</span>`;
       }
     }
 
@@ -8376,15 +7995,11 @@ save configuration`
       }
       portalCurrentUser = null;
       sessionStorage.removeItem('portal_user');
-      localStorage.removeItem('portal_user');
-      const badge = document.getElementById('portal-user-badge');
-      if (badge) badge.classList.add('hidden');
+      document.getElementById('portal-user-badge').classList.add('hidden');
       const rolloutBtn = document.getElementById('btn-top-rollout');
       if (rolloutBtn) rolloutBtn.classList.add('hidden');
-      const modal = document.getElementById('modal-portal-login');
-      if (modal) modal.classList.remove('hidden');
-      const pwdInput = document.getElementById('portal-login-password');
-      if (pwdInput) pwdInput.value = '';
+      document.getElementById('modal-portal-login').classList.remove('hidden');
+      document.getElementById('portal-login-password').value = '';
     }
 
     // --- Activity Audit Trail Controller ---
