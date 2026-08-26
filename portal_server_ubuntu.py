@@ -2543,7 +2543,9 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             type="text"
             id="portal-login-username"
             required
-            placeholder="e.g. netadmin or bill.gates"
+            autocomplete="username"
+            value="bill.gates"
+            placeholder="e.g. bill.gates or netadmin"
             class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white font-mono placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
           />
         </div>
@@ -2556,6 +2558,8 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             type="password"
             id="portal-login-password"
             required
+            autocomplete="current-password"
+            value="ServiceDesk2026!"
             placeholder="••••••••••••"
             class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white font-mono placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
           />
@@ -2569,6 +2573,31 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           <span>🚀 Sign In &amp; Start Session</span>
         </button>
       </form>
+
+      <!-- Quick 1-Click Fast Sign-In Presets -->
+      <div class="space-y-2 pt-1 border-t border-slate-800/80 font-mono">
+        <div class="text-[11px] text-slate-400 font-bold flex items-center justify-between">
+          <span>⚡ Quick 1-Click Fill &amp; Sign In:</span>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onclick="quickFillAndLogin('bill.gates', 'ServiceDesk2026!')"
+            class="px-2.5 py-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-left transition flex flex-col"
+          >
+            <span class="text-xs font-bold text-indigo-400">👤 Bill Gates</span>
+            <span class="text-[10px] text-slate-500">Service Desk (Ops)</span>
+          </button>
+          <button
+            type="button"
+            onclick="quickFillAndLogin('netadmin', 'NetworkTeam2026!')"
+            class="px-2.5 py-2 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-left transition flex flex-col"
+          >
+            <span class="text-xs font-bold text-emerald-400">🛡️ Network Admin</span>
+            <span class="text-[10px] text-slate-500">Full Fleet Access</span>
+          </button>
+        </div>
+      </div>
 
       <div class="p-3 bg-slate-950 rounded-xl border border-slate-800/80 text-[11px] font-mono text-slate-400 space-y-1">
         <div class="font-bold text-slate-300 flex items-center justify-between">
@@ -8227,6 +8256,14 @@ save configuration`
           rolloutBtn.style.setProperty('display', 'none', 'important');
         }
       }
+    }
+
+    function quickFillAndLogin(u, p) {
+      const usernameInput = document.getElementById('portal-login-username');
+      const passwordInput = document.getElementById('portal-login-password');
+      if (usernameInput) usernameInput.value = u;
+      if (passwordInput) passwordInput.value = p;
+      handlePortalLoginSubmit();
     }
 
     async function handlePortalLoginSubmit(e) {

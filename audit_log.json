@@ -1,5 +1,19 @@
 [
   {
+    "id": "audit-1787756152665",
+    "timestamp": "2026-08-26 14:55:52",
+    "username": "bill.gates",
+    "fullName": "Bill Gates (Service Desk)",
+    "role": "service_desk",
+    "action": "LOGIN",
+    "category": "AUTH",
+    "switchIp": null,
+    "switchHostname": null,
+    "details": "User bill.gates logged into portal session (service_desk)",
+    "clientIp": "127.0.0.1",
+    "status": "SUCCESS"
+  },
+  {
     "id": "audit-1787748942941",
     "timestamp": "2026-08-26 13:55:42",
     "username": "bill.gates",
