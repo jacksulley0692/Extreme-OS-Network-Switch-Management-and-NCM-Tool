@@ -6317,11 +6317,11 @@ show ip route</pre>
       openModal('modal-backups');
 
       try {
-        // Try finding switch from switchesData first for instant revision array
-        let switchObj = (switchesData || []).find(s => s.ip === ip);
+        // Try finding switch from allSwitches first for instant revision array
+        let switchObj = (typeof allSwitches !== 'undefined' && Array.isArray(allSwitches)) ? allSwitches.find(s => s.ip === ip) : null;
         let revisions = (switchObj && switchObj.revisions && switchObj.revisions.length > 0) ? switchObj.revisions : [];
 
-        // Always also query backend for latest on-disk state
+        // Always query backend for on-disk state
         const res = await fetch(`/api/backup-file?ip=${encodeURIComponent(ip)}`);
         const data = await res.json();
         
@@ -6332,12 +6332,17 @@ show ip route</pre>
 
         if (data && data.backupContent) {
           primaryContent = data.backupContent;
-          primaryFilename = data.filename || `${hostname}.xsf`;
-          primaryTime = data.timestamp || 'Latest';
+          primaryFilename = data.filename || data.latestFilename || `${hostname}.xsf`;
+          primaryTime = data.timestamp || data.latestBackupTime || 'Latest';
           primarySize = data.fileSizeKb || 0;
         }
 
-        // If revisions not in memory, construct at least primary or fallback
+        // If backend returned revisions array, use it
+        if (data && data.revisions && data.revisions.length > 0) {
+          revisions = data.revisions;
+        }
+
+        // If revisions still empty but primaryContent exists, construct fallback revision item
         if (revisions.length === 0 && primaryContent) {
           revisions = [{
             filename: primaryFilename,
