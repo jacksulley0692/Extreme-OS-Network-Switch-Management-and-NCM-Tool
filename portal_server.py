@@ -1832,6 +1832,29 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
 
         if parsed.path == "/api/backup-file":
             ip = params.get("ip", [""])[0]
+            fpath = params.get("path", [""])[0]
+            if fpath and os.path.exists(fpath):
+                try:
+                    with open(fpath, "r", encoding="utf-8", errors="ignore") as f:
+                        content = f.read()
+                    fmtime = os.path.getmtime(fpath)
+                    res = {
+                        "ip": ip,
+                        "filename": os.path.basename(fpath),
+                        "timestamp": datetime.fromtimestamp(fmtime).strftime("%Y-%m-%d %H:%M:%S"),
+                        "backupContent": content,
+                        "path": fpath,
+                        "fileSizeKb": round(os.path.getsize(fpath) / 1024, 1)
+                    }
+                    self.send_response(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Access-Control-Allow-Origin", "*")
+                    self.end_headers()
+                    self.wfile.write(json.dumps(res).encode("utf-8"))
+                    return
+                except Exception as e:
+                    pass
+
             info = get_hostname_and_backup_for_ip(ip) if ip else None
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
@@ -2516,6 +2539,9 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         </span>
         <button onclick="openSwitchesEditor()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
           <span>📋 Fleet Inventory (Switches.txt)</span>
+        </button>
+        <button onclick="openCheatSheetModal()" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/40 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
+          <span>📖 Recovery Cheat Sheet</span>
         </button>
         <button id="btn-top-audit-trail" onclick="openAuditTrailModal()" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
           <span>📜 Activity Audit Trail</span>
@@ -3359,34 +3385,306 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
     </div>
   </div>
 
-  <!-- MODAL: Previous Backups & History -->
+  <!-- MODAL: Previous Backups & Multi-Revision History -->
   <div id="modal-backups" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-indigo-400 font-bold">🕒 Backup History & Configuration</span>
-            <span id="modal-backup-title" class="text-xs font-mono text-slate-300 bg-slate-800 px-2 py-0.5 rounded"></span>
+            <span class="text-indigo-400 font-bold text-sm">🕒 Retained Backup Revisions & Configuration Archive</span>
+            <span id="modal-backup-title" class="text-xs font-mono text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded border border-slate-700"></span>
           </div>
-          <p id="modal-backup-subtitle" class="text-xs text-slate-400 mt-0.5 font-mono">Configuration Archive</p>
+          <p id="modal-backup-subtitle" class="text-xs text-slate-400 mt-0.5 font-mono">Select any historical backup revision from disk to inspect or copy to clipboard.</p>
         </div>
         <div class="flex items-center gap-2">
-          <button onclick="copyElementText('modal-backup-content')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">
-            📋 Copy Configuration
+          <button onclick="copyCurrentSelectedBackupRevision()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono transition flex items-center gap-1.5 shadow">
+            <span>📋 Copy Selected Config</span>
+          </button>
+          <button onclick="downloadCurrentSelectedBackupRevision()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center gap-1.5">
+            <span>📥 Download File</span>
           </button>
           <button onclick="closeModal('modal-backups')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
         </div>
       </div>
 
-      <div class="p-6 overflow-y-auto flex-1 space-y-4">
-        <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-200 overflow-x-auto max-h-[500px]">
-          <pre id="modal-backup-content">Loading backup file...</pre>
+      <!-- Main Layout: Revisions Sidebar + Content View -->
+      <div class="flex flex-col md:flex-row flex-1 min-h-0 overflow-hidden">
+        
+        <!-- Left Revisions List -->
+        <div class="w-full md:w-80 border-b md:border-b-0 md:border-r border-slate-800 bg-slate-950/70 p-3.5 flex flex-col shrink-0">
+          <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono mb-2 flex items-center justify-between">
+            <span>📂 Retained Files (<span id="modal-revisions-count">0</span>)</span>
+            <span class="text-[10px] text-slate-500">TFTP / Backups</span>
+          </div>
+          <div id="modal-revisions-list" class="space-y-1.5 overflow-y-auto flex-1 pr-1 custom-scrollbar text-xs font-mono">
+            <div class="text-slate-500 text-xs py-4 text-center">Scanning revisions...</div>
+          </div>
+        </div>
+
+        <!-- Right Code Preview Area -->
+        <div class="flex-1 flex flex-col p-4 bg-slate-900 overflow-hidden">
+          <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-xs font-mono text-slate-400">
+            <div class="flex items-center gap-2 truncate">
+              <span class="text-slate-500">Active File:</span>
+              <strong id="modal-backup-active-filename" class="text-emerald-400 truncate">Loading...</strong>
+            </div>
+            <div class="flex items-center gap-3 shrink-0">
+              <span id="modal-backup-active-time" class="text-slate-400">--</span>
+              <span id="modal-backup-active-size" class="px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">-- KB</span>
+            </div>
+          </div>
+
+          <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-200 overflow-auto flex-1 select-text">
+            <pre id="modal-backup-content" class="whitespace-pre font-mono leading-relaxed">Loading backup file...</pre>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="px-6 py-3 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between text-xs font-mono">
+        <span class="text-slate-500">All retained configurations are stored in the local server TFTP / backups repository.</span>
+        <button onclick="closeModal('modal-backups')" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Field Engineer Switch Recovery Cheat Sheet (SOP) -->
+  <div id="modal-cheatsheet" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      
+      <!-- Header -->
+      <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
+        <div class="flex items-center gap-3">
+          <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-lg">
+            📖
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-bold text-white">Field Engineer Switch Recovery & Replacement SOP</h2>
+              <span class="px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-mono font-bold">Console & TFTP Reference</span>
+            </div>
+            <p class="text-xs text-slate-400 font-mono">
+              Standard Operating Procedures for field workers replacing RMA switches, factory wiping hardware, and loading saved configurations.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- OS Tabs -->
+          <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 font-mono text-xs">
+            <button
+              id="cs-tab-exos"
+              onclick="setCheatSheetOs('EXOS')"
+              class="px-3 py-1.5 rounded-lg font-bold bg-indigo-600 text-white transition shadow"
+            >
+              ExtremeXOS (EXOS)
+            </button>
+            <button
+              id="cs-tab-voss"
+              onclick="setCheatSheetOs('VOSS')"
+              class="px-3 py-1.5 rounded-lg font-bold text-slate-400 hover:text-white transition"
+            >
+              Virtual OS (VOSS / VSP)
+            </button>
+          </div>
+          <button onclick="closeModal('modal-cheatsheet')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
         </div>
       </div>
 
-      <div class="px-6 py-3 border-t border-slate-800 bg-slate-950/60 flex justify-end">
-        <button onclick="closeModal('modal-backups')" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white">Close</button>
+      <!-- Scrollable Body -->
+      <div class="p-6 overflow-y-auto flex-1 space-y-6">
+        
+        <!-- EXOS View -->
+        <div id="cs-view-exos" class="space-y-5">
+          <!-- Quick Specs Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 font-mono">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <div class="text-[10px] text-slate-500 uppercase font-bold">Console Serial Settings</div>
+              <div class="text-sm font-bold text-white mt-1">9600 baud, 8-N-1</div>
+              <div class="text-[11px] text-slate-400 mt-1">RJ-45 Rollover or Micro-USB</div>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <div class="text-[10px] text-slate-500 uppercase font-bold">Default Factory Login</div>
+              <div class="text-sm font-bold text-emerald-400 mt-1">admin / &lt;empty password&gt;</div>
+              <div class="text-[11px] text-slate-400 mt-1">No password on clean unconfigure</div>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <div class="text-[10px] text-slate-500 uppercase font-bold">Recommended Script Format</div>
+              <div class="text-sm font-bold text-indigo-400 mt-1">.xsf (ASCII CLI Script)</div>
+              <div class="text-[11px] text-slate-400 mt-1">Directly executable via load config</div>
+            </div>
+          </div>
+
+          <!-- Step 1 -->
+          <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden font-mono">
+            <div class="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs flex items-center justify-center font-bold">1</span>
+                <span class="text-xs font-bold text-slate-200">Step 1: Clean Factory Wipe & Temporary Management IP</span>
+              </div>
+              <button onclick="copyCheatSheetStep('exos-1')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
+                📋 Copy Commands
+              </button>
+            </div>
+            <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
+              <pre id="cs-code-exos-1" class="whitespace-pre text-slate-200"># 1. Reset switch to clean factory default state
+unconfigure switch all
+reboot
+
+# 2. After reboot, log in as 'admin' (hit enter for password)
+# 3. Configure temporary IP to reach your TFTP backup server
+configure vlan Default ipaddress 10.36.226.99 255.255.255.0
+configure iproute add default 10.36.226.1
+ping 10.36.226.7</pre>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden font-mono">
+            <div class="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-indigo-500/20 text-indigo-400 text-xs flex items-center justify-center font-bold">2</span>
+                <span class="text-xs font-bold text-slate-200">Step 2: Pull .xsf Configuration from TFTP & Apply to Switch</span>
+              </div>
+              <button onclick="copyCheatSheetStep('exos-2')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
+                📋 Copy Commands
+              </button>
+            </div>
+            <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
+              <pre id="cs-code-exos-2" class="whitespace-pre text-slate-200"># 1. Download switch configuration script from TFTP server
+tftp get 10.36.226.7 vr "VR-Default" SW-EDGE-EXOS-02.xsf
+
+# 2. Execute configuration commands
+load configuration SW-EDGE-EXOS-02.xsf
+
+# 3. Commit running configuration to primary NVRAM
+save configuration
+use configuration primary</pre>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden font-mono">
+            <div class="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs flex items-center justify-center font-bold">3</span>
+                <span class="text-xs font-bold text-slate-200">Step 3: Verification & Port Uplink Checks</span>
+              </div>
+              <button onclick="copyCheatSheetStep('exos-3')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
+                📋 Copy Commands
+              </button>
+            </div>
+            <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
+              <pre id="cs-code-exos-3" class="whitespace-pre text-slate-200">show vlan
+show ports description
+show iproute
+show inline-power
+show lldp neighbors</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- VOSS View -->
+        <div id="cs-view-voss" class="hidden space-y-5">
+          <!-- Quick Specs Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 font-mono">
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <div class="text-[10px] text-slate-500 uppercase font-bold">Console Serial Settings</div>
+              <div class="text-sm font-bold text-white mt-1">9600 baud, 8-N-1</div>
+              <div class="text-[11px] text-slate-400 mt-1">DB9 / RJ-45 Rollover</div>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <div class="text-[10px] text-slate-500 uppercase font-bold">Default Factory Login</div>
+              <div class="text-sm font-bold text-purple-400 mt-1">rwa / rwa (or admin / admin)</div>
+              <div class="text-[11px] text-slate-400 mt-1">Read-Write-Admin privilege level</div>
+            </div>
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
+              <div class="text-[10px] text-slate-500 uppercase font-bold">Config File Architecture</div>
+              <div class="text-sm font-bold text-purple-400 mt-1">config.cfg (ASCII CLI format)</div>
+              <div class="text-[11px] text-slate-400 mt-1">Loaded on boot via boot flags</div>
+            </div>
+          </div>
+
+          <!-- Step 1 -->
+          <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden font-mono">
+            <div class="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 text-xs flex items-center justify-center font-bold">1</span>
+                <span class="text-xs font-bold text-slate-200">Step 1: Enter Privileged Mode & Factory Zeroize</span>
+              </div>
+              <button onclick="copyCheatSheetStep('voss-1')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
+                📋 Copy Commands
+              </button>
+            </div>
+            <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
+              <pre id="cs-code-voss-1" class="whitespace-pre text-slate-200">enable
+config t
+boot config flags factory-default
+reset -y</pre>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden font-mono">
+            <div class="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-purple-500/20 text-purple-400 text-xs flex items-center justify-center font-bold">2</span>
+                <span class="text-xs font-bold text-slate-200">Step 2: Transfer Saved .cfg & Apply to Boot Flags</span>
+              </div>
+              <button onclick="copyCheatSheetStep('voss-2')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
+                📋 Copy Commands
+              </button>
+            </div>
+            <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
+              <pre id="cs-code-voss-2" class="whitespace-pre text-slate-200">enable
+config t
+interface Vlan 1
+  ip address 10.36.226.99 255.255.255.0
+  ip default-gateway 10.36.226.1
+exit
+
+# Copy backup to local NVRAM config.cfg and reboot
+copy tftp 10.36.226.7 SW-FABRIC-VOSS-01.cfg config.cfg
+boot config flags config-file config.cfg
+reset -y</pre>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="bg-slate-950 rounded-xl border border-slate-800 overflow-hidden font-mono">
+            <div class="px-4 py-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs flex items-center justify-center font-bold">3</span>
+                <span class="text-xs font-bold text-slate-200">Step 3: Verify SPBM Fabric & Interfaces</span>
+              </div>
+              <button onclick="copyCheatSheetStep('voss-3')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
+                📋 Copy Commands
+              </button>
+            </div>
+            <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
+              <pre id="cs-code-voss-3" class="whitespace-pre text-slate-200">show isis spbm
+show isis adjacency
+show vlan i-sid
+show interfaces gigabitEthernet
+show ip route</pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Safety Notice Banner -->
+        <div class="p-4 bg-amber-950/30 border border-amber-500/30 rounded-xl flex items-start gap-3 text-xs font-mono text-amber-300">
+          <span class="text-base">⚠️</span>
+          <div>
+            <strong>Firmware Matching Warning:</strong> Always verify that the replacement hardware has the same major firmware revision (e.g. EXOS 31.x or VOSS 8.x) as the backup file before executing configuration scripts to prevent syntax mismatch.
+          </div>
+        </div>
+
       </div>
+
+      <div class="px-6 py-3 border-t border-slate-800 bg-slate-950/80 flex justify-end">
+        <button onclick="closeModal('modal-cheatsheet')" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white">Close</button>
+      </div>
+
     </div>
   </div>
 
@@ -5998,23 +6296,225 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       }
     }
 
+    // Backup History Multi-Revision State
+    let currentBackupModalIp = '';
+    let currentBackupModalHostname = '';
+    let currentBackupModalRevisions = [];
+    let activeSelectedRevisionIndex = 0;
+
     async function showPreviousBackups(ip, hostname) {
+      currentBackupModalIp = ip;
+      currentBackupModalHostname = hostname;
       document.getElementById('modal-backup-title').innerText = `${hostname} (${ip})`;
-      document.getElementById('modal-backup-subtitle').innerText = `Archive of backups in folder`;
-      document.getElementById('modal-backup-content').innerText = 'Loading backup content...';
+      document.getElementById('modal-backup-subtitle').innerText = `Select any historical revision below to inspect or copy to clipboard`;
+      document.getElementById('modal-backup-content').innerText = 'Loading backup archive...';
+      document.getElementById('modal-revisions-list').innerHTML = '<div class="text-slate-500 text-xs py-4 text-center">Scanning TFTP / backups folder...</div>';
+      document.getElementById('modal-revisions-count').innerText = '0';
+      document.getElementById('modal-backup-active-filename').innerText = 'Loading...';
+      document.getElementById('modal-backup-active-time').innerText = '--';
+      document.getElementById('modal-backup-active-size').innerText = '-- KB';
+      
       openModal('modal-backups');
 
       try {
+        // Try finding switch from switchesData first for instant revision array
+        let switchObj = (switchesData || []).find(s => s.ip === ip);
+        let revisions = (switchObj && switchObj.revisions && switchObj.revisions.length > 0) ? switchObj.revisions : [];
+
+        // Always also query backend for latest on-disk state
         const res = await fetch(`/api/backup-file?ip=${encodeURIComponent(ip)}`);
+        const data = await res.json();
+        
+        let primaryContent = '';
+        let primaryFilename = '';
+        let primaryTime = '';
+        let primarySize = 0;
+
+        if (data && data.backupContent) {
+          primaryContent = data.backupContent;
+          primaryFilename = data.filename || `${hostname}.xsf`;
+          primaryTime = data.timestamp || 'Latest';
+          primarySize = data.fileSizeKb || 0;
+        }
+
+        // If revisions not in memory, construct at least primary or fallback
+        if (revisions.length === 0 && primaryContent) {
+          revisions = [{
+            filename: primaryFilename,
+            timestamp: primaryTime,
+            fileSizeKb: primarySize,
+            path: data.path || ''
+          }];
+        }
+
+        currentBackupModalRevisions = revisions;
+        activeSelectedRevisionIndex = 0;
+        document.getElementById('modal-revisions-count').innerText = revisions.length;
+
+        if (revisions.length === 0 && !primaryContent) {
+          document.getElementById('modal-revisions-list').innerHTML = `
+            <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 text-center space-y-1">
+              <div class="text-amber-400">⚠️ No Backups Found</div>
+              <div class="text-[11px]">No backup files (.xsf / .cfg) currently on disk for ${ip}.</div>
+            </div>
+          `;
+          document.getElementById('modal-backup-content').innerText = `# No configuration file found on disk for ${hostname} (${ip}).\n# Click the "⚡ Backup" button on the main dashboard to generate one right now!`;
+          document.getElementById('modal-backup-active-filename').innerText = 'None';
+          return;
+        }
+
+        // Render revisions sidebar
+        renderBackupRevisionsList();
+
+        // Load active revision (default to index 0: latest)
+        loadBackupRevision(0, primaryContent);
+
+      } catch (err) {
+        document.getElementById('modal-backup-content').innerText = 'Failed to load backup history: ' + err.message;
+      }
+    }
+
+    function renderBackupRevisionsList() {
+      const container = document.getElementById('modal-revisions-list');
+      if (!container) return;
+
+      if (!currentBackupModalRevisions || currentBackupModalRevisions.length === 0) {
+        container.innerHTML = '<div class="text-slate-500 text-xs py-4 text-center">No retained files</div>';
+        return;
+      }
+
+      container.innerHTML = currentBackupModalRevisions.map((rev, idx) => {
+        const isSelected = idx === activeSelectedRevisionIndex;
+        const isLatest = idx === 0;
+        return `
+          <button
+            type="button"
+            onclick="selectBackupRevision(${idx})"
+            class="w-full text-left p-2.5 rounded-xl border transition flex flex-col gap-1 ${
+              isSelected 
+                ? 'bg-indigo-950/70 border-indigo-500/80 text-white shadow' 
+                : 'bg-slate-900/60 border-slate-800 hover:bg-slate-800/80 text-slate-300'
+            }"
+          >
+            <div class="flex items-center justify-between gap-1.5">
+              <div class="font-bold text-xs truncate flex items-center gap-1.5 ${isSelected ? 'text-indigo-200' : 'text-slate-200'}">
+                <span>📄</span>
+                <span class="truncate">${escapeHtml(rev.filename)}</span>
+              </div>
+              ${isLatest ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 shrink-0">LATEST</span>' : ''}
+            </div>
+            <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
+              <span>🕒 ${rev.timestamp || '--'}</span>
+              <span class="px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">${rev.fileSizeKb || 0} KB</span>
+            </div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    async function selectBackupRevision(index) {
+      if (index < 0 || index >= currentBackupModalRevisions.length) return;
+      activeSelectedRevisionIndex = index;
+      renderBackupRevisionsList();
+      await loadBackupRevision(index);
+    }
+
+    async function loadBackupRevision(index, cachedContent) {
+      const rev = currentBackupModalRevisions[index];
+      if (!rev) return;
+
+      document.getElementById('modal-backup-active-filename').innerText = rev.filename;
+      document.getElementById('modal-backup-active-time').innerText = rev.timestamp;
+      document.getElementById('modal-backup-active-size').innerText = `${rev.fileSizeKb || 0} KB`;
+
+      if (cachedContent && index === 0) {
+        document.getElementById('modal-backup-content').innerText = cachedContent;
+        return;
+      }
+
+      document.getElementById('modal-backup-content').innerText = `Loading ${rev.filename} from disk...`;
+
+      try {
+        const url = rev.path 
+          ? `/api/backup-file?ip=${encodeURIComponent(currentBackupModalIp)}&path=${encodeURIComponent(rev.path)}`
+          : `/api/backup-file?ip=${encodeURIComponent(currentBackupModalIp)}`;
+        const res = await fetch(url);
         const data = await res.json();
         if (data && data.backupContent) {
           document.getElementById('modal-backup-content').innerText = data.backupContent;
         } else {
-          document.getElementById('modal-backup-content').innerText = `# No configuration file (.xsf / .cfg) found on disk for IP ${ip}.\n# Click the "⚡ Backup" button on the portal to generate one right now!`;
+          document.getElementById('modal-backup-content').innerText = `# Could not read file content for ${rev.filename}.`;
         }
-      } catch (err) {
-        document.getElementById('modal-backup-content').innerText = 'Failed to load backup: ' + err.message;
+      } catch (e) {
+        document.getElementById('modal-backup-content').innerText = `# Error reading ${rev.filename}: ` + e.message;
       }
+    }
+
+    function copyCurrentSelectedBackupRevision() {
+      const text = document.getElementById('modal-backup-content').innerText;
+      if (!text || text.startsWith('# No configuration') || text.startsWith('Loading')) {
+        showToast('No valid configuration content to copy', 'warning');
+        return;
+      }
+      navigator.clipboard.writeText(text).then(() => {
+        const rev = currentBackupModalRevisions[activeSelectedRevisionIndex];
+        const fname = rev ? rev.filename : 'configuration';
+        showToast(`✔ Copied ${fname} to clipboard!`, 'success');
+      }).catch(err => {
+        showToast('Failed to copy: ' + err, 'error');
+      });
+    }
+
+    function downloadCurrentSelectedBackupRevision() {
+      const text = document.getElementById('modal-backup-content').innerText;
+      if (!text || text.startsWith('# No configuration') || text.startsWith('Loading')) {
+        showToast('No file to download', 'warning');
+        return;
+      }
+      const rev = currentBackupModalRevisions[activeSelectedRevisionIndex];
+      const fname = rev ? rev.filename : `${currentBackupModalHostname}_backup.xsf`;
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = fname;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast(`📥 Downloading ${fname}`, 'success');
+    }
+
+    // Field Tech Recovery Cheat Sheet Controller
+    function openCheatSheetModal() {
+      openModal('modal-cheatsheet');
+    }
+
+    function setCheatSheetOs(os) {
+      const exosTab = document.getElementById('cs-tab-exos');
+      const vossTab = document.getElementById('cs-tab-voss');
+      const exosView = document.getElementById('cs-view-exos');
+      const vossView = document.getElementById('cs-view-voss');
+
+      if (os === 'EXOS') {
+        exosTab.className = 'px-3 py-1.5 rounded-lg font-bold bg-indigo-600 text-white transition shadow';
+        vossTab.className = 'px-3 py-1.5 rounded-lg font-bold text-slate-400 hover:text-white transition';
+        exosView.classList.remove('hidden');
+        vossView.classList.add('hidden');
+      } else {
+        vossTab.className = 'px-3 py-1.5 rounded-lg font-bold bg-purple-600 text-white transition shadow';
+        exosTab.className = 'px-3 py-1.5 rounded-lg font-bold text-slate-400 hover:text-white transition';
+        vossView.classList.remove('hidden');
+        exosView.classList.add('hidden');
+      }
+    }
+
+    function copyCheatSheetStep(stepId) {
+      const preEl = document.getElementById(`cs-code-${stepId}`);
+      if (!preEl) return;
+      navigator.clipboard.writeText(preEl.innerText).then(() => {
+        showToast('✔ Commands copied to clipboard!', 'success');
+      }).catch(err => {
+        showToast('Failed to copy: ' + err, 'error');
+      });
     }
 
     async function showPortDescriptionsLive(ip, hostname) {
