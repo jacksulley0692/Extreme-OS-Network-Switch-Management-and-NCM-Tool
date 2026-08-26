@@ -5047,8 +5047,8 @@ show ip route</pre>
       if (!hostnameOrIp) return "UNASSIGNED";
       const clean = String(hostnameOrIp).trim();
       
-      // Known IP subnet mappings
-      if (clean.startsWith('10.32.221.') || clean.startsWith('10.32.81.')) return 'YORK';
+      // Known IP subnet mappings (York is exclusively 10.32.221.x)
+      if (clean.startsWith('10.32.221.')) return 'YORK';
       if (clean.startsWith('10.32.214.')) return 'LICHFIELD';
       if (clean.startsWith('10.32.54.')) return 'LEEDS';
       if (clean.startsWith('10.32.61.')) return 'LEICESTER';
@@ -5056,6 +5056,7 @@ show ip route</pre>
       if (clean.startsWith('10.32.227.')) return 'BEACONSFIELD';
       if (clean.startsWith('10.32.52.')) return 'LINCOLN';
       if (clean.startsWith('10.32.48.')) return 'LUTON';
+      if (clean.startsWith('10.32.224.')) return 'ABERDEEN';
 
       if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(clean)) return "UNASSIGNED";
       
@@ -5369,7 +5370,18 @@ show ip route</pre>
       if (fleetToolbar) fleetToolbar.classList.add('hidden');
       if (switchesGrid) switchesGrid.classList.add('hidden');
 
-      const siteSwitches = allSwitches.filter(sw => extractSiteCode(sw.hostname || sw.ip) === selectedSite);
+      const seenSiteIps = new Set();
+      const siteSwitches = allSwitches.filter(sw => {
+        if (!sw || !sw.ip) return false;
+        const normalizedIp = sw.ip.trim();
+        if (seenSiteIps.has(normalizedIp)) return false;
+        const matches = extractSiteCode(sw.hostname || sw.ip) === selectedSite;
+        if (matches) {
+          seenSiteIps.add(normalizedIp);
+          return true;
+        }
+        return false;
+      });
       const isYork = selectedSite.toUpperCase() === 'YORK' || selectedSite.toLowerCase().includes('york');
       const backedUpCount = siteSwitches.filter(s => s.hasBackup).length;
       const coveragePct = siteSwitches.length > 0 ? Math.round((backedUpCount / siteSwitches.length) * 100) : 100;
@@ -5794,7 +5806,18 @@ show ip route</pre>
         const res = await fetch('/api/switches');
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
-        allSwitches = data.switches || [];
+        const raw = data.switches || [];
+        const seenIps = new Set();
+        allSwitches = [];
+        for (const sw of raw) {
+          if (sw && sw.ip) {
+            const cleanIp = sw.ip.trim();
+            if (!seenIps.has(cleanIp)) {
+              seenIps.add(cleanIp);
+              allSwitches.push(sw);
+            }
+          }
+        }
         document.getElementById('total-switch-count').innerText = allSwitches.length;
         updateReachabilityCounters();
         renderSiteTree();
