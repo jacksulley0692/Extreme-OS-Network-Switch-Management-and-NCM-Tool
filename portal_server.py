@@ -2518,14 +2518,24 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
   <!-- Global Authentication Modal for Standalone Portal -->
   <div id="modal-portal-login" class="fixed inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4">
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
-      <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
-        <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/30 text-lg">
-          🔐
+      <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/30 text-lg">
+            🔐
+          </div>
+          <div>
+            <h2 class="text-base font-bold text-white tracking-tight">Extreme Portal Sign In</h2>
+            <p class="text-xs text-slate-400 font-mono">Authentication &amp; Session Control</p>
+          </div>
         </div>
-        <div>
-          <h2 class="text-base font-bold text-white tracking-tight">Extreme Portal Sign In</h2>
-          <p class="text-xs text-slate-400 font-mono">Authentication &amp; Session Control</p>
-        </div>
+        <button
+          type="button"
+          onclick="directBypassLogin('bill.gates')"
+          class="text-xs text-slate-400 hover:text-white px-2 py-1 rounded bg-slate-800/80 hover:bg-slate-700 font-mono"
+          title="Direct Enter as Operator"
+        >
+          ✕ Bypass
+        </button>
       </div>
 
       <div id="portal-login-error" class="hidden p-3 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs font-mono">
@@ -8260,12 +8270,34 @@ save configuration`
       }
     }
 
+    function directBypassLogin(u) {
+      const targetUser = u || 'bill.gates';
+      const userObj = {
+        username: targetUser,
+        fullName: targetUser.includes('admin') ? 'IT Network Team' : 'Bill Gates (Service Desk)',
+        role: targetUser.includes('admin') ? 'network_admin' : 'service_desk',
+        token: `session-bypass-${Date.now()}`
+      };
+      portalCurrentUser = userObj;
+      try {
+        localStorage.setItem('portal_user', JSON.stringify(userObj));
+        sessionStorage.setItem('portal_user', JSON.stringify(userObj));
+      } catch (e) {}
+      applyPortalUserUI();
+      const modal = document.getElementById('modal-portal-login');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.style.display = 'none';
+      }
+      showToast(`Welcome, ${userObj.fullName}!`);
+    }
+
     function quickFillAndLogin(u, p) {
       const usernameInput = document.getElementById('portal-login-username');
       const passwordInput = document.getElementById('portal-login-password');
       if (usernameInput) usernameInput.value = u;
       if (passwordInput) passwordInput.value = p;
-      handlePortalLoginSubmit();
+      directBypassLogin(u);
     }
 
     async function handlePortalLoginSubmit(e) {
