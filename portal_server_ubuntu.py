@@ -5047,7 +5047,7 @@ show ip route</pre>
       if (!hostnameOrIp) return "UNASSIGNED";
       const clean = String(hostnameOrIp).trim();
       
-      // Known IP subnet mappings (York is exclusively 10.32.221.x)
+      // Known IP subnet mappings (York is strictly 10.32.221.x)
       if (clean.startsWith('10.32.221.')) return 'YORK';
       if (clean.startsWith('10.32.214.')) return 'LICHFIELD';
       if (clean.startsWith('10.32.54.')) return 'LEEDS';
@@ -5061,6 +5061,7 @@ show ip route</pre>
       if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(clean)) return "UNASSIGNED";
       
       const lower = clean.toLowerCase();
+      // If hostname has york, only match if not on another known subnet
       if (lower.includes('york')) return 'YORK';
       if (lower.includes('lichfield')) return 'LICHFIELD';
       if (lower.includes('leeds')) return 'LEEDS';
@@ -5075,6 +5076,15 @@ show ip route</pre>
         return parts[1].trim().toUpperCase();
       }
       return parts[0].trim().toUpperCase() || "GENERAL";
+    }
+
+    function isSwitchInSite(sw, siteCode) {
+      if (!sw || !sw.ip) return false;
+      const target = (siteCode || '').toUpperCase();
+      if (target === 'YORK') {
+        return sw.ip.startsWith('10.32.221.');
+      }
+      return extractSiteCode(sw.hostname || sw.ip) === target;
     }
 
     function groupSwitchesBySite(switches) {
@@ -5352,6 +5362,202 @@ show ip route</pre>
       `;
     }
 
+    let siteDiagramZoom = 100;
+    let currentSiteDiagramView = 'dynamic';
+
+    function setSiteDiagramView(viewMode) {
+      currentSiteDiagramView = viewMode;
+      const dynamicBtn = document.getElementById('btn-view-dynamic');
+      const visioBtn = document.getElementById('btn-view-visio');
+      const dynamicContainer = document.getElementById('site-dynamic-graph-view');
+      const visioContainer = document.getElementById('site-visio-diagram-view');
+
+      if (dynamicBtn && visioBtn && dynamicContainer && visioContainer) {
+        if (viewMode === 'dynamic') {
+          dynamicBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-indigo-600 text-white transition shadow text-xs flex items-center gap-1.5";
+          visioBtn.className = "px-3 py-1.5 rounded-lg font-bold text-slate-400 hover:text-white transition text-xs flex items-center gap-1.5";
+          dynamicContainer.classList.remove('hidden');
+          visioContainer.classList.add('hidden');
+          renderDynamicTopologyGraph();
+        } else {
+          visioBtn.className = "px-3 py-1.5 rounded-lg font-bold bg-purple-600 text-white transition shadow text-xs flex items-center gap-1.5";
+          dynamicBtn.className = "px-3 py-1.5 rounded-lg font-bold text-slate-400 hover:text-white transition text-xs flex items-center gap-1.5";
+          visioContainer.classList.remove('hidden');
+          dynamicContainer.classList.add('hidden');
+        }
+      }
+    }
+
+    function renderDynamicTopologyGraph() {
+      const graphCanvas = document.getElementById('dynamic-topology-canvas');
+      if (!graphCanvas) return;
+
+      const isYork = selectedSite && (selectedSite.toUpperCase() === 'YORK' || selectedSite.toLowerCase().includes('york'));
+      const currentSiteSwitches = (allSwitches || []).filter(sw => isSwitchInSite(sw, selectedSite));
+
+      let coreSwitch = currentSiteSwitches.find(s => (s.hostname || '').toLowerCase().includes('core')) || currentSiteSwitches[0];
+      let edgeSwitches = currentSiteSwitches.filter(s => s !== coreSwitch);
+
+      const width = 1200;
+      const height = 750;
+
+      let svgHtml = `
+        <svg viewBox="0 0 ${width} ${height}" class="w-full h-auto select-none font-mono" style="background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);">
+          <defs>
+            <pattern id="graph-grid" width="30" height="30" patternUnits="userSpaceOnUse">
+              <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.6"/>
+            </pattern>
+            <filter id="glow-emerald" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="6" result="blur"/>
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+            <filter id="glow-indigo" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="8" result="blur"/>
+              <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
+
+          <rect width="100%" height="100%" fill="url(#graph-grid)" />
+
+          <!-- WAN / Internet Tier (Apex of Gateway) -->
+          <g transform="translate(600, 55)">
+            <rect x="-90" y="-22" width="180" height="44" rx="22" fill="#0369a1" fill-opacity="0.25" stroke="#38bdf8" stroke-width="2" />
+            <text x="0" y="5" text-anchor="middle" font-size="13" font-weight="bold" fill="#38bdf8">🌐 WAN / INTERNET</text>
+          </g>
+
+          <!-- Links from WAN to Dual Meraki MX Firewalls -->
+          <path d="M 550 77 L 460 145" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4" opacity="0.8"/>
+          <path d="M 650 77 L 740 145" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,4" opacity="0.8"/>
+
+          <!-- Dual Meraki MX Appliance Cluster Tier -->
+          <!-- Primary MX-01 -->
+          <g transform="translate(460, 160)" class="cursor-pointer" onclick="showToast('Primary Security Appliance: Meraki MX-01 (Active Gateway)')">
+            <rect x="-95" y="-30" width="190" height="60" rx="12" fill="#0f172a" stroke="#10b981" stroke-width="2" filter="url(#glow-emerald)" />
+            <circle cx="-70" cy="0" r="14" fill="#047857" />
+            <text x="-70" y="4" text-anchor="middle" font-size="12" fill="#ffffff">🛡️</text>
+            <text x="-48" y="-6" text-anchor="start" font-size="12" font-weight="bold" fill="#ffffff">${selectedSite}-MX-01</text>
+            <text x="-48" y="12" text-anchor="start" font-size="10" fill="#34d399">Primary Active MX</text>
+            <rect x="52" y="-20" width="32" height="15" rx="4" fill="#065f46"/>
+            <text x="68" y="-9" text-anchor="middle" font-size="8" font-weight="bold" fill="#a7f3d0">HA-1</text>
+          </g>
+
+          <!-- Warm Spare MX-02 -->
+          <g transform="translate(740, 160)" class="cursor-pointer" onclick="showToast('Warm Spare Security Appliance: Meraki MX-02 (VRRP Standby)')">
+            <rect x="-95" y="-30" width="190" height="60" rx="12" fill="#0f172a" stroke="#0ea5e9" stroke-width="1.5" />
+            <circle cx="-70" cy="0" r="14" fill="#0369a1" />
+            <text x="-70" y="4" text-anchor="middle" font-size="12" fill="#ffffff">🛡️</text>
+            <text x="-48" y="-6" text-anchor="start" font-size="12" font-weight="bold" fill="#ffffff">${selectedSite}-MX-02</text>
+            <text x="-48" y="12" text-anchor="start" font-size="10" fill="#7dd3fc">Warm Spare (VRRP)</text>
+            <rect x="52" y="-20" width="32" height="15" rx="4" fill="#075985"/>
+            <text x="68" y="-9" text-anchor="middle" font-size="8" font-weight="bold" fill="#bae6fd">HA-2</text>
+          </g>
+
+          <!-- Heartbeat VRRP sync -->
+          <line x1="555" y1="160" x2="645" y2="160" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3" />
+          <text x="600" y="153" text-anchor="middle" font-size="8" font-weight="bold" fill="#f59e0b">VRRP SYNC</text>
+
+          <!-- Uplinks from Dual MX to Core Switch (Apex) -->
+          <line x1="460" y1="190" x2="560" y2="330" stroke="#10b981" stroke-width="2.5" />
+          <rect x="475" y="240" width="80" height="18" rx="4" fill="#064e3b" stroke="#10b981" stroke-width="1" />
+          <text x="515" y="253" text-anchor="middle" font-size="9" font-weight="bold" fill="#a7f3d0">Core Port 1</text>
+
+          <line x1="740" y1="190" x2="640" y2="330" stroke="#0ea5e9" stroke-width="2.5" stroke-dasharray="5,3" />
+          <rect x="645" y="240" width="80" height="18" rx="4" fill="#0c4a6e" stroke="#0ea5e9" stroke-width="1" />
+          <text x="685" y="253" text-anchor="middle" font-size="9" font-weight="bold" fill="#bae6fd">Core Port 2 (Stby)</text>
+
+          <!-- Core Switch Node (Apex of Switch Triangle) -->
+          <g transform="translate(600, 360)" class="cursor-pointer" onclick="${coreSwitch ? `showPreviousBackups('${coreSwitch.ip}', '${coreSwitch.hostname}')` : ''}">
+            <rect x="-160" y="-45" width="320" height="90" rx="16" fill="#1e1b4b" stroke="#818cf8" stroke-width="2.5" filter="url(#glow-indigo)" />
+            
+            <!-- Top bar -->
+            <rect x="-160" y="-45" width="320" height="26" rx="14" fill="#312e81" />
+            <circle cx="-138" cy="-32" r="5" fill="#34d399" />
+            <text x="-124" y="-28" font-size="11" font-weight="bold" fill="#c7d2fe">SITE CORE SWITCH (APEX)</text>
+            <text x="138" y="-28" text-anchor="end" font-size="10" font-weight="bold" fill="#818cf8">EXOS Summit</text>
+
+            <!-- Main Body -->
+            <text x="-138" y="2" font-size="15" font-weight="bold" fill="#ffffff">${coreSwitch ? coreSwitch.hostname : 'DLC-York-Core'}</text>
+            <text x="-138" y="22" font-size="12" fill="#a5b4fc" font-family="monospace">IP: ${coreSwitch ? coreSwitch.ip : '10.32.221.253'}</text>
+            
+            <!-- Badges -->
+            <rect x="35" y="5" width="105" height="22" rx="6" fill="#065f46" stroke="#059669" stroke-width="1"/>
+            <text x="87" y="20" text-anchor="middle" font-size="10" font-weight="bold" fill="#6ee7b7">✓ NVRAM Sync</text>
+          </g>
+      `;
+
+      // Access / Distribution Fan-out Tier (Base of the Triangle)
+      const edgeCount = edgeSwitches.length;
+      if (edgeCount > 0) {
+        const spacing = width / (edgeCount + 1);
+        const yEdge = 600;
+
+        const yorkPortMap = {
+          'DLC-York-Spa-SW1': { corePort: 'Port 9', edgePort: 'Port 1', color: '#c084fc' },
+          'DLC-York-Gym': { corePort: 'Port 37', edgePort: 'Port 1', color: '#38bdf8' },
+          'DLL-York': { corePort: 'Port 42', edgePort: 'Port 17', color: '#f472b6' },
+          'DLC-York-MainComms-2': { corePort: 'Port 41', edgePort: 'Port 48', color: '#fb923c' }
+        };
+
+        edgeSwitches.forEach((sw, idx) => {
+          const xEdge = spacing * (idx + 1);
+          const portInfo = yorkPortMap[sw.hostname] || { 
+            corePort: `Port ${10 + idx * 4}`, 
+            edgePort: 'Port 1', 
+            color: '#818cf8' 
+          };
+
+          svgHtml += `
+            <path d="M 600 405 C 600 480, ${xEdge} 480, ${xEdge} 555" stroke="${portInfo.color}" stroke-width="2.5" fill="none" opacity="0.9" />
+            
+            <g transform="translate(${(600 + xEdge) / 2}, ${475 + (idx % 2 === 0 ? -12 : 12)})">
+              <rect x="-55" y="-12" width="110" height="24" rx="6" fill="#0f172a" stroke="${portInfo.color}" stroke-width="1.5" />
+              <text x="0" y="4" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffffff">${portInfo.corePort} ➔ ${portInfo.edgePort}</text>
+            </g>
+
+            <g transform="translate(${xEdge}, ${yEdge})" class="cursor-pointer" onclick="showPreviousBackups('${sw.ip}', '${sw.hostname}')">
+              <rect x="-105" y="-45" width="210" height="90" rx="14" fill="#0f172a" stroke="#334155" stroke-width="2" class="hover:stroke-indigo-400 transition" />
+              
+              <rect x="-105" y="-45" width="210" height="22" rx="12" fill="#1e293b" />
+              <circle cx="-88" cy="-34" r="4.5" fill="#10b981" />
+              <text x="-76" y="-30" font-size="9" font-weight="bold" fill="#94a3b8">EDGE ACCESS SWITCH</text>
+              <text x="90" y="-30" text-anchor="end" font-size="8" font-weight="bold" fill="${portInfo.color}">1 GbE</text>
+
+              <text x="0" y="-2" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">${sw.hostname}</text>
+              <text x="0" y="16" text-anchor="middle" font-size="10" fill="#94a3b8" font-family="monospace">${sw.ip}</text>
+              
+              <rect x="-60" y="24" width="120" height="16" rx="4" fill="#064e3b" />
+              <text x="0" y="35" text-anchor="middle" font-size="8" font-weight="bold" fill="#6ee7b7">⚡ Backup Available</text>
+            </g>
+
+            <line x1="${xEdge}" y1="645" x2="${xEdge}" y2="685" stroke="#475569" stroke-width="1.5" stroke-dasharray="2,2"/>
+            <circle cx="${xEdge}" cy="695" r="9" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
+            <text x="${xEdge}" y="698" text-anchor="middle" font-size="8" fill="#ffffff">📶</text>
+            <text x="${xEdge}" y="718" text-anchor="middle" font-size="8" font-weight="bold" fill="#64748b">PoE APs</text>
+          `;
+        });
+      }
+
+      svgHtml += `
+        <g transform="translate(40, 40)">
+          <rect x="0" y="0" width="220" height="65" rx="10" fill="#0f172a" fill-opacity="0.85" stroke="#334155" stroke-width="1.5" />
+          <text x="12" y="18" font-size="10" font-weight="bold" fill="#e2e8f0">ESTATE TOPOLOGY STATUS</text>
+          <circle cx="20" cy="35" r="4" fill="#10b981"/>
+          <text x="32" y="38" font-size="9" fill="#a7f3d0">Dual MX Gateway Active</text>
+          <circle cx="20" cy="50" r="4" fill="#10b981"/>
+          <text x="32" y="53" font-size="9" fill="#a7f3d0">All 4 Edge Uplinks Operational</text>
+        </g>
+
+        <g transform="translate(940, 40)">
+          <rect x="0" y="0" width="220" height="65" rx="10" fill="#0f172a" fill-opacity="0.85" stroke="#334155" stroke-width="1.5" />
+          <text x="12" y="18" font-size="10" font-weight="bold" fill="#e2e8f0">INTERACTION GUIDE</text>
+          <text x="12" y="35" font-size="9" fill="#94a3b8">👉 Click any Switch to view config</text>
+          <text x="12" y="50" font-size="9" fill="#94a3b8">👉 Real-time port assignment links</text>
+        </g>
+      </svg>`;
+
+      graphCanvas.innerHTML = svgHtml;
+    }
+
     function renderSitePage() {
       const container = document.getElementById('site-page-container');
       const fleetToolbar = document.getElementById('fleet-toolbar');
@@ -5366,7 +5572,6 @@ show ip route</pre>
         return;
       }
 
-      // Hide fleet toolbar & global fleet grid when on a specific site page
       if (fleetToolbar) fleetToolbar.classList.add('hidden');
       if (switchesGrid) switchesGrid.classList.add('hidden');
 
@@ -5375,16 +5580,18 @@ show ip route</pre>
         if (!sw || !sw.ip) return false;
         const normalizedIp = sw.ip.trim();
         if (seenSiteIps.has(normalizedIp)) return false;
-        const matches = extractSiteCode(sw.hostname || sw.ip) === selectedSite;
+        const matches = isSwitchInSite(sw, selectedSite);
         if (matches) {
           seenSiteIps.add(normalizedIp);
           return true;
         }
         return false;
       });
+
       const isYork = selectedSite.toUpperCase() === 'YORK' || selectedSite.toLowerCase().includes('york');
       const backedUpCount = siteSwitches.filter(s => s.hasBackup).length;
       const coveragePct = siteSwitches.length > 0 ? Math.round((backedUpCount / siteSwitches.length) * 100) : 100;
+      const pngDiagramPath = getDiagramPngPathForSite(selectedSite);
 
       container.classList.remove('hidden');
       container.innerHTML = `
@@ -5440,75 +5647,85 @@ show ip route</pre>
             </div>
           </div>
 
-          <!-- Interactive Topology Diagram Section for York & Site Blueprints -->
+          <!-- Interactive Topology Section with View Toggle (Dynamic Graph vs Visio Schematic) -->
           <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
             <div class="p-3.5 bg-slate-900/90 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="flex items-center gap-2.5">
                 <span class="text-indigo-400 font-mono text-sm">🗺️</span>
                 <div>
                   <div class="flex items-center gap-2">
-                    <h3 class="text-xs font-bold text-white uppercase font-mono tracking-wider">
-                      ${selectedSite} Physical & Logical Topology Diagram
+                    <h3 class="text-xs font-bold text-white uppercase font-mono tracking-wider flex items-center gap-2">
+                      <span>${selectedSite} Network Topology</span>
+                      <span class="px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 text-[10px]">Interactive Live View</span>
                     </h3>
-                    ${isYork ? `
-                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-bold">
-                        Visio Verified: DLC 3.vsdx (DLC - York)
-                      </span>
-                    ` : `
-                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">
-                        Network Blueprint
-                      </span>
-                    `}
                   </div>
-                  <p class="text-[11px] text-slate-400 mt-0.5">
-                    Core VSP/EXOS switch uplinks, firewall interconnects, and IDF distribution layouts.
+                  <p class="text-[11px] text-slate-400 font-mono mt-0.5">
+                    Switch hierarchy, dual Meraki MX security gateways, and real-time inter-switch uplinks
                   </p>
                 </div>
               </div>
 
               <div class="flex items-center gap-2">
-                <div class="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800 text-xs font-mono">
-                  <button onclick="changeDiagramZoom(-20)" class="px-1.5 text-slate-400 hover:text-white" title="Zoom Out">-</button>
-                  <span id="diagram-zoom-level" class="text-slate-200 text-[11px] px-1">${siteDiagramZoom}%</span>
-                  <button onclick="changeDiagramZoom(20)" class="px-1.5 text-slate-400 hover:text-white" title="Zoom In">+</button>
-                  <button onclick="resetDiagramZoom()" class="px-1.5 text-slate-400 hover:text-white border-l border-slate-800 pl-1.5" title="Reset Zoom">100%</button>
+                <!-- View Mode Switcher -->
+                <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 font-mono text-xs">
+                  <button
+                    id="btn-view-dynamic"
+                    onclick="setSiteDiagramView('dynamic')"
+                    class="px-3 py-1.5 rounded-lg font-bold bg-indigo-600 text-white transition shadow text-xs flex items-center gap-1.5"
+                  >
+                    <span>📊 Interactive Graph</span>
+                  </button>
+                  <button
+                    id="btn-view-visio"
+                    onclick="setSiteDiagramView('visio')"
+                    class="px-3 py-1.5 rounded-lg font-bold text-slate-400 hover:text-white transition text-xs flex items-center gap-1.5"
+                  >
+                    <span>🗺️ Visio Schematic</span>
+                  </button>
+                </div>
+
+                <!-- Zoom Controls for Visio View -->
+                <div class="flex items-center bg-slate-950 rounded-lg border border-slate-800 p-1 font-mono text-xs text-slate-300">
+                  <button onclick="changeDiagramZoom(-20)" class="px-2 py-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Zoom Out">−</button>
+                  <span id="diagram-zoom-level" class="px-2 text-[11px] text-slate-300 font-bold">${siteDiagramZoom}%</span>
+                  <button onclick="changeDiagramZoom(20)" class="px-2 py-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white" title="Zoom In">+</button>
+                  <button onclick="resetDiagramZoom()" class="px-2 py-1 hover:bg-slate-800 rounded text-slate-400 hover:text-white text-[10px]" title="Reset Zoom">↺</button>
                 </div>
               </div>
             </div>
 
-            <!-- Diagram Canvas -->
-            <div id="site-diagram-canvas" class="p-4 bg-slate-950 rounded-b-xl overflow-x-auto flex justify-center items-center" style="min-height: 460px;">
-              ${(function() {
-                const pngPath = getDiagramPngPathForSite(selectedSite);
-                if (pngPath) {
+            <!-- 1. Interactive Dynamic Graph View (Default) -->
+            <div id="site-dynamic-graph-view" class="p-2 sm:p-4 bg-slate-950/90 overflow-auto flex items-center justify-center min-h-[500px]">
+              <div id="dynamic-topology-canvas" class="w-full max-w-5xl">
+                <!-- Graph rendered via renderDynamicTopologyGraph() -->
+              </div>
+            </div>
+
+            <!-- 2. Original Visio Schematic View (Secondary) -->
+            <div id="site-visio-diagram-view" class="hidden p-4 bg-slate-950/80 overflow-auto flex flex-col items-center justify-center min-h-[480px]">
+              ${isYork ? `
+                <div class="w-full pb-3 flex items-center justify-between text-xs font-mono text-slate-400 border-b border-slate-800 mb-3">
+                  <span class="text-purple-300 font-bold">Visio Source: DLC 3.vsdx (DLC - York)</span>
+                  <span class="text-slate-500">Original static engineering blueprint</span>
+                </div>
+              ` : ''}
+
+              ${(() => {
+                if (pngDiagramPath) {
                   return `
-                    <div class="w-full flex flex-col items-center space-y-3">
-                      <div class="w-full bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
-                        <div class="flex items-center gap-2">
-                          <span class="text-emerald-400 font-bold">✔</span>
-                          <span>Visio Verified Diagram: <strong class="text-white">${pngPath.split("/").pop()}</strong></span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                          <a href="${pngPath}" target="_blank" class="text-indigo-400 hover:underline flex items-center gap-1 text-[11px]">
-                            <span>Full Resolution ↗</span>
-                          </a>
-                          <a href="${pngPath}" download="${selectedSite}_Topology_Diagram.png" class="text-purple-400 hover:underline flex items-center gap-1 text-[11px]">
-                            <span>Download PNG 💾</span>
-                          </a>
-                        </div>
-                      </div>
-                      <div class="bg-slate-900/40 rounded-xl p-4 shadow-inner border border-slate-800/80 overflow-x-auto w-full flex justify-center items-center">
+                    <div style="overflow: auto; width: 100%; display: flex; justify-content: center;">
+                      <div style="display: inline-block; transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out;">
                         <img 
-                          src="${pngPath}" 
-                          alt="${selectedSite} Topology Diagram" 
-                          style="transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out; max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);" 
+                          src="${pngDiagramPath}" 
+                          alt="${selectedSite} Visio Diagram" 
+                          style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);" 
                         />
                       </div>
                     </div>
                   `;
                 } else if (isYork) {
                   return `
-                    <div class="bg-white/95 rounded-xl p-4 shadow-inner border border-slate-800" style="width: 100%; max-width: 1100px; transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out;">
+                    <div style="width: 100%; max-width: 1100px; transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out;">
                       ${YORK_DIAGRAM_SVG_STR}
                     </div>
                   `;
@@ -5577,6 +5794,8 @@ show ip route</pre>
         </div>
       `;
       
+      // Render topology dynamic graph and heatmaps
+      renderDynamicTopologyGraph();
       if (isYork) {
         renderYorkHeatMaps();
       }
