@@ -10,3 +10,4 @@ Timestamp (GMT),Username,Operator Full Name,Role,Action Type,Category,Target Swi
 2026-08-27 10:59:15 GMT,admin,"Network Administrator",network_admin,LOGIN,AUTH,,,"User admin successfully authenticated (network_admin)",127.0.0.1,SUCCESS
 2026-08-27 10:59:15 GMT,bill.gates,"Bill Gates (Service Desk)",service_desk,LOGIN,AUTH,,,"User bill.gates successfully authenticated (service_desk)",127.0.0.1,SUCCESS
 2026-08-27 10:59:15 GMT,operator,"operator",service_desk,LOGIN,AUTH,,,"User operator successfully authenticated (service_desk)",127.0.0.1,SUCCESS
+2026-08-27 11:11:13 GMT,netadmin,"IT Network Team",network_admin,LOGIN,AUTH,,,"User netadmin successfully authenticated (network_admin)",127.0.0.1,SUCCESS

@@ -24,8 +24,7 @@ import {
   Cpu,
   RefreshCw,
   Radio,
-  Sparkles,
-  ShieldAlert
+  Sparkles
 } from "lucide-react";
 import { SwitchItem, AuthUser, UserRole } from "../types";
 import { extractSiteCode, formatSiteDisplayName } from "../utils/siteHierarchy";
@@ -34,7 +33,6 @@ import { YORK_DIAGRAM_SVG } from "../data/yorkDiagramSvg";
 import { SITE_TOPOLOGIES, getTopologySvgForSite } from "../data/siteTopologiesData";
 import { SiteHeatMapsSection } from "./SiteHeatMapsSection";
 import { YorkLiveLldpTopologyMap } from "./YorkLiveLldpTopologyMap";
-import { UnmanagedSwitchDiscoveryModal } from "./UnmanagedSwitchDiscoveryModal";
 
 interface SitePageViewProps {
   siteCode: string;
@@ -117,7 +115,6 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
   ] : []);
 
   const [activeDiagramMode, setActiveDiagramMode] = useState<"vector" | "image">("image");
-  const [showUnmanagedDiscoveryModal, setShowUnmanagedDiscoveryModal] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset states whenever active siteCode changes
@@ -198,23 +195,6 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
 
         {/* Site Metrics & Action */}
         <div className="flex items-center space-x-3 flex-wrap gap-y-2">
-          <button
-            id="btn-discover-unmanaged-switches"
-            onClick={() => setShowUnmanagedDiscoveryModal(true)}
-            className={`flex items-center space-x-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition cursor-pointer shadow-lg shadow-amber-600/25 border border-amber-400/40 ${
-              displayName.toLowerCase().includes("northwood") || siteName.toLowerCase().includes("northwood") ? "ring-2 ring-amber-400" : ""
-            }`}
-            title="Scan edge ports for rogue unmanaged switches and multi-MAC drops (Hardcoded test target: Northwood)"
-          >
-            <ShieldAlert className="w-4 h-4 text-amber-200 animate-pulse" />
-            <span>🛡️ Discover Unmanaged Switches</span>
-            {(displayName.toLowerCase().includes("northwood") || siteName.toLowerCase().includes("northwood")) && (
-              <span className="px-1.5 py-0.2 rounded bg-amber-950/80 text-amber-200 border border-amber-400/40 text-[10px] font-mono font-bold">
-                Northwood Test
-              </span>
-            )}
-          </button>
-
           <div className="text-right mr-1 hidden lg:block">
             <div className="text-xs text-slate-400">Site Backup Coverage</div>
             <div className="text-sm font-bold font-mono text-emerald-400">{healthPercent}% ({backedUpCount}/{siteSwitches.length || 1})</div>
@@ -306,24 +286,6 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
           >
             <RotateCcw className="w-4 h-4 text-emerald-400" />
             <span>🔄 Switch Replacement</span>
-          </button>
-
-          <button
-            id="btn-site-tab-unmanaged"
-            onClick={() => setShowUnmanagedDiscoveryModal(true)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              (displayName.toLowerCase().includes("northwood") || siteName.toLowerCase().includes("northwood"))
-                ? "bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40"
-                : "text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800"
-            }`}
-          >
-            <ShieldAlert className="w-4 h-4 text-amber-400" />
-            <span>🛡️ Unmanaged Rogue Scan</span>
-            {(displayName.toLowerCase().includes("northwood") || siteName.toLowerCase().includes("northwood")) && (
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/30 text-amber-200 border border-amber-400/40 font-mono font-bold">
-                Northwood
-              </span>
-            )}
           </button>
         </div>
 
@@ -734,14 +696,7 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
         </div>
       )}
 
-      {/* Extreme-OS Unmanaged Switch Discovery Modal */}
-      <UnmanagedSwitchDiscoveryModal
-        isOpen={showUnmanagedDiscoveryModal}
-        onClose={() => setShowUnmanagedDiscoveryModal(false)}
-        siteCode={siteCode}
-        siteName={displayName}
-        currentUser={currentUser}
-      />
+      {/* Switch Fleet View */}
     </div>
   );
 };

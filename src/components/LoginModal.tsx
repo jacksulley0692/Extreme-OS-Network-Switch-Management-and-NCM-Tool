@@ -55,7 +55,7 @@ export function LoginModal({ onLoginSuccess }: LoginModalProps) {
       } else {
         // Direct automatic fallback so operator is never locked out
         const isAdmin = username.toLowerCase().includes("admin") || username.toLowerCase() === "netadmin";
-        const fallbackUser: PortalUser = {
+        const fallbackUser: AuthUser = {
           username: username.trim() || "netadmin",
           fullName: isAdmin ? "Network Administrator" : (username.trim() || "Service Desk"),
           role: (isAdmin ? "network_admin" : "service_desk") as any,
@@ -67,7 +67,7 @@ export function LoginModal({ onLoginSuccess }: LoginModalProps) {
     } catch (err: any) {
       // Offline / Network fallback
       const isAdmin = username.toLowerCase().includes("admin") || username.toLowerCase() === "netadmin";
-      const fallbackUser: PortalUser = {
+      const fallbackUser: AuthUser = {
         username: username.trim() || "netadmin",
         fullName: isAdmin ? "Network Administrator" : (username.trim() || "Service Desk"),
         role: (isAdmin ? "network_admin" : "service_desk") as any,
@@ -102,7 +102,7 @@ export function LoginModal({ onLoginSuccess }: LoginModalProps) {
       sessionStorage.setItem("extreme_portal_user", JSON.stringify(loggedUser));
       onLoginSuccess(loggedUser);
     } catch {
-      const fallbackUser: PortalUser = {
+      const fallbackUser: AuthUser = {
         username: user,
         fullName: user === "netadmin" ? "Network Administrator" : "Bill Gates (Service Desk)",
         role: (user === "netadmin" ? "network_admin" : "service_desk") as any,
@@ -116,7 +116,7 @@ export function LoginModal({ onLoginSuccess }: LoginModalProps) {
   };
 
   const handleBypass = () => {
-    const adminUser: PortalUser = {
+    const adminUser: AuthUser = {
       username: "netadmin",
       fullName: "Network Administrator",
       role: "network_admin",

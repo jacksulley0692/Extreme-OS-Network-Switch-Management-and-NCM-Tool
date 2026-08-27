@@ -1,5 +1,19 @@
 [
   {
+    "id": "audit-1787829073473-2w47",
+    "timestamp": "2026-08-27 11:11:13 GMT",
+    "username": "netadmin",
+    "fullName": "IT Network Team",
+    "role": "network_admin",
+    "action": "LOGIN",
+    "category": "AUTH",
+    "switchIp": null,
+    "switchHostname": null,
+    "details": "User netadmin successfully authenticated (network_admin)",
+    "clientIp": "127.0.0.1",
+    "status": "SUCCESS"
+  },
+  {
     "id": "audit-1787828355992-j70q",
     "timestamp": "2026-08-27 10:59:15 GMT",
     "username": "operator",
