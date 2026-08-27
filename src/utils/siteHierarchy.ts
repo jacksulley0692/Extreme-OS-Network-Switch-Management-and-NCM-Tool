@@ -18,10 +18,10 @@ export interface SiteGroup {
 /**
  * Normalizes any hostname, IP, or site name into a canonical siteCode
  */
-export function extractSiteCode(hostnameOrIp: string): string {
-  if (!hostnameOrIp) return "UNASSIGNED";
+export function extractSiteCode(hostnameOrIpOrSite: string): string {
+  if (!hostnameOrIpOrSite) return "UNASSIGNED";
   
-  const clean = String(hostnameOrIp).trim();
+  const clean = String(hostnameOrIpOrSite).trim();
   
   // Known IP subnet mappings
   if (clean.startsWith("10.32.224.")) return "ABERDEEN";
@@ -29,10 +29,12 @@ export function extractSiteCode(hostnameOrIp: string): string {
   if (clean.startsWith("10.32.214.")) return "LICHFIELD";
   if (clean.startsWith("10.32.54.")) return "LEEDS";
   if (clean.startsWith("10.32.61.")) return "LEICESTER";
-  if (clean.startsWith("10.32.208.")) return "BRISTOL";
+  if (clean.startsWith("10.32.208.")) return "BRISTOL-LA";
   if (clean.startsWith("10.32.227.")) return "BEACONSFIELD";
   if (clean.startsWith("10.32.52.")) return "LINCOLN";
   if (clean.startsWith("10.32.48.")) return "LUTON";
+  if (clean.startsWith("10.32.104.")) return "AMSTERDAM";
+  if (clean.startsWith("10.32.172.")) return "NORTHWOOD";
 
   // Pure IP address without known mapping
   const ipRegex = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
@@ -43,73 +45,92 @@ export function extractSiteCode(hostnameOrIp: string): string {
   const lower = clean.toLowerCase();
   
   // Specific multi-word or compound site matches first
-  if (lower.includes("royalberkshire") || lower.includes("royal-berkshire") || lower.includes("royal berkshire")) return "ROYALBERKSHIRE";
-  if (lower.includes("cheshireoaks") || lower.includes("cheshire-oaks") || lower.includes("cheshire oaks")) return "CHESHIREOAKS";
-  if (lower.includes("collierswood") || lower.includes("colliers-wood") || lower.includes("colliers wood")) return "COLLIERSWOOD";
-  if (lower.includes("emersonsgreen") || lower.includes("emersons-green") || lower.includes("emersons green")) return "EMERSONSGREEN";
-  if (lower.includes("gideapark") || lower.includes("gidea-park") || lower.includes("gidea park")) return "GIDEAPARK";
-  if (lower.includes("hernebay") || lower.includes("herne-bay") || lower.includes("herne bay")) return "HERNEBAY";
-  if (lower.includes("kingshill") || lower.includes("kings-hill") || lower.includes("kings hill")) return "KINGSHILL";
-  if (lower.includes("lafinca") || lower.includes("la-finca") || lower.includes("la finca")) return "LAFINCA";
-  if (lower.includes("miltonkeynes") || lower.includes("milton-keynes") || lower.includes("milton keynes")) return "MILTONKEYNES";
-  if (lower.includes("nottinghill") || lower.includes("notting-hill") || lower.includes("notting hill")) return "NOTTINGHILL";
-  if (lower.includes("portsolent") || lower.includes("port-solent") || lower.includes("port solent")) return "PORTSOLENT";
-  if (lower.includes("raynespark") || lower.includes("raynes-park") || lower.includes("raynes park")) return "RAYNESPARK";
-  if (lower.includes("sudburyhill") || lower.includes("sudbury-hill") || lower.includes("sudbury hill")) return "SUDBURYHILL";
-  if (lower.includes("westbridgeford") || lower.includes("westbridgford") || lower.includes("west-bridgeford") || lower.includes("west bridgford")) return "WESTBRIDGFORD";
-  if (lower.includes("blijdorp") || lower.includes("rotterdam")) return "ROTTERDAM";
-  if (lower.includes("badhomburg") || lower.includes("bad-homburg") || lower.includes("bad homburg")) return "BADHOMBURG";
-  if (lower.includes("burystedmunds") || lower.includes("bury-st-edmunds") || lower.includes("bury")) return "BURYSTEDMUNDS";
-  if (lower.includes("gavamar") || lower.includes("gava-mar") || lower.includes("gava mar")) return "GAVAMAR";
+  if (lower.includes("royal berkshire") || lower.includes("royalberkshire") || lower.includes("royal-berkshire") || lower.includes("rbc")) return "ROYALBERKSHIRE";
+  if (lower.includes("cheshire oaks") || lower.includes("cheshireoaks") || lower.includes("cheshire-oaks")) return "CHESHIREOAKS";
+  if (lower.includes("colliers wood") || lower.includes("collierswood") || lower.includes("colliers-wood")) return "COLLIERSWOOD";
+  if (lower.includes("emersons green") || lower.includes("emersonsgreen") || lower.includes("emersons-green") || lower.includes("emerson_green")) return "EMERSONSGREEN";
+  if (lower.includes("gidea park") || lower.includes("gideapark") || lower.includes("gidea-park")) return "GIDEAPARK";
+  if (lower.includes("herne bay") || lower.includes("hernebay") || lower.includes("herne-bay")) return "HERNEBAY";
+  if (lower.includes("kings hill") || lower.includes("kingshill") || lower.includes("kings-hill")) return "KINGSHILL";
+  if (lower.includes("la finca") || lower.includes("lafinca") || lower.includes("la-finca")) return "LAFINCA";
+  if (lower.includes("milton keynes") || lower.includes("miltonkeynes") || lower.includes("milton-keynes")) return "MILTONKEYNES";
+  if (lower.includes("notting hill") || lower.includes("nottinghill") || lower.includes("notting-hill")) return "NOTTINGHILL";
+  if (lower.includes("port solent") || lower.includes("portsolent") || lower.includes("port-solent")) return "PORTSOLENT";
+  if (lower.includes("raynes park") || lower.includes("raynespark") || lower.includes("raynes-park") || lower.includes("rayespark")) return "RAYNESPARK";
+  if (lower.includes("sudbury hill") || lower.includes("sudburyhill") || lower.includes("sudbury-hill")) return "SUDBURYHILL";
+  if (lower.includes("west bridgford") || lower.includes("westbridgeford") || lower.includes("westbridgford") || lower.includes("west-bridgeford") || lower.includes("west-bridgford")) return "WESTBRIDGFORD";
+  if (lower.includes("blijdorp")) return "ROTTERDAM-BLIJDORP";
+  if (lower.includes("akragon")) return "ROTTERDAM-AKRAGON";
+  if (lower.includes("rotterdam")) return "ROTTERDAM";
+  if (lower.includes("bad homburg") || lower.includes("badhomburg") || lower.includes("bad-homburg") || lower.includes("bad homborg")) return "BADHOMBURG";
+  if (lower.includes("bury st edmunds") || lower.includes("burystedmunds") || lower.includes("bury-st-edmunds") || lower.includes("bury st. edmunds")) return "BURYSTEDMUNDS";
+  if (lower.includes("gava mar") || lower.includes("gavamar") || lower.includes("gava-mar") || lower.includes("gava")) return "GAVAMAR";
+  if (lower.includes("chelsea")) return "CHELSEA";
+  if (lower.includes("acton")) return "ACTON";
 
   // Specific Glasgow Sub-sites
-  if (lower.includes("roukenglen") || lower.includes("rouken-glen") || lower.includes("rouken")) return "GLASGOW-ROUKEN-GLEN";
+  if (lower.includes("rouken glen") || lower.includes("roukenglen") || lower.includes("rouken-glen")) return "GLASGOW-ROUKEN-GLEN";
   if (lower.includes("renfrew")) return "GLASGOW-RENFREW";
-  if (lower.includes("glasgow-we") || lower.includes("west-end") || lower.includes("westend")) return "GLASGOW-WEST-END";
-  if (lower.includes("glasgow")) return "GLASGOW";
+  if (lower.includes("glasgow west end") || lower.includes("glasgow-we") || lower.includes("west-end") || lower.includes("westend")) return "GLASGOW-WEST-END";
+  if (lower.includes("glasgow")) return "GLASGOW-WEST-END";
 
   // Specific Geneva sub-sites
-  if (lower.includes("citygreen") || lower.includes("city-green") || lower.includes("city green")) return "GENEVA-CITY-GREEN";
-  if (lower.includes("genevacc") || lower.includes("geneva-cc") || lower.includes("geneva cc")) return "GENEVA-CC";
+  if (lower.includes("city green") || lower.includes("citygreen") || lower.includes("city-green")) return "GENEVA-CITY-GREEN";
+  if (lower.includes("country club") || lower.includes("genevacc") || lower.includes("geneva-cc") || lower.includes("geneva cc")) return "GENEVA-CC";
   if (lower.includes("geneva")) return "GENEVA-CITY-GREEN";
 
   // Specific Bristol Sub-sites
-  if (lower.includes("bristol-la") || lower.includes("long-ashton") || lower.includes("longashton") || lower.includes("bristolla")) return "BRISTOL-LA";
-  if (lower.includes("westbury") || lower.includes("bristolwestbury") || lower.includes("bristol-westbury")) return "BRISTOL-WESTBURY";
-  if (lower.includes("bristol")) return "BRISTOL";
+  if (lower.includes("long ashton") || lower.includes("bristol-la") || lower.includes("longashton") || lower.includes("bristolla") || lower.includes("briston long ashton")) return "BRISTOL-LA";
+  if (lower.includes("bristol westbury") || lower.includes("westbury") || lower.includes("bristolwestbury") || lower.includes("bristol-westbury")) return "BRISTOL-WESTBURY";
+  if (lower.includes("bristol") || lower.includes("briston")) return "BRISTOL-LA";
 
   // Specific Southampton Sub-sites
-  if (lower.includes("southamptonwestend") || lower.includes("southampton-west-end")) return "SOUTHAMPTON-WEST-END";
+  if (lower.includes("southampton west end") || lower.includes("southamptonwestend") || lower.includes("southampton-west-end")) return "SOUTHAMPTON-WEST-END";
   if (lower.includes("southampton")) return "SOUTHAMPTON";
 
-  // Normalizations for typos / variations
-  if (lower.includes("sterrebeek") || lower.includes("sterr") || lower.includes("ster")) return "STERREBEEK";
-  if (lower.includes("shresbury") || lower.includes("shrewsbury")) return "SHREWSBURY";
-  if (lower.includes("solihull")) return "SOLIHULL";
-  if (lower.includes("narbourgh") || lower.includes("narborough")) return "NARBOROUGH";
-  if (lower.includes("teeside") || lower.includes("teesside")) return "TEESSIDE";
-  if (lower.includes("gloucestshire") || lower.includes("gloucestershire") || lower.includes("gloucester")) return "GLOUCESTERSHIRE";
-  if (lower.includes("malaspain") || lower.includes("malaspina")) return "MALASPINA";
-  if (lower.includes("manchesternorth") || lower.includes("manchester-north")) return "MANCHESTER-NORTH";
-  if (lower.includes("manchester")) return "MANCHESTER";
-  if (lower.includes("norwhich") || lower.includes("norwich")) return "NORWICH";
-  if (lower.includes("brussles") || lower.includes("brussels")) return "BRUSSELS";
-  if (lower.includes("edinburghnewhaven") || lower.includes("newhaven")) return "EDINBURGH-NEWHAVEN";
+  // Specific Edinburgh sub-sites
+  if (lower.includes("edinburgh newhaven") || lower.includes("edinburghnewhaven") || lower.includes("newhaven")) return "EDINBURGH-NEWHAVEN";
   if (lower.includes("edinburgh")) return "EDINBURGH";
+
+  // Other specific compound / distinct sites
+  if (lower.includes("north manchester") || lower.includes("manchesternorth") || lower.includes("manchester-north")) return "MANCHESTER-NORTH";
+  if (lower.includes("cheadle royal") || lower.includes("cheadle")) return "CHEADLE";
+  if (lower.includes("solihull cranmore") || lower.includes("solihull")) return "SOLIHULL";
+
+  // Normalizations for typos / variations (full word checks, avoiding partial collisions)
+  if (lower.includes("sterrebeek")) return "STERREBEEK";
+  if (lower.includes("shrewsbury") || lower.includes("shresbury")) return "SHREWSBURY";
+  if (lower.includes("narborough") || lower.includes("narbourgh")) return "NARBOROUGH";
+  if (lower.includes("teesside") || lower.includes("teeside")) return "TEESSIDE";
+  if (lower.includes("gloucestershire") || lower.includes("gloucestshire") || lower.includes("gloucester")) return "GLOUCESTERSHIRE";
+  if (lower.includes("malaspina") || lower.includes("malaspain")) return "MALASPINA";
+  if (lower.includes("manchester")) return "MANCHESTER";
+  if (lower.includes("norwich") || lower.includes("norwhich")) return "NORWICH";
+  if (lower.includes("brussels") || lower.includes("brussles")) return "BRUSSELS";
+  if (lower.includes("eindhoven") || lower.includes("veldhoven")) return "EINDHOVEN";
+  if (lower.includes("amsterdam")) return "AMSTERDAM";
+  if (lower.includes("northwood")) return "NORTHWOOD";
+  if (lower.includes("antwerp")) return "ANTWERP";
+  if (lower.includes("hatfield")) return "HATFIELD";
+  if (lower.includes("bicester")) return "BICESTER";
+  if (lower.includes("colchester")) return "COLCHESTER";
+  if (lower.includes("leicester")) return "LEICESTER";
+  if (lower.includes("worcester")) return "WORCESTER";
+  if (lower.includes("newbury")) return "NEWBURY";
 
   // Direct single-city keywords
   const directCities = [
-    "ABERDEEN", "ACTON", "AMSTERDAM", "ARAVACA", "BARCELONA", "BASILDON", "BEACONSFIELD", 
+    "ABERDEEN", "ACTON", "AMSTERDAM", "ANTWERP", "ARAVACA", "BARCELONA", "BASILDON", "BEACONSFIELD", 
     "BECKENHAM", "BELFAST", "BICESTER", "BIRMINGHAM", "BOADILLA", "BOLTON", "BRIGHTON", 
     "BROMSGROVE", "BROOKLANDS", "BUSHEY", "CAMBRIDGE", "CAPELLE", "CARDIFF", "CHEADLE", 
-    "CHEAM", "CHIGWELL", "CHORLEY", "COLCHESTER", "COVENTRY", "CRICKLEWOOD", "DARTFORD", 
-    "DERBY", "DUDLEY", "DUNDEE", "EASTBOURNE", "EINDHOVEN", "ENFIELD", "EPSOM", "EXETER", 
-    "FARNHAM", "FINCHLEY", "FULHAM", "HAMILTON", "HAMPTON", "HARLOW", "HARROGATE", "HESTON", 
+    "CHEAM", "CHELSEA", "CHIGWELL", "CHORLEY", "COLCHESTER", "COVENTRY", "CRICKLEWOOD", "DARTFORD", 
+    "DERBY", "DUBLIN", "DUDLEY", "DUNDEE", "EASTBOURNE", "EINDHOVEN", "ENFIELD", "EPSOM", "EXETER", 
+    "FARNHAM", "FINCHLEY", "FULHAM", "HAMILTON", "HAMPTON", "HARLOW", "HARROGATE", "HATFIELD", "HESTON", 
     "HULL", "IPSWICH", "KENSINGTON", "KIDBROOKE", "KINGSTON", "KNOWSLEY", "LEEDS", "LEICESTER", 
     "LICHFIELD", "LINCOLN", "LUTON", "MAIDENHEAD", "MALAGA", "MODENA", "NEWBURY", "NEWCASTLE", 
-    "NORTHWOOD", "NOTTINGHAM", "OXFORD", "PETERBOROUGH", "PLYMOUTH", "POOLE", "PRESTON", 
+    "NORTHWOOD", "NOTTINGHAM", "OXFORD", "PETERBOROUGH", "PLYMOUTH", "POOLE", "PORTSOLENT", "PRESTON", 
     "PURLEY", "READING", "RINGWOOD", "ROMFORD", "RUGBY", "SALFORD", "SERRANO", "SHAWFAIR", 
-    "SHEFFIELD", "SIDCUP", "SLOUGH", "SOUTHEND", "SPEKE", "STAFFORD", "STEVENAGE", "STOCKPORT", 
+    "SHEFFIELD", "SIDCUP", "SLOUGH", "SOLIHULL", "SOUTHEND", "SPEKE", "STAFFORD", "STEVENAGE", "STOCKPORT", 
     "STOKE", "STRATFORD", "SUNDERLAND", "SUTTON", "SWANSEA", "SWINDON", "TAUNTON", "TELFORD", 
     "TORQUAY", "WAKEFIELD", "WALSALL", "WARRINGTON", "WATFORD", "WICKWOODS", "WIGAN", 
     "WIMBLEDON", "WINCHESTER", "WINDSOR", "WOKING", "WOLVERHAMPTON", "WORCESTER", "WORTHING", 
@@ -177,8 +198,11 @@ export function formatSiteDisplayName(siteCode: string): string {
     "TEESSIDE": "Teesside",
     "GLOUCESTERSHIRE": "Gloucestershire",
     "MANCHESTER-NORTH": "Manchester North",
-    "BLIJDORP": "Rotterdam Blijdorp",
-    "ROTTERDAM": "Rotterdam (Akragon)",
+    "ROTTERDAM-BLIJDORP": "Rotterdam Blijdorp",
+    "ROTTERDAM-AKRAGON": "Rotterdam Akragon",
+    "ROTTERDAM": "Rotterdam",
+    "AMSTERDAM": "Amsterdam",
+    "NORTHWOOD": "Northwood",
   };
 
   if (customNames[siteCode]) {
@@ -242,9 +266,9 @@ export function getAllEstateSites(switches: SwitchItem[] = []): Record<string, S
     }
   }
 
-  // 3. Populate switches from the active inventory
+  // 3. Populate switches from the active inventory using sw.site priority
   for (const sw of switches) {
-    const siteCode = extractSiteCode(sw.hostname || sw.ip);
+    const siteCode = extractSiteCode(sw.site || sw.hostname || sw.ip);
     if (!groups[siteCode]) {
       const diagPath = getDiagramPngPathForSite(siteCode);
       groups[siteCode] = {

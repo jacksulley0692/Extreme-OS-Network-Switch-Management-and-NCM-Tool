@@ -15,143 +15,32 @@ import {
   Download
 } from "lucide-react";
 import { SwitchItem } from "../types";
-
-export interface DiscoveredUnmanagedSwitch {
-  id: string;
-  vendor: "Netgear" | "TP-Link" | "D-Link" | "Linksys" | "Cisco Small Business" | "Unknown";
-  model: string;
-  ipAddress: string;
-  macAddress: string;
-  parentSwitchHostname: string;
-  parentSwitchIp: string;
-  connectedPort: string;
-  detectedSubnet: string;
-  firstSeen: string;
-  status: "active" | "investigating" | "approved_temporary" | "quarantined";
-  siteCode: string;
-  confidenceScore: number;
-  detectedDevicesBehindCount: number;
-  riskLevel: "Low" | "Medium" | "High";
-  notes?: string;
-}
+import { DISCOVERED_UNMANAGED_SWITCHES, DiscoveredUnmanagedSwitch } from "../data/unmanagedSwitchesData";
 
 interface UnmanagedDiscoveryModalProps {
   isOpen: boolean;
   onClose: () => void;
   switches: SwitchItem[];
   onSelectParentSwitch?: (sw: SwitchItem) => void;
+  initialSiteFilter?: string;
 }
 
 export const UnmanagedDiscoveryModal: React.FC<UnmanagedDiscoveryModalProps> = ({
   isOpen,
   onClose,
   switches,
-  onSelectParentSwitch
+  onSelectParentSwitch,
+  initialSiteFilter = "ALL"
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedVendor, setSelectedVendor] = useState<string>("ALL");
   const [selectedRisk, setSelectedRisk] = useState<string>("ALL");
-  const [selectedSite, setSelectedSite] = useState<string>("ALL");
+  const [selectedSite, setSelectedSite] = useState<string>(initialSiteFilter);
   const [isScanning, setIsScanning] = useState(false);
   const [scanProgress, setScanProgress] = useState(0);
 
   // Generate realistic discovered rogue/unmanaged devices attached to access ports
-  const discoveredDevices: DiscoveredUnmanagedSwitch[] = useMemo(() => {
-    const devices: DiscoveredUnmanagedSwitch[] = [
-      {
-        id: "rogue-ng-01",
-        vendor: "Netgear",
-        model: "ProSAFE GS108E 8-Port Gigabit",
-        ipAddress: "10.32.221.188",
-        macAddress: "A0:04:60:11:F2:4A",
-        parentSwitchHostname: "DLC-York-Gym",
-        parentSwitchIp: "10.32.221.250",
-        connectedPort: "1:8",
-        detectedSubnet: "10.32.221.0/24",
-        firstSeen: "Yesterday at 14:22",
-        status: "active",
-        siteCode: "YORK",
-        confidenceScore: 98,
-        detectedDevicesBehindCount: 6,
-        riskLevel: "High",
-        notes: "Multi-MAC flood detected behind port 1:8. 6 MAC addresses registered on single edge port (Fitness Cardio console hub)."
-      },
-      {
-        id: "rogue-tp-02",
-        vendor: "TP-Link",
-        model: "TL-SG105E Easy Smart",
-        ipAddress: "10.32.224.195",
-        macAddress: "50:D4:F7:88:31:0C",
-        parentSwitchHostname: "DLC-Aberdeen-Gym",
-        parentSwitchIp: "10.32.224.251",
-        connectedPort: "1:4",
-        detectedSubnet: "10.32.224.0/24",
-        firstSeen: "3 days ago",
-        status: "investigating",
-        siteCode: "ABERDEEN",
-        confidenceScore: 94,
-        detectedDevicesBehindCount: 4,
-        riskLevel: "Medium",
-        notes: "Unmanaged desktop switch in Gym Admin office. 4 desktop workstations chained through single wall drop."
-      },
-      {
-        id: "rogue-ng-03",
-        vendor: "Netgear",
-        model: "GS105v5 5-Port Gigabit Desktop",
-        ipAddress: "10.32.54.177",
-        macAddress: "9C:3D:CF:45:90:12",
-        parentSwitchHostname: "DLL-Leeds-SubRack",
-        parentSwitchIp: "10.32.54.252",
-        connectedPort: "1:12",
-        detectedSubnet: "10.32.54.0/24",
-        firstSeen: "5 days ago",
-        status: "approved_temporary",
-        siteCode: "LEEDS",
-        confidenceScore: 99,
-        detectedDevicesBehindCount: 3,
-        riskLevel: "Low",
-        notes: "Temporary contractor testing switch in Plantroom B. Approved until end of month."
-      },
-      {
-        id: "rogue-dl-04",
-        vendor: "D-Link",
-        model: "DGS-108 8-Port Gigabit Metal",
-        ipAddress: "10.32.208.164",
-        macAddress: "B0:C5:54:19:AA:33",
-        parentSwitchHostname: "DLL-Bristol-LA-SubRack",
-        parentSwitchIp: "10.32.208.252",
-        connectedPort: "1:6",
-        detectedSubnet: "10.32.208.0/24",
-        firstSeen: "1 week ago",
-        status: "quarantined",
-        siteCode: "BRISTOL-LA",
-        confidenceScore: 91,
-        detectedDevicesBehindCount: 5,
-        riskLevel: "High",
-        notes: "Rogue switch detected in Club Lounge. High broadcast volume causing spanning-tree topology change notifications."
-      },
-      {
-        id: "rogue-cs-05",
-        vendor: "Cisco Small Business",
-        model: "SG110D-08 8-Port Unmanaged",
-        ipAddress: "10.32.61.144",
-        macAddress: "00:26:0B:44:81:F0",
-        parentSwitchHostname: "DLC-Leicester-Gym",
-        parentSwitchIp: "10.32.61.251",
-        connectedPort: "1:11",
-        detectedSubnet: "10.32.61.0/24",
-        firstSeen: "2 weeks ago",
-        status: "active",
-        siteCode: "LEICESTER",
-        confidenceScore: 96,
-        detectedDevicesBehindCount: 4,
-        riskLevel: "Medium",
-        notes: "Membership Sales hub unmanaged switch. 4 sales desktop terminals connected."
-      }
-    ];
-
-    return devices;
-  }, []);
+  const [devicesList, setDevicesList] = useState<DiscoveredUnmanagedSwitch[]>(DISCOVERED_UNMANAGED_SWITCHES);
 
   const handleRunFleetAudit = () => {
     setIsScanning(true);
@@ -171,7 +60,7 @@ export const UnmanagedDiscoveryModal: React.FC<UnmanagedDiscoveryModalProps> = (
   };
 
   const filteredDevices = useMemo(() => {
-    return discoveredDevices.filter(dev => {
+    return devicesList.filter(dev => {
       const matchesSearch = 
         !searchQuery ||
         dev.ipAddress.includes(searchQuery) ||
@@ -187,11 +76,11 @@ export const UnmanagedDiscoveryModal: React.FC<UnmanagedDiscoveryModalProps> = (
 
       return matchesSearch && matchesVendor && matchesRisk && matchesSite;
     });
-  }, [discoveredDevices, searchQuery, selectedVendor, selectedRisk, selectedSite]);
+  }, [devicesList, searchQuery, selectedVendor, selectedRisk, selectedSite]);
 
   const uniqueSites = useMemo(() => {
-    return Array.from(new Set(discoveredDevices.map(d => d.siteCode))).sort();
-  }, [discoveredDevices]);
+    return Array.from(new Set(devicesList.map(d => d.siteCode))).sort();
+  }, [devicesList]);
 
   if (!isOpen) return null;
 
@@ -211,7 +100,7 @@ export const UnmanagedDiscoveryModal: React.FC<UnmanagedDiscoveryModalProps> = (
                   Rogue &amp; Unmanaged Switch Discovery Engine
                 </h2>
                 <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  {discoveredDevices.length} Detected
+                  {devicesList.length} Detected
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5 font-mono">

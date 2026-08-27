@@ -106,6 +106,8 @@ export interface LldpNeighbor {
 export interface SwitchItem {
   /** Unique internal identifier */
   id: string;
+  /** Site name or code (e.g. "Amsterdam", "Northwood", "York") */
+  site?: string;
   /** Fully-qualified hostname (e.g., "DLC-York-Spa-SW1") */
   hostname: string;
   /** IPv4 Management address (e.g., "10.32.81.250") */

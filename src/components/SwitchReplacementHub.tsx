@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { SwitchItem, SwitchOS, SwitchBackupRevision, LiveStatusData, UserRole, AuthUser, BackupScheduleConfig } from "../types";
 import { SiteSidebar } from "./SiteSidebar";
+import { extractSiteCode } from "../utils/siteHierarchy";
 import { 
   Search, 
   Download, 
@@ -159,9 +160,14 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
 
       // Site filter
       if (activeSite) {
-        const parts = sw.hostname.split(/[-_]/);
-        const siteCode = parts.length >= 2 ? parts[1].trim().toUpperCase() : parts[0].trim().toUpperCase();
-        if (siteCode !== activeSite && !sw.hostname.toUpperCase().includes(activeSite)) {
+        const normActive = activeSite.toUpperCase().trim();
+        const detectedCode = extractSiteCode(sw.site || sw.hostname || sw.ip);
+        const matchesSite = 
+          detectedCode === normActive ||
+          (sw.site && sw.site.toUpperCase().trim() === normActive) ||
+          (sw.site && sw.site.toUpperCase().replace(/[^A-Z0-9]/g, "") === normActive.replace(/[^A-Z0-9]/g, "")) ||
+          sw.hostname.toUpperCase().includes(normActive);
+        if (!matchesSite) {
           return false;
         }
       }

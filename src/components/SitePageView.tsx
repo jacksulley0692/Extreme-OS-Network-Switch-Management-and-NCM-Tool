@@ -24,13 +24,15 @@ import {
   Cpu,
   RefreshCw,
   Radio,
-  Sparkles
+  Sparkles,
+  ShieldAlert
 } from "lucide-react";
 import { SwitchItem, AuthUser, UserRole } from "../types";
 import { extractSiteCode, formatSiteDisplayName } from "../utils/siteHierarchy";
 import { findDiagramForSiteOrSwitch, getDiagramPngPathForSite } from "../data/siteDiagramsData";
 import { YORK_DIAGRAM_SVG } from "../data/yorkDiagramSvg";
 import { SITE_TOPOLOGIES, getTopologySvgForSite } from "../data/siteTopologiesData";
+import { getUnmanagedSwitchesForSite, DiscoveredUnmanagedSwitch } from "../data/unmanagedSwitchesData";
 import { SiteHeatMapsSection } from "./SiteHeatMapsSection";
 import { YorkLiveLldpTopologyMap } from "./YorkLiveLldpTopologyMap";
 
@@ -61,11 +63,20 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
     return findDiagramForSiteOrSwitch(siteCode) || findDiagramForSiteOrSwitch(displayName);
   }, [siteCode, displayName]);
 
+  // Discovered rogue / Netgear unmanaged switches on this site
+  const siteRogueDevices = useMemo(() => {
+    return getUnmanagedSwitchesForSite(siteCode);
+  }, [siteCode]);
+
   // Filter for only this site's switches with strict deduplication
   const siteSwitches = useMemo(() => {
+    const normSiteCode = siteCode.toUpperCase().trim();
     const raw = switches.filter((sw) => {
-      const detectedCode = extractSiteCode(sw.hostname || sw.ip);
-      if (detectedCode === siteCode) return true;
+      const detectedCode = extractSiteCode(sw.site || sw.hostname || sw.ip);
+      if (detectedCode === normSiteCode) return true;
+      if (sw.site && sw.site.toUpperCase().trim() === normSiteCode) return true;
+      if (sw.site && sw.site.toUpperCase().replace(/[^A-Z0-9]/g, "") === normSiteCode.replace(/[^A-Z0-9]/g, "")) return true;
+      if (sw.hostname.toUpperCase().includes(normSiteCode)) return true;
       if (siteDiagram?.associatedHostnames?.includes(sw.hostname)) return true;
       if (siteDiagram?.switchIps?.includes(sw.ip)) return true;
       return false;
@@ -87,7 +98,7 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
   const healthPercent = siteSwitches.length > 0 ? Math.round((backedUpCount / siteSwitches.length) * 100) : 100;
 
   // Site Page View Mode: Visual Node Graph is primary default!
-  const [siteViewMode, setSiteViewMode] = useState<"graph" | "blueprint" | "heatmaps" | "switches" | "replacement">("graph");
+  const [siteViewMode, setSiteViewMode] = useState<"graph" | "blueprint" | "heatmaps" | "switches" | "replacement" | "rogue">("graph");
 
   const [diagramOpen, setDiagramOpen] = useState<boolean>(true);
   const [zoomLevel, setZoomLevel] = useState<number>(100);
@@ -276,6 +287,24 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
           </button>
 
           <button
+            id="btn-site-tab-rogue"
+            onClick={() => setSiteViewMode("rogue")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              siteViewMode === "rogue"
+                ? "bg-amber-600 text-white shadow-md shadow-amber-600/30 ring-2 ring-amber-400"
+                : "text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800"
+            }`}
+          >
+            <Radio className="w-4 h-4 text-amber-400" />
+            <span>🕵️ Rogue / Netgear Discovery</span>
+            {siteRogueDevices.length > 0 && (
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono font-bold animate-pulse">
+                {siteRogueDevices.length} Detected
+              </span>
+            )}
+          </button>
+
+          <button
             id="btn-site-tab-replacement"
             onClick={() => setSiteViewMode("replacement")}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
@@ -295,6 +324,35 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
           <span>Core: <strong className="text-indigo-300">EXOS X460-G2</strong></span>
         </div>
       </div>
+
+      {/* Rogue / Netgear Alert Banner if detected on site */}
+      {siteRogueDevices.length > 0 && siteViewMode !== "rogue" && (
+        <div className="bg-amber-950/40 border border-amber-600/40 rounded-xl p-4 flex items-center justify-between gap-4 shadow-lg">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-lg bg-amber-500/20 text-amber-400 shrink-0">
+              <ShieldAlert className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-sm font-bold text-amber-300 flex items-center gap-2">
+                <span>{siteRogueDevices.length} Unmanaged / Netgear Switch{siteRogueDevices.length > 1 ? "es" : ""} Discovered at {displayName}</span>
+                <span className="px-2 py-0.2 rounded text-[10px] font-mono bg-amber-500/20 text-amber-200 border border-amber-500/30">
+                  Multi-MAC Port Detection
+                </span>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Rogue desktop switches detected behind Extreme access drops (e.g. {siteRogueDevices.map(d => `${d.parentSwitchHostname} Port ${d.connectedPort}`).slice(0, 2).join(", ")}).
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setSiteViewMode("rogue")}
+            className="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white transition flex items-center gap-1.5 shrink-0 shadow cursor-pointer font-mono"
+          >
+            <span>Inspect Devices &rarr;</span>
+          </button>
+        </div>
+      )}
+
 
       {/* VIEW 1: Interactive Visual Node Graph */}
       {siteViewMode === "graph" && (
@@ -706,6 +764,128 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* VIEW 6: Rogue & Netgear Switch Discovery */}
+      {siteViewMode === "rogue" && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6 animate-in fade-in duration-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🕵️</span>
+                <h3 className="text-base font-bold text-white tracking-wide">
+                  {displayName} Unmanaged &amp; Rogue Switch Discovery
+                </h3>
+              </div>
+              <p className="text-xs text-slate-400 mt-1 font-mono">
+                Passive MAC table &amp; multi-host edge port detection across {displayName} Extreme access switches (Netgear, TP-Link, D-Link).
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                {siteRogueDevices.length} Unmanaged Switch{siteRogueDevices.length === 1 ? "" : "es"} Detected
+              </span>
+            </div>
+          </div>
+
+          {siteRogueDevices.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {siteRogueDevices.map((dev) => {
+                const parentSw = siteSwitches.find(
+                  (s) => s.hostname === dev.parentSwitchHostname || s.ip === dev.parentSwitchIp
+                );
+
+                return (
+                  <div
+                    key={dev.id}
+                    className="bg-slate-950 border border-slate-800 hover:border-amber-500/60 rounded-xl p-5 space-y-4 shadow-lg transition"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3">
+                        <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
+                          <Radio className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <h4 className="text-sm font-bold text-white tracking-wide">{dev.vendor} {dev.model}</h4>
+                            <span className={`px-2 py-0.2 rounded text-[10px] font-mono font-bold ${
+                              dev.riskLevel === "High" ? "bg-rose-500/20 text-rose-300 border border-rose-500/30" :
+                              dev.riskLevel === "Medium" ? "bg-amber-500/20 text-amber-300 border border-amber-500/30" :
+                              "bg-emerald-500/20 text-emerald-300 border border-emerald-500/30"
+                            }`}>
+                              {dev.riskLevel} Risk
+                            </span>
+                          </div>
+                          <div className="text-xs font-mono text-slate-400 mt-1">
+                            MAC: <span className="text-slate-200">{dev.macAddress}</span> &bull; IP: <span className="text-emerald-400">{dev.ipAddress}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <span className="text-[10px] font-mono text-slate-500 px-2 py-1 rounded bg-slate-900 border border-slate-800">
+                        {dev.status.toUpperCase()}
+                      </span>
+                    </div>
+
+                    <div className="p-3 bg-slate-900/90 rounded-lg border border-slate-800 grid grid-cols-2 gap-3 text-xs font-mono">
+                      <div>
+                        <span className="text-slate-500 text-[10px] block">Connected Parent Switch</span>
+                        <span className="text-indigo-300 font-bold truncate block">{dev.parentSwitchHostname}</span>
+                        <span className="text-slate-400 text-[10px]">{dev.parentSwitchIp}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 text-[10px] block">Connected Port &amp; Subnet</span>
+                        <span className="text-amber-300 font-bold block">Port {dev.connectedPort}</span>
+                        <span className="text-slate-400 text-[10px]">{dev.detectedSubnet}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 text-[10px] block">Devices Behind Port</span>
+                        <span className="text-slate-200 font-bold block">{dev.detectedDevicesBehindCount} Client MACs</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 text-[10px] block">Detection Confidence</span>
+                        <span className="text-emerald-400 font-bold block">{dev.confidenceScore}%</span>
+                      </div>
+                    </div>
+
+                    {dev.notes && (
+                      <div className="text-xs text-slate-400 bg-slate-900/50 p-2.5 rounded-lg border border-slate-800/80 font-mono">
+                        {dev.notes}
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-2 pt-2 border-t border-slate-900">
+                      {parentSw && (
+                        <button
+                          onClick={() => onSelectSwitch(parentSw)}
+                          className="flex-1 py-2 px-3 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center justify-center gap-1.5 shadow cursor-pointer font-mono"
+                        >
+                          <span>Inspect Parent {parentSw.hostname} &rarr;</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => onTriggerBackup && onTriggerBackup("port_description_report.py", dev.parentSwitchIp)}
+                        className="py-2 px-3 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 transition cursor-pointer font-mono"
+                        title="Audit port description and FDB table"
+                      >
+                        <span>Audit FDB</span>
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="p-12 text-center bg-slate-950/40 rounded-xl border border-slate-800/60 text-xs text-slate-400 font-mono space-y-3">
+              <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 flex items-center justify-center mx-auto">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <div className="text-sm font-bold text-white">No Rogue Switches Detected at {displayName}</div>
+              <div className="text-slate-500 max-w-md mx-auto">
+                All edge access drops are running single-host configurations without unmanaged desktop hubs or unauthorized multi-MAC chaining.
+              </div>
+            </div>
+          )}
         </div>
       )}
 
