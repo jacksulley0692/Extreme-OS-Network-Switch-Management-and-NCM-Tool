@@ -447,6 +447,8 @@ export const SiteDiagramViewer: React.FC<SiteDiagramViewerProps> = ({
           {/* View Mode 1: Live LLDP Topology Map */}
           {activeViewMode === "lldp" && (
             <YorkLiveLldpTopologyMap 
+              siteCode={selectedDiagram.cleanName || selectedDiagram.id}
+              siteName={selectedDiagram.siteName}
               switches={switches}
               currentUser={currentUser}
               onTriggerBackup={onTriggerBackup}

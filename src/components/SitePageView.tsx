@@ -24,7 +24,8 @@ import {
   Cpu,
   RefreshCw,
   Radio,
-  Sparkles
+  Sparkles,
+  ShieldAlert
 } from "lucide-react";
 import { SwitchItem, AuthUser, UserRole } from "../types";
 import { extractSiteCode, formatSiteDisplayName } from "../utils/siteHierarchy";
@@ -33,6 +34,7 @@ import { YORK_DIAGRAM_SVG } from "../data/yorkDiagramSvg";
 import { SITE_TOPOLOGIES, getTopologySvgForSite } from "../data/siteTopologiesData";
 import { SiteHeatMapsSection } from "./SiteHeatMapsSection";
 import { YorkLiveLldpTopologyMap } from "./YorkLiveLldpTopologyMap";
+import { UnmanagedSwitchDiscoveryModal } from "./UnmanagedSwitchDiscoveryModal";
 
 interface SitePageViewProps {
   siteCode: string;
@@ -115,6 +117,7 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
   ] : []);
 
   const [activeDiagramMode, setActiveDiagramMode] = useState<"vector" | "image">("image");
+  const [showUnmanagedDiscoveryModal, setShowUnmanagedDiscoveryModal] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Reset states whenever active siteCode changes
@@ -194,8 +197,18 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
         </div>
 
         {/* Site Metrics & Action */}
-        <div className="flex items-center space-x-4">
-          <div className="text-right mr-2 hidden sm:block">
+        <div className="flex items-center space-x-3 flex-wrap gap-y-2">
+          <button
+            id="btn-discover-unmanaged-switches"
+            onClick={() => setShowUnmanagedDiscoveryModal(true)}
+            className="flex items-center space-x-2 px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:border-amber-500/50 text-xs font-bold rounded-xl transition cursor-pointer shadow-sm"
+            title="Scan edge ports for rogue unmanaged switches and multi-MAC drops (Hardcoded test target: Northwood)"
+          >
+            <ShieldAlert className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+            <span>Discover Unmanaged Switches</span>
+          </button>
+
+          <div className="text-right mr-1 hidden lg:block">
             <div className="text-xs text-slate-400">Site Backup Coverage</div>
             <div className="text-sm font-bold font-mono text-emerald-400">{healthPercent}% ({backedUpCount}/{siteSwitches.length || 1})</div>
           </div>
@@ -695,6 +708,15 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
           </div>
         </div>
       )}
+
+      {/* Extreme-OS Unmanaged Switch Discovery Modal */}
+      <UnmanagedSwitchDiscoveryModal
+        isOpen={showUnmanagedDiscoveryModal}
+        onClose={() => setShowUnmanagedDiscoveryModal(false)}
+        siteCode={siteCode}
+        siteName={displayName}
+        currentUser={currentUser}
+      />
     </div>
   );
 };

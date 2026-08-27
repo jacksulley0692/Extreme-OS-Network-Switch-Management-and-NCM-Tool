@@ -6184,203 +6184,243 @@ WantedBy=multi-user.target</pre>
       const container = document.getElementById(containerId);
       if (!container) return;
 
-      const isYork = siteCode.toUpperCase() === 'YORK' || siteCode.toLowerCase().includes('york');
+      const norm = (siteCode || 'YORK').toUpperCase().replace(/[^A-Z0-9-]/g, '');
+      
+      // Known Site Profiles
+      const SITE_PROFILES = {
+        'YORK': {
+          title: 'York Estate',
+          core: { ip: '10.32.221.253', name: 'DLC-York-Core', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
+          fws: [{ name: 'York-MXP', ip: '10.32.221.1', role: 'Primary' }, { name: 'York-MXS', ip: '10.32.221.2', role: 'Standby' }],
+          edges: [
+            { ip: '10.32.221.252', name: 'DLC-York-Spa-SW1', model: 'EXOS X440', ports: 52, linkPort: 'P9 ‚ûî P49', speed: '10G' },
+            { ip: '10.32.221.250', name: 'DLC-York-Gym', model: 'EXOS X440', ports: 28, linkPort: 'P37 ‚ûî P25', speed: '1G' },
+            { ip: '10.32.221.249', name: 'DLL-York', model: 'VSP 4450 (VOSS)', ports: 52, linkPort: 'P42 ‚ûî P49', speed: '10G' },
+            { ip: '10.32.221.248', name: 'DLC-York-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P41 ‚ûî P49', speed: '10G' }
+          ],
+          aps: ['Spa Pool', 'Gym Floor', 'Tennis Hub', 'Reception']
+        },
+        'LEEDS': {
+          title: 'Leeds Estate',
+          core: { ip: '10.32.54.253', name: 'DLC-Leeds-Core', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
+          fws: [{ name: 'Leeds-MXP', ip: '10.32.54.1', role: 'Primary' }, { name: 'Leeds-MXS', ip: '10.32.54.2', role: 'Standby' }],
+          edges: [
+            { ip: '10.32.54.250', name: 'DLC-Leeds-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 ‚ûî P49', speed: '10G' },
+            { ip: '10.32.54.249', name: 'DLL-Leeds-SubRack', model: 'EXOS X440', ports: 52, linkPort: 'P10 ‚ûî P49', speed: '10G' },
+            { ip: '10.32.54.248', name: 'DLC-Leeds-Lynxight', model: 'EXOS X435', ports: 28, linkPort: 'P11 ‚ûî P25', speed: '1G' }
+          ],
+          aps: ['Reception Lounge', 'Cardio Floor', 'Spin Studio', 'Pool Deck']
+        },
+        'FARNHAM': {
+          title: 'Farnham Estate',
+          core: { ip: '10.32.219.253', name: 'DLC-Farnham-Core', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
+          fws: [{ name: 'Farnham-MXP', ip: '10.32.219.1', role: 'Primary' }, { name: 'Farnham-MXS', ip: '10.32.219.2', role: 'Standby' }],
+          edges: [
+            { ip: '10.32.219.252', name: 'DLC-Farnham-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 ‚ûî P49', speed: '10G' },
+            { ip: '10.32.219.250', name: 'DLC-Farnham-Subrack', model: 'EXOS X440', ports: 52, linkPort: 'P10 ‚ûî P49', speed: '10G' },
+            { ip: '10.32.219.249', name: 'DLC-Farnham-Lynxight', model: 'EXOS X435', ports: 28, linkPort: 'P11 ‚ûî P25', speed: '1G' }
+          ],
+          aps: ['Gymnasium', 'Hydro Spa', 'Tennis Dome']
+        },
+        'ABERDEEN': {
+          title: 'Aberdeen Estate',
+          core: { ip: '10.32.224.253', name: 'DLL-Aberdeen-Comms', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
+          fws: [{ name: 'Aberdeen-MXP', ip: '10.32.224.1', role: 'Primary' }, { name: 'Aberdeen-MXS', ip: '10.32.224.2', role: 'Standby' }],
+          edges: [
+            { ip: '10.32.224.252', name: 'DLC-Aberdeen-Gym', model: 'EXOS X440', ports: 52, linkPort: 'P9 ‚ûî P49', speed: '10G' },
+            { ip: '10.32.224.251', name: 'DLC-Aberdeen-Lynxight', model: 'EXOS X435', ports: 28, linkPort: 'P10 ‚ûî P25', speed: '1G' }
+          ],
+          aps: ['Fitness Arena', 'Member Lounge', 'Indoor Pool']
+        },
+        'BRISTOL': {
+          title: 'Bristol Estate',
+          core: { ip: '10.32.208.253', name: 'DLL-Bristol-LA-MainComms', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
+          fws: [{ name: 'Bristol-MXP', ip: '10.32.208.1', role: 'Primary' }, { name: 'Bristol-MXS', ip: '10.32.208.2', role: 'Standby' }],
+          edges: [
+            { ip: '10.32.208.252', name: 'DLL-Bristol-LA-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 ‚ûî P49', speed: '10G' },
+            { ip: '10.32.208.251', name: 'DLC-Bristol-Gym', model: 'EXOS X440', ports: 52, linkPort: 'P10 ‚ûî P49', speed: '10G' }
+          ],
+          aps: ['Fitness Studio', 'Member Cafe', 'Tennis Center']
+        },
+        'LICHFIELD': {
+          title: 'Lichfield Estate',
+          core: { ip: '10.32.214.253', name: 'DL-Lichfield', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
+          fws: [{ name: 'Lichfield-MXP', ip: '10.32.214.1', role: 'Primary' }, { name: 'Lichfield-MXS', ip: '10.32.214.2', role: 'Standby' }],
+          edges: [
+            { ip: '10.32.214.252', name: 'DLC-Lichfield-Subrack', model: 'EXOS X440', ports: 52, linkPort: 'P9 ‚ûî P49', speed: '10G' },
+            { ip: '10.32.214.251', name: 'DLC-Lichfield-Spa', model: 'EXOS X440', ports: 52, linkPort: 'P10 ‚ûî P49', speed: '10G' }
+          ],
+          aps: ['Gymnasium', 'Spa Treatment']
+        },
+        'MANCHESTER': {
+          title: 'Manchester Estate',
+          core: { ip: '10.36.226.12', name: 'MANCHESTER-CORE-VSP', model: 'VOSS VSP 8400', ports: '52x 10G SPB Fabric' },
+          fws: [{ name: 'Manchester-MXP', ip: '10.36.226.1', role: 'Primary' }, { name: 'Manchester-MXS', ip: '10.36.226.2', role: 'Standby' }],
+          edges: [
+            { ip: '10.36.226.13', name: 'MANCHESTER-EDGE-01', model: 'EXOS X440', ports: 52, linkPort: 'P49 ‚ûî P49', speed: '10G SPB' },
+            { ip: '10.36.226.14', name: 'MANCHESTER-EDGE-02', model: 'EXOS X440', ports: 52, linkPort: 'P50 ‚ûî P49', speed: '10G SPB' }
+          ],
+          aps: ['Atrium Ground', 'Studio Floor 1']
+        }
+      };
 
-      if (isYork) {
-        container.innerHTML = `
-          <div class="w-full flex flex-col items-center space-y-4">
-            <div class="w-full flex items-center justify-between text-xs font-mono text-slate-400 px-2">
-              <div class="flex items-center gap-2">
-                <span class="text-emerald-400 font-bold">‚óè</span>
-                <span>Active LLDP Nodes Discovered: <strong>7 Devices</strong> (1 Core, 4 Edge, 2 Firewalls)</span>
-              </div>
-              <span class="text-indigo-400 font-bold">Click any device for live telemetry</span>
-            </div>
-
-            <div class="w-full bg-slate-950/80 rounded-xl p-4 border border-slate-800 overflow-x-auto flex justify-center">
-              <svg viewBox="0 0 1000 680" class="w-full max-w-[950px] h-auto font-mono select-none" style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));">
-                <defs>
-                  <linearGradient id="grad-core" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#4338ca"/>
-                    <stop offset="100%" stop-color="#312e81"/>
-                  </linearGradient>
-                  <linearGradient id="grad-edge" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#1e1b4b"/>
-                    <stop offset="100%" stop-color="#0f172a"/>
-                  </linearGradient>
-                  <linearGradient id="grad-fw" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#831843"/>
-                    <stop offset="100%" stop-color="#500724"/>
-                  </linearGradient>
-                  <linearGradient id="grad-ap" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#064e3b"/>
-                    <stop offset="100%" stop-color="#022c22"/>
-                  </linearGradient>
-                  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="3" result="blur" />
-                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                  </filter>
-                </defs>
-
-                <!-- Background Grid -->
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.4"/>
-                </pattern>
-                <rect width="1000" height="680" fill="url(#grid)" />
-
-                <!-- FIBER LINKS / UPLINKS (LINES & LABELS) -->
-
-                <!-- Dual Firewall Uplinks to Core -->
-                <path d="M 440 90 L 480 180" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4,4" />
-                <path d="M 560 90 L 520 180" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4,4" />
-                <text x="430" y="140" fill="#fda4af" font-size="10" font-weight="bold">WAN 1 (1Gbps)</text>
-                <text x="560" y="140" fill="#fda4af" font-size="10" font-weight="bold">WAN 2 (1Gbps)</text>
-
-                <!-- Core to Spa SW1 (10G Fiber) -->
-                <path d="M 430 250 L 160 380" stroke="#10b981" stroke-width="3" filter="url(#glow)"/>
-                <circle cx="295" cy="315" r="4" fill="#34d399">
-                  <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
-                </circle>
-                <rect x="230" y="300" width="130" height="20" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
-                <text x="295" y="314" fill="#a7f3d0" font-size="9" text-anchor="middle" font-weight="bold">10G SFP+ [P9 ‚ûî P1]</text>
-
-                <!-- Core to Gym SW (10G Fiber) -->
-                <path d="M 470 260 L 380 380" stroke="#10b981" stroke-width="3" filter="url(#glow)"/>
-                <circle cx="425" cy="320" r="4" fill="#34d399">
-                  <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
-                </circle>
-                <rect x="365" y="315" width="130" height="20" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
-                <text x="430" y="329" fill="#a7f3d0" font-size="9" text-anchor="middle" font-weight="bold">10G SFP+ [P37 ‚ûî P1]</text>
-
-                <!-- Core to DLL York VOSS (10G Fiber) -->
-                <path d="M 530 260 L 620 380" stroke="#06b6d4" stroke-width="3" filter="url(#glow)"/>
-                <circle cx="575" cy="320" r="4" fill="#22d3ee">
-                  <animate attributeName="opacity" values="0.3;1;0.3" dur="1.8s" repeatCount="indefinite"/>
-                </circle>
-                <rect x="510" y="315" width="135" height="20" rx="4" fill="#0f172a" stroke="#06b6d4" stroke-width="1"/>
-                <text x="577" y="329" fill="#cffafe" font-size="9" text-anchor="middle" font-weight="bold">10G SFP+ [P42 ‚ûî P17]</text>
-
-                <!-- Core to MainComms-2 (10G Fiber) -->
-                <path d="M 570 250 L 840 380" stroke="#10b981" stroke-width="3" filter="url(#glow)"/>
-                <circle cx="705" cy="315" r="4" fill="#34d399">
-                  <animate attributeName="opacity" values="1;0.3;1" dur="2.2s" repeatCount="indefinite"/>
-                </circle>
-                <rect x="640" y="300" width="135" height="20" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
-                <text x="707" y="314" fill="#a7f3d0" font-size="9" text-anchor="middle" font-weight="bold">10G SFP+ [P41 ‚ûî P48]</text>
-
-                <!-- Edge Switches to Wi-Fi 6E APs (PoE+ Links) -->
-                <path d="M 160 450 L 120 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
-                <path d="M 380 450 L 340 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
-                <path d="M 380 450 L 440 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
-                <path d="M 840 450 L 800 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
-                <path d="M 840 450 L 880 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
-
-                <!-- INTERACTIVE DEVICE NODES -->
-
-                <!-- Firewall HA Pair -->
-                <g onclick="openSwitchReplacementModal('10.32.221.1')" class="cursor-pointer group">
-                  <rect x="360" y="30" width="130" height="60" rx="8" fill="url(#grad-fw)" stroke="#f43f5e" stroke-width="1.5" class="group-hover:stroke-white transition"/>
-                  <text x="425" y="52" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">Meraki MX250-1</text>
-                  <text x="425" y="68" fill="#fda4af" font-size="9" text-anchor="middle">10.32.221.1 &bull; Active</text>
-                  <text x="425" y="80" fill="#94a3b8" font-size="8" text-anchor="middle">Primary Gateway</text>
-                </g>
-
-                <g onclick="openSwitchReplacementModal('10.32.221.2')" class="cursor-pointer group">
-                  <rect x="510" y="30" width="130" height="60" rx="8" fill="url(#grad-fw)" stroke="#f43f5e" stroke-width="1.5" class="group-hover:stroke-white transition"/>
-                  <text x="575" y="52" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">Meraki MX250-2</text>
-                  <text x="575" y="68" fill="#fda4af" font-size="9" text-anchor="middle">10.32.221.2 &bull; Standby</text>
-                  <text x="575" y="80" fill="#94a3b8" font-size="8" text-anchor="middle">Warm Spare HA</text>
-                </g>
-
-                <!-- CORE SWITCH (DLC-York-Core) -->
-                <g onclick="showSwitchMonitorLive('10.32.221.253', 'DLC-York-Core', 'xsf')" class="cursor-pointer group">
-                  <rect x="390" y="180" width="220" height="80" rx="10" fill="url(#grad-core)" stroke="#818cf8" stroke-width="2" class="group-hover:stroke-white transition"/>
-                  <circle cx="410" cy="202" r="5" fill="#34d399">
-                    <animate attributeName="r" values="4;6;4" dur="1.5s" repeatCount="indefinite"/>
-                  </circle>
-                  <text x="425" y="206" fill="#fff" font-size="13" font-weight="bold">DLC-York-Core</text>
-                  <text x="425" y="224" fill="#a5b4fc" font-size="10">IP: 10.32.221.253 &bull; EXOS X460-G2</text>
-                  <text x="425" y="240" fill="#34d399" font-size="9">CPU: 8% &bull; Temp: 34¬∞C &bull; 48x 10G/1G</text>
-                  <rect x="530" y="190" width="65" height="18" rx="4" fill="#312e81" stroke="#818cf8"/>
-                  <text x="562" y="202" fill="#e0e7ff" font-size="9" text-anchor="middle" font-weight="bold">CORE STACK</text>
-                </g>
-
-                <!-- EDGE 1: Spa SW1 -->
-                <g onclick="showSwitchMonitorLive('10.32.221.250', 'DLC-York-Spa-SW1', 'xsf')" class="cursor-pointer group">
-                  <rect x="80" y="380" width="160" height="70" rx="8" fill="url(#grad-edge)" stroke="#6366f1" stroke-width="1.5" class="group-hover:stroke-white transition"/>
-                  <text x="160" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">DLC-York-Spa-SW1</text>
-                  <text x="160" y="422" fill="#94a3b8" font-size="9" text-anchor="middle">10.32.221.250 &bull; EXOS X440</text>
-                  <text x="160" y="438" fill="#34d399" font-size="8" text-anchor="middle">24 Ports &bull; PoE+ Enabled</text>
-                </g>
-
-                <!-- EDGE 2: Gym SW -->
-                <g onclick="showSwitchMonitorLive('10.32.221.251', 'DLC-York-Gym', 'xsf')" class="cursor-pointer group">
-                  <rect x="300" y="380" width="160" height="70" rx="8" fill="url(#grad-edge)" stroke="#6366f1" stroke-width="1.5" class="group-hover:stroke-white transition"/>
-                  <text x="380" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">DLC-York-Gym</text>
-                  <text x="380" y="422" fill="#94a3b8" font-size="9" text-anchor="middle">10.32.221.251 &bull; EXOS X440</text>
-                  <text x="380" y="438" fill="#34d399" font-size="8" text-anchor="middle">48 Ports &bull; PoE+ Enabled</text>
-                </g>
-
-                <!-- EDGE 3: DLL-York VOSS -->
-                <g onclick="showSwitchMonitorLive('10.32.221.254', 'DLL-York', 'cfg')" class="cursor-pointer group">
-                  <rect x="540" y="380" width="160" height="70" rx="8" fill="url(#grad-edge)" stroke="#06b6d4" stroke-width="1.5" class="group-hover:stroke-white transition"/>
-                  <text x="620" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">DLL-York (VOSS)</text>
-                  <text x="620" y="422" fill="#94a3b8" font-size="9" text-anchor="middle">10.32.221.254 &bull; VSP 4450</text>
-                  <text x="620" y="438" fill="#22d3ee" font-size="8" text-anchor="middle">Fabric Engine &bull; SPB Native</text>
-                </g>
-
-                <!-- EDGE 4: MainComms-2 -->
-                <g onclick="showSwitchMonitorLive('10.32.221.252', 'DLC-York-MainComms-2', 'xsf')" class="cursor-pointer group">
-                  <rect x="760" y="380" width="160" height="70" rx="8" fill="url(#grad-edge)" stroke="#6366f1" stroke-width="1.5" class="group-hover:stroke-white transition"/>
-                  <text x="840" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">DLC-York-MainComms-2</text>
-                  <text x="840" y="422" fill="#94a3b8" font-size="9" text-anchor="middle">10.32.221.252 &bull; EXOS X440</text>
-                  <text x="840" y="438" fill="#34d399" font-size="8" text-anchor="middle">48 Ports &bull; PoE+ Enabled</text>
-                </g>
-
-                <!-- Wi-Fi 6E ACCESS POINTS (Extreme AP5050) -->
-                <g class="cursor-pointer group">
-                  <rect x="60" y="540" width="120" height="45" rx="6" fill="url(#grad-ap)" stroke="#10b981" stroke-width="1"/>
-                  <text x="120" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP5050 - Spa</text>
-                  <text x="120" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Wi-Fi 6E &bull; Port 14</text>
-                </g>
-
-                <g class="cursor-pointer group">
-                  <rect x="280" y="540" width="120" height="45" rx="6" fill="url(#grad-ap)" stroke="#10b981" stroke-width="1"/>
-                  <text x="340" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP5050 - Gym Flr</text>
-                  <text x="340" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Wi-Fi 6E &bull; Port 22</text>
-                </g>
-
-                <g class="cursor-pointer group">
-                  <rect x="410" y="540" width="120" height="45" rx="6" fill="url(#grad-ap)" stroke="#10b981" stroke-width="1"/>
-                  <text x="470" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP5050 - Studios</text>
-                  <text x="470" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Wi-Fi 6E &bull; Port 28</text>
-                </g>
-
-                <g class="cursor-pointer group">
-                  <rect x="740" y="540" width="120" height="45" rx="6" fill="url(#grad-ap)" stroke="#10b981" stroke-width="1"/>
-                  <text x="800" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP5050 - Comms</text>
-                  <text x="800" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Wi-Fi 6E &bull; Port 11</text>
-                </g>
-
-                <g class="cursor-pointer group">
-                  <rect x="870" y="540" width="120" height="45" rx="6" fill="url(#grad-ap)" stroke="#10b981" stroke-width="1"/>
-                  <text x="930" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP5050 - Cafe</text>
-                  <text x="930" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Wi-Fi 6E &bull; Port 19</text>
-                </g>
-
-              </svg>
-            </div>
-          </div>
-        `;
-      } else {
-        container.innerHTML = `
-          <div class="py-12 text-center text-slate-400 font-mono space-y-2">
-            <div class="text-3xl">üè¢</div>
-            <div class="text-sm font-bold text-white">${siteCode} Dynamic Topology Map</div>
-            <p class="text-xs text-slate-500">LLDP links automatically discovered from Telnet neighbor queries.</p>
-          </div>
-        `;
+      // Lookup or construct profile
+      let prof = SITE_PROFILES[norm];
+      if (!prof) {
+        const foundKey = Object.keys(SITE_PROFILES).find(k => norm.includes(k) || k.includes(norm));
+        if (foundKey) {
+          prof = SITE_PROFILES[foundKey];
+        } else {
+          const cleanName = siteCode.replace(/^(DLC|DLL)-?/i, '');
+          prof = {
+            title: cleanName + ' Estate',
+            core: { ip: '10.32.100.253', name: 'DLC-' + cleanName + '-Core', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
+            fws: [{ name: cleanName + '-MXP', ip: '10.32.100.1', role: 'Primary' }, { name: cleanName + '-MXS', ip: '10.32.100.2', role: 'Standby' }],
+            edges: [
+              { ip: '10.32.100.252', name: 'DLC-' + cleanName + '-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 ‚ûî P49', speed: '10G' },
+              { ip: '10.32.100.250', name: 'DLC-' + cleanName + '-Subrack', model: 'EXOS X440', ports: 28, linkPort: 'P10 ‚ûî P25', speed: '10G' }
+            ],
+            aps: [cleanName + ' Gym', cleanName + ' Lounge', cleanName + ' Pool']
+          };
+        }
       }
+
+      const totalDevs = 1 + (prof.edges ? prof.edges.length : 0) + (prof.fws ? prof.fws.length : 0);
+      const edgeCount = prof.edges.length;
+      const spacing = 800 / (edgeCount + 1);
+      const edgePositions = prof.edges.map((e, idx) => ({
+        ...e,
+        x: Math.round(100 + (idx + 1) * spacing),
+        y: 380
+      }));
+
+      const apPositions = prof.aps.map((apName, idx) => {
+        const parentEdge = edgePositions[idx % edgePositions.length];
+        return {
+          name: apName,
+          x: parentEdge ? parentEdge.x : (150 + idx * 180),
+          y: 540,
+          parentX: parentEdge ? parentEdge.x : 500
+        };
+      });
+
+      const edgeLinksSvg = edgePositions.map(e => `
+        <path d="M 500 240 L ${e.x} 380" stroke="${e.speed.includes('SPB') ? '#06b6d4' : '#10b981'}" stroke-width="3" filter="url(#glow-${norm})"/>
+        <rect x="${(500 + e.x)/2 - 55}" y="${(240 + 380)/2 - 10}" width="110" height="20" rx="4" fill="#0f172a" stroke="${e.speed.includes('SPB') ? '#06b6d4' : '#10b981'}" stroke-width="1"/>
+        <text x="${(500 + e.x)/2}" y="${(240 + 380)/2 + 4}" fill="#a7f3d0" font-size="9" text-anchor="middle" font-weight="bold">${e.speed} [${e.linkPort}]</text>
+      `).join('');
+
+      const apLinksSvg = apPositions.map(ap => `
+        <path d="M ${ap.parentX} 430 L ${ap.x} 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
+      `).join('');
+
+      const edgeNodesSvg = edgePositions.map(e => `
+        <g onclick="showSwitchMonitorLive('${e.ip}', '${e.name}', '${e.model.includes('VOSS') ? 'cfg' : 'xsf'}')" class="cursor-pointer group">
+          <rect x="${e.x - 80}" y="380" width="160" height="70" rx="8" fill="url(#grad-edge-${norm})" stroke="${e.model.includes('VOSS') ? '#06b6d4' : '#6366f1'}" stroke-width="1.5" class="group-hover:stroke-white transition"/>
+          <text x="${e.x}" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">${e.name.length > 20 ? e.name.slice(0, 18) + '‚Ä¶' : e.name}</text>
+          <text x="${e.x}" y="422" fill="#94a3b8" font-size="9" text-anchor="middle">${e.ip} &bull; ${e.model}</text>
+          <text x="${e.x}" y="438" fill="${e.model.includes('VOSS') ? '#22d3ee' : '#34d399'}" font-size="8" text-anchor="middle">${e.ports} Ports &bull; PoE+ Enabled</text>
+        </g>
+      `).join('');
+
+      const apNodesSvg = apPositions.map((ap, idx) => `
+        <g class="cursor-pointer group">
+          <rect x="${ap.x - 65}" y="540" width="130" height="45" rx="6" fill="url(#grad-ap-${norm})" stroke="#10b981" stroke-width="1"/>
+          <text x="${ap.x}" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP - ${ap.name}</text>
+          <text x="${ap.x}" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Extreme AP5050 &bull; Wi-Fi 6E</text>
+        </g>
+      `).join('');
+
+      container.innerHTML = `
+        <div class="w-full flex flex-col items-center space-y-4">
+          <div class="w-full flex items-center justify-between text-xs font-mono text-slate-400 px-2">
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-400 font-bold">‚óè</span>
+              <span>Active LLDP Nodes Discovered: <strong>${totalDevs} Devices</strong> (1 Core, ${prof.edges.length} Edge Stacks, ${prof.fws.length} Firewalls)</span>
+            </div>
+            <span class="text-indigo-400 font-bold">Click any device for live telemetry & diagnostics</span>
+          </div>
+
+          <div class="w-full bg-slate-950/80 rounded-xl p-4 border border-slate-800 overflow-x-auto flex justify-center">
+            <svg viewBox="0 0 1000 660" class="w-full max-w-[950px] h-auto font-mono select-none" style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));">
+              <defs>
+                <linearGradient id="grad-core-${norm}" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#4338ca"/>
+                  <stop offset="100%" stop-color="#312e81"/>
+                </linearGradient>
+                <linearGradient id="grad-edge-${norm}" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#1e1b4b"/>
+                  <stop offset="100%" stop-color="#0f172a"/>
+                </linearGradient>
+                <linearGradient id="grad-fw-${norm}" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#831843"/>
+                  <stop offset="100%" stop-color="#500724"/>
+                </linearGradient>
+                <linearGradient id="grad-ap-${norm}" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#064e3b"/>
+                  <stop offset="100%" stop-color="#022c22"/>
+                </linearGradient>
+                <filter id="glow-${norm}" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
+
+              <!-- Background Grid -->
+              <pattern id="grid-${norm}" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.4"/>
+              </pattern>
+              <rect width="1000" height="660" fill="url(#grid-${norm})" />
+
+              <!-- FIBER LINKS & UPLINKS -->
+              <!-- Firewall Links to Core -->
+              <path d="M 440 90 L 480 180" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4,4" />
+              <path d="M 560 90 L 520 180" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4,4" />
+              <text x="430" y="140" fill="#fda4af" font-size="10" font-weight="bold">WAN 1 (1Gbps)</text>
+              <text x="560" y="140" fill="#fda4af" font-size="10" font-weight="bold">WAN 2 (1Gbps)</text>
+
+              <!-- Core to Edge Links -->
+              ${edgeLinksSvg}
+
+              <!-- Edge to AP Links (PoE+) -->
+              ${apLinksSvg}
+
+              <!-- INTERACTIVE DEVICE NODES -->
+              <!-- Firewall HA Pair -->
+              <g class="cursor-pointer group">
+                <rect x="360" y="40" width="130" height="50" rx="6" fill="url(#grad-fw-${norm})" stroke="#f43f5e" stroke-width="1.5" class="group-hover:stroke-white transition"/>
+                <text x="425" y="58" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">${prof.fws[0].name}</text>
+                <text x="425" y="72" fill="#fda4af" font-size="9" text-anchor="middle">${prof.fws[0].ip} &bull; Active</text>
+              </g>
+
+              <g class="cursor-pointer group">
+                <rect x="510" y="40" width="130" height="50" rx="6" fill="url(#grad-fw-${norm})" stroke="#f43f5e" stroke-width="1.5" opacity="0.85" class="group-hover:stroke-white transition"/>
+                <text x="575" y="58" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">${prof.fws[1].name}</text>
+                <text x="575" y="72" fill="#fda4af" font-size="9" text-anchor="middle">${prof.fws[1].ip} &bull; Standby</text>
+              </g>
+
+              <!-- CORE SWITCH -->
+              <g onclick="showSwitchMonitorLive('${prof.core.ip}', '${prof.core.name}', '${prof.core.model.includes('VOSS') ? 'cfg' : 'xsf'}')" class="cursor-pointer group">
+                <rect x="380" y="180" width="240" height="80" rx="10" fill="url(#grad-core-${norm})" stroke="#818cf8" stroke-width="2" class="group-hover:stroke-white transition"/>
+                <circle cx="400" cy="202" r="5" fill="#34d399">
+                  <animate attributeName="r" values="4;6;4" dur="1.5s" repeatCount="indefinite"/>
+                </circle>
+                <text x="415" y="206" fill="#fff" font-size="13" font-weight="bold">${prof.core.name}</text>
+                <text x="415" y="224" fill="#a5b4fc" font-size="10">IP: ${prof.core.ip} &bull; ${prof.core.model}</text>
+                <text x="415" y="240" fill="#34d399" font-size="9">CPU: 8% &bull; Temp: 33¬∞C &bull; ${prof.core.ports}</text>
+                <rect x="540" y="190" width="65" height="18" rx="4" fill="#312e81" stroke="#818cf8"/>
+                <text x="572" y="202" fill="#e0e7ff" font-size="9" text-anchor="middle" font-weight="bold">CORE STACK</text>
+              </g>
+
+              <!-- EDGE SWITCHES -->
+              ${edgeNodesSvg}
+
+              <!-- Wi-Fi 6E ACCESS POINTS -->
+              ${apNodesSvg}
+            </svg>
+          </div>
+        </div>
+      `;
     }
 
     function openVisualNodeGraphModal(siteCode, highlightIp) {
@@ -8787,734 +8827,36 @@ save configuration`
 
       const snippet = templates[type] || '';
       if (snippet) {
-        textarea.value = (textarea.value.trim() ? textarea.value.trim() + '\n\n' : '') + snippet;
-        updateRolloutCommandCount();
-        showToast('Template added to command editor');
-      }
-    }
-
-    async function executeRolloutLive() {
-      const textarea = document.getElementById('rollout-commands-input');
-      const commands = textarea ? textarea.value.trim() : '';
-      const selectedSwitches = rolloutTargetSwitches.filter(sw => sw.selected);
-      const autoSave = document.getElementById('rollout-autosave') ? document.getElementById('rollout-autosave').checked : true;
-
-      if (!commands) {
-        alert('Please enter at least one CLI command to execute.');
-        return;
-      }
-
-      if (selectedSwitches.length === 0) {
-        alert('Please select at least one target switch to apply commands to.');
-        return;
-      }
-
-      const btn = document.getElementById('btn-run-fleet-rollout');
-      btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin mr-1">‚öôÔ∏è</span> Rolling out to ${selectedSwitches.length} switches...`;
-      btn.className = "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-amber-700 text-white cursor-wait opacity-80";
-
-      try {
-        const res = await fetch('/api/rollout-config-live', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            commands,
-            targetSwitches: selectedSwitches,
-            autoSave,
-            username: portalCurrentUser ? portalCurrentUser.username : 'admin',
-            fullName: portalCurrentUser ? (portalCurrentUser.fullName || portalCurrentUser.username) : 'Network Administrator',
-            role: portalCurrentUser ? portalCurrentUser.role : 'network_admin'
-          })
-        });
-
-        const data = await res.json();
-        
-        document.getElementById('rollout-composer-view').classList.add('hidden');
-        document.getElementById('rollout-results-view').classList.remove('hidden');
-
-        document.getElementById('rollout-results-summary').innerText = 
-          `Executed on ${data.totalSwitches || selectedSwitches.length} switches ‚Ä¢ Success: ${data.successCount || selectedSwitches.length} ‚Ä¢ Failed: ${data.failedCount || 0} ‚Ä¢ Time: ${data.timestamp || new Date().toLocaleTimeString()}`;
-
-        document.getElementById('rollout-transcript-cli').innerText = data.rawCliSummary || 'Rollout completed.';
-        
-        btn.disabled = false;
-        btn.innerHTML = `<span>‚úî Rollout Complete</span>`;
-        btn.className = "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-lg";
-
-        showToast(`Rollout completed successfully across ${selectedSwitches.length} switches!`);
-      } catch (err) {
-        alert(`Failed to execute rollout: ${err.message}`);
-        btn.disabled = false;
-        btn.innerHTML = `<span>üöÄ Retry Rollout</span>`;
-        btn.className = "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white";
-      }
-    }
-
-    // --- Switches.txt Fleet Inventory Editor ---
-    async function openSwitchesEditor() {
-      try {
-        const res = await fetch('/api/switches-txt');
-        const data = await res.json();
-        const textarea = document.getElementById('switches-txt-textarea');
-        if (textarea) {
-          textarea.value = data.content || '';
-          updateSwitchesEditorCount();
-        }
-      } catch (err) {
-        console.error('Failed to load switches.txt:', err);
-      }
-      openModal('modal-switches-editor');
-    }
-
-    function updateSwitchesEditorCount() {
-      const textarea = document.getElementById('switches-txt-textarea');
-      const countEl = document.getElementById('switches-editor-count');
-      if (!textarea || !countEl) return;
-      const lines = textarea.value.split('\n').filter(l => l.trim().length > 0 && !l.trim().startsWith('#'));
-      countEl.innerText = `${lines.length} Switch${lines.length === 1 ? '' : 'es'} Configured`;
-    }
-
-    function handleSwitchesFileUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        const content = evt.target.result;
-        const textarea = document.getElementById('switches-txt-textarea');
-        if (textarea) {
-          textarea.value = content;
-          updateSwitchesEditorCount();
-          showToast(`Imported ${file.name} successfully`);
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function formatSwitchesEditorContent() {
-      const textarea = document.getElementById('switches-txt-textarea');
-      if (!textarea) return;
-      const rawLines = textarea.value.split('\n');
-      const seenIps = new Set();
-      const cleaned = [];
-
-      for (let line of rawLines) {
-        const trimmed = line.trim();
-        if (!trimmed) continue;
-        if (trimmed.startsWith('#')) {
-          cleaned.push(trimmed);
-          continue;
-        }
-        const ipMatch = trimmed.match(/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/);
-        if (ipMatch) {
-          const ip = ipMatch[1];
-          if (!seenIps.has(ip)) {
-            seenIps.add(ip);
-            cleaned.push(trimmed);
-          }
-        } else {
-          cleaned.push(trimmed);
-        }
-      }
-
-      textarea.value = cleaned.join('\n');
-      updateSwitchesEditorCount();
-      showToast('Cleaned and deduplicated inventory list');
-    }
-
-    async function saveSwitchesEditor() {
-      const textarea = document.getElementById('switches-txt-textarea');
-      const content = textarea ? textarea.value : '';
-      const btn = document.getElementById('btn-save-switches-txt');
-
-      btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin mr-1">‚öôÔ∏è</span> Saving Fleet...`;
-
-      try {
-        const res = await fetch('/api/save-switches-txt', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ content })
-        });
-        const data = await res.json();
-        if (data.success) {
-          closeModal('modal-switches-editor');
-          showToast('Fleet inventory updated & reloaded!');
-          loadSwitches();
-        } else {
-          alert(`Error saving switches: ${data.error}`);
-        }
-      } catch (err) {
-        alert(`Failed to save: ${err.message}`);
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<span>üíæ Save &amp; Reload Fleet</span>`;
-      }
-    }
-
-    // Standalone Portal Authentication & Session Handler
-    let portalCurrentUser = null;
-
-    function initPortalAuth() {
-      const rolloutBtn = document.getElementById('btn-top-rollout');
-      if (rolloutBtn) {
-        rolloutBtn.classList.add('hidden');
-        rolloutBtn.style.setProperty('display', 'none', 'important');
-      }
-      try {
-        const saved = sessionStorage.getItem('portal_user');
-        if (saved) {
-          portalCurrentUser = JSON.parse(saved);
-          applyPortalUserUI();
-          document.getElementById('modal-portal-login').classList.add('hidden');
-        } else {
-          document.getElementById('modal-portal-login').classList.remove('hidden');
-        }
-      } catch (e) {
-        document.getElementById('modal-portal-login').classList.remove('hidden');
-      }
-    }
-
-    function applyPortalUserUI() {
-      if (!portalCurrentUser) return;
-      const badge = document.getElementById('portal-user-badge');
-      const nameEl = document.getElementById('portal-user-name');
-      const roleEl = document.getElementById('portal-user-role');
-      if (badge && nameEl && roleEl) {
-        badge.classList.remove('hidden');
-        nameEl.innerText = portalCurrentUser.fullName || portalCurrentUser.username;
-        roleEl.innerText = (portalCurrentUser.role === 'network_admin' || portalCurrentUser.role === 'Admin') ? 'Admin' : 'Service Desk';
-        roleEl.className = (portalCurrentUser.role === 'network_admin' || portalCurrentUser.role === 'Admin')
-          ? 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800'
-          : 'px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800';
-      }
-
-      // Rollout button is strictly restricted to Network Administrators
-      const rolloutBtn = document.getElementById('btn-top-rollout');
-      if (rolloutBtn) {
-        if (portalCurrentUser && (portalCurrentUser.role === 'network_admin' || portalCurrentUser.role === 'Admin')) {
-          rolloutBtn.classList.remove('hidden');
-          rolloutBtn.style.setProperty('display', 'inline-flex', 'important');
-        } else {
-          rolloutBtn.classList.add('hidden');
-          rolloutBtn.style.setProperty('display', 'none', 'important');
-        }
-      }
-    }
-
-    async function handlePortalLoginSubmit(e) {
-      if (e) e.preventDefault();
-      const usernameInput = document.getElementById('portal-login-username');
-      const passwordInput = document.getElementById('portal-login-password');
-      const errorEl = document.getElementById('portal-login-error');
-      const submitBtn = document.getElementById('btn-portal-login-submit');
-
-      const username = usernameInput ? usernameInput.value.trim() : '';
-      const password = passwordInput ? passwordInput.value : '';
-
-      errorEl.classList.add('hidden');
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span>‚è≥ Authenticating...</span>`;
-
-      try {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-
-        if (res.ok && data.success && data.user) {
-          portalCurrentUser = data.user;
-          sessionStorage.setItem('portal_user', JSON.stringify(data.user));
-          applyPortalUserUI();
-          document.getElementById('modal-portal-login').classList.add('hidden');
-          showToast(`Welcome, ${data.user.fullName || data.user.username}!`);
-        } else {
-          errorEl.innerText = data.message || 'Invalid username or password. Check users.txt on the server.';
-          errorEl.classList.remove('hidden');
-        }
-      } catch (err) {
-        errorEl.innerText = `Authentication connection failed: ${err.message}`;
-        errorEl.classList.remove('hidden');
-      } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>üöÄ Sign In &amp; Start Session</span>`;
-      }
-    }
-
-    async function handlePortalLogout() {
-      if (portalCurrentUser) {
-        try {
-          await fetch('/api/auth/logout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(portalCurrentUser)
-          });
-        } catch (e) {}
-      }
-      portalCurrentUser = null;
-      sessionStorage.removeItem('portal_user');
-      document.getElementById('portal-user-badge').classList.add('hidden');
-      const rolloutBtn = document.getElementById('btn-top-rollout');
-      if (rolloutBtn) rolloutBtn.classList.add('hidden');
-      document.getElementById('modal-portal-login').classList.remove('hidden');
-      document.getElementById('portal-login-password').value = '';
-    }
-
-    // --- Activity Audit Trail Controller ---
-    let auditLogsCache = [];
-
-    async function openAuditTrailModal() {
-      openModal('modal-audit-trail');
-      await loadAuditLogsData();
-    }
-
-    async function loadAuditLogsData() {
-      const tbody = document.getElementById('audit-table-body');
-      if (tbody) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Loading audit records from audit_log.json...</td></tr>`;
-      }
-      try {
-        const res = await fetch('/api/audit/logs');
-        const data = await res.json();
-        auditLogsCache = data.logs || [];
-        const countEl = document.getElementById('audit-trail-count');
-        if (countEl) countEl.innerText = `${auditLogsCache.length} Records`;
-        filterAuditLogsTable();
-      } catch (err) {
-        if (tbody) {
-          tbody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-rose-400">Error loading audit records: ${err.message}</td></tr>`;
-        }
-      }
-    }
-
-    function filterAuditLogsTable() {
-      const searchInput = document.getElementById('audit-search-input');
-      const catSelect = document.getElementById('audit-filter-category');
-      const q = (searchInput ? searchInput.value : '').toLowerCase().trim();
-      const cat = catSelect ? catSelect.value : 'ALL';
-
-      const filtered = auditLogsCache.filter(item => {
-        const matchesQ = !q || 
-          (item.username || '').toLowerCase().includes(q) ||
-          (item.fullName || '').toLowerCase().includes(q) ||
-          (item.details || '').toLowerCase().includes(q) ||
-          (item.action || '').toLowerCase().includes(q) ||
-          (item.switchIp || '').includes(q) ||
-          (item.switchHostname || '').toLowerCase().includes(q);
-
-        let matchesCat = true;
-        if (cat === 'ALL') {
-          matchesCat = true;
-        } else if (cat === 'DIAGNOSTIC') {
-          matchesCat = item.category === 'DIAGNOSTIC' || item.action === 'PING_TEST' || item.action === 'PING';
-        } else if (cat === 'PORT_OPERATIONS') {
-          matchesCat = item.category === 'PORT_OPERATIONS' || item.category === 'PORT_BOUNCE' || item.action === 'BOUNCE_PORT' || item.action === 'PORT_BOUNCE';
-        } else if (cat === 'CONFIGURATION_MANAGEMENT') {
-          matchesCat = item.category === 'CONFIGURATION_MANAGEMENT' || item.action === 'ROLLOUT_CONFIG' || item.action === 'FLEET_CONFIG_ROLLOUT' || item.action === 'UPDATE_INVENTORY';
-        } else if (cat === 'BACKUP') {
-          matchesCat = item.category === 'BACKUP' || item.category === 'BACKUP_OPERATIONS' || item.action === 'TRIGGER_BACKUP' || item.action === 'BACKUP_ALL';
-        } else if (cat === 'AUTH') {
-          matchesCat = item.category === 'AUTH' || item.action === 'LOGIN' || item.action === 'LOGOUT';
-        } else {
-          matchesCat = item.category === cat || item.action === cat;
-        }
-
-        return matchesQ && matchesCat;
-      });
-
-      renderAuditLogsTable(filtered);
-    }
-
-    let expandedAuditIndices = new Set();
-    let currentRenderedAuditItems = [];
-
-    function toggleAuditRowExpand(idx) {
-      if (expandedAuditIndices.has(idx)) {
-        expandedAuditIndices.delete(idx);
-      } else {
-        expandedAuditIndices.add(idx);
-      }
-      renderAuditLogsTable(currentRenderedAuditItems, false);
-    }
-
-    function toggleAllAuditRows() {
-      if (expandedAuditIndices.size === currentRenderedAuditItems.length && currentRenderedAuditItems.length > 0) {
-        expandedAuditIndices.clear();
-      } else {
-        expandedAuditIndices = new Set(currentRenderedAuditItems.map((_, i) => i));
-      }
-      renderAuditLogsTable(currentRenderedAuditItems, false);
-    }
-
-    function copyAuditRowDetails(text) {
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(() => {
-          showToast('üìã Copied full audit details to clipboard!');
-        }).catch(() => {
-          showToast('üìã Copied audit details!');
-        });
-      } else {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        showToast('üìã Copied audit details to clipboard!');
-      }
-    }
-
-    function renderAuditLogsTable(items, resetExpanded = false) {
-      const tbody = document.getElementById('audit-table-body');
-      if (!tbody) return;
-
-      currentRenderedAuditItems = items || [];
-      if (resetExpanded) {
-        expandedAuditIndices.clear();
-      }
-
-      const toggleAllLabel = document.getElementById('btn-toggle-all-audit-label');
-      if (toggleAllLabel) {
-        const isAllExpanded = currentRenderedAuditItems.length > 0 && expandedAuditIndices.size === currentRenderedAuditItems.length;
-        toggleAllLabel.innerText = isAllExpanded ? 'üìï Collapse All' : 'üìñ Expand All';
-      }
-
-      if (!items || items.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center py-8 text-slate-500">No matching audit trail records found.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = items.map((l, idx) => {
-        const isSuccess = (l.status || '').toUpperCase() === 'SUCCESS';
-        const isExpanded = expandedAuditIndices.has(idx);
-
-        const roleBadge = (l.role === 'network_admin' || l.role === 'Admin') 
-          ? `<span class="px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 text-[10px]">ADMIN</span>`
-          : `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">SERVICE DESK</span>`;
-
-        let catBadge = `<span class="px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">${l.category || l.action}</span>`;
-        if (l.action === 'PING_TEST' || l.category === 'DIAGNOSTIC') {
-          catBadge = `<span class="px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800 text-[10px]">PING / DIAGNOSTIC</span>`;
-        } else if (l.action === 'PORT_BOUNCE' || l.category === 'PORT_OPERATIONS') {
-          catBadge = `<span class="px-1.5 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800 text-[10px]">PORT BOUNCE</span>`;
-        } else if (l.category === 'CONFIGURATION_MANAGEMENT' || l.action === 'ROLLOUT_CONFIG') {
-          catBadge = `<span class="px-1.5 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 text-[10px]">MULTI ROLLOUT</span>`;
-        } else if (l.category === 'BACKUP') {
-          catBadge = `<span class="px-1.5 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 text-[10px]">BACKUP</span>`;
-        }
-
-        const statusBadge = isSuccess
-          ? `<span class="px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 font-bold text-[10px]">SUCCESS</span>`
-          : `<span class="px-2 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800 font-bold text-[10px]">FAILED</span>`;
-
-        const detailsText = l.details || '';
-        const escapedDetails = detailsText.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-
-        let expandedSubRow = '';
-        if (isExpanded) {
-          expandedSubRow = `
-            <tr class="bg-slate-950/70 border-b border-indigo-950/60">
-              <td colspan="6" class="p-4">
-                <div class="bg-slate-900/90 rounded-xl p-3.5 border border-indigo-900/40 text-xs font-mono">
-                  <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
-                    <span class="text-indigo-300 font-bold flex items-center gap-1.5">
-                      <span>üîç Full Action Details & Telemetry Inspection</span>
-                    </span>
-                    <div class="flex items-center gap-2">
-                      <button
-                        onclick="copyAuditRowDetails('${escapedDetails}')"
-                        class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] rounded border border-slate-700 transition flex items-center gap-1"
-                        title="Copy detail text to clipboard"
-                      >
-                        <span>üìã Copy Details</span>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-200 text-xs whitespace-pre-wrap break-words leading-relaxed select-text font-mono">
-${detailsText || 'No additional details provided.'}
-                  </div>
-                  <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-2.5 pt-2.5 border-t border-slate-800/80 text-[11px] text-slate-400">
-                    <div><span class="text-slate-500">Operator:</span> <strong class="text-slate-300">${l.fullName || l.username || 'System'}</strong></div>
-                    <div><span class="text-slate-500">Role:</span> <strong class="text-slate-300">${l.role || 'N/A'}</strong></div>
-                    <div><span class="text-slate-500">Client IP:</span> <strong class="text-slate-300">${l.clientIp || '127.0.0.1'}</strong></div>
-                    <div><span class="text-slate-500">Action Type:</span> <strong class="text-indigo-300">${l.action || l.category || 'LOG'}</strong></div>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          `;
-        }
-
-        return `
-          <tr class="hover:bg-slate-800/50 transition cursor-pointer border-b border-slate-800/40" onclick="toggleAuditRowExpand(${idx})">
-            <td class="py-2.5 px-3 whitespace-nowrap text-slate-400">
-              <div class="flex items-center gap-1.5">
-                <span class="text-slate-400 text-xs">${isExpanded ? '‚ñº' : '‚ñ∂'}</span>
-                <span>${l.timestamp}</span>
-              </div>
-            </td>
-            <td class="py-2.5 px-3 whitespace-nowrap">
-              <div class="flex items-center gap-1.5">
-                <span class="font-bold text-slate-200">${l.fullName || l.username}</span>
-                ${roleBadge}
-              </div>
-            </td>
-            <td class="py-2.5 px-3 whitespace-nowrap">${catBadge}</td>
-            <td class="py-2.5 px-3 whitespace-nowrap">
-              <span class="text-indigo-300 font-bold">${l.switchHostname || ''}</span>
-              ${l.switchIp ? `<span class="text-slate-400 text-[11px]"> (${l.switchIp})</span>` : ''}
-            </td>
-            <td class="py-2.5 px-3 text-slate-300 text-[11px]">
-              <div class="flex items-center justify-between gap-2">
-                <span class="${isExpanded ? '' : 'truncate max-w-md'} block" title="${escapedDetails}">
-                  ${l.details || ''}
-                </span>
-                <span class="text-[10px] text-indigo-400 font-bold px-1.5 py-0.5 rounded bg-indigo-950/80 border border-indigo-800 whitespace-nowrap">
-                  ${isExpanded ? 'Collapse' : 'Expand'}
-                </span>
-              </div>
-            </td>
-            <td class="py-2.5 px-3 whitespace-nowrap">${statusBadge}</td>
-          </tr>
-          ${expandedSubRow}
-        `;
-      }).join('');
-    }
-
-    // --- Backup Schedule Management & Modal Controller ---
-    let activeSchedFreq = 'daily';
-    let currentSchedConfig = {
-      enabled: true,
-      frequency: 'daily',
-      dailyTimeUtc: '02:00',
-      retentionDays: 30,
-      autoSaveConfig: true,
-      alertOnFailure: true,
-      scriptName: 'BackupSave.py'
-    };
-
-    function setScheduleQuickTestPlus1Min() {
-      const now = new Date();
-      // Add 1 minute to current local time
-      const testDate = new Date(now.getTime() + 60 * 1000);
-      const hh = String(testDate.getHours()).padStart(2, '0');
-      const mm = String(testDate.getMinutes()).padStart(2, '0');
-      const timeStr = `${hh}:${mm}`;
-      const timeInput = document.getElementById('sched-time-utc');
-      if (timeInput) {
-        timeInput.value = timeStr;
-        renderSchedulePreview();
-        showToast(`‚ö° Quick Test: Schedule time set to ${timeStr} (+1 min lead time)`);
-      }
-    }
-
-    async function openScheduleModal() {
-      try {
-        const res = await fetch('/api/backup-schedule');
-        const data = await res.json();
-        if (data.config) {
-          currentSchedConfig = Object.assign({}, currentSchedConfig, data.config);
-        }
-      } catch (e) {}
-
-      const enabledEl = document.getElementById('sched-enabled');
-      const timeEl = document.getElementById('sched-time-utc');
-      const retEl = document.getElementById('sched-retention');
-      const retLbl = document.getElementById('sched-retention-label');
-      const autoEl = document.getElementById('sched-autosave');
-      const alertEl = document.getElementById('sched-alert-fail');
-
-      if (enabledEl) enabledEl.checked = currentSchedConfig.enabled !== false;
-      if (timeEl) timeEl.value = currentSchedConfig.dailyTimeUtc || '02:00';
-      if (retEl) retEl.value = currentSchedConfig.retentionDays || 30;
-      if (retLbl) retLbl.innerText = `${currentSchedConfig.retentionDays || 30} Days`;
-      if (autoEl) autoEl.checked = currentSchedConfig.autoSaveConfig !== false;
-      if (alertEl) alertEl.checked = currentSchedConfig.alertOnFailure !== false;
-
-      setSchedFreq(currentSchedConfig.frequency || 'daily', false);
-      renderSchedulePreview();
-      openModal('modal-schedule');
-    }
-
-    function setSchedFreq(freq, shouldRerender = true) {
-      activeSchedFreq = freq;
-      ['daily', 'hourly', 'every_4h', 'weekly'].forEach(f => {
-        const btn = document.getElementById(`freq-btn-${f}`);
-        if (!btn) return;
-        if (f === freq) {
-          btn.className = 'p-3 rounded-xl border text-left transition flex flex-col justify-between gap-1 bg-indigo-950/50 border-indigo-500 text-indigo-200 ring-1 ring-indigo-500';
-        } else {
-          btn.className = 'p-3 rounded-xl border text-left transition flex flex-col justify-between gap-1 bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700';
-        }
-      });
-      if (shouldRerender) renderSchedulePreview();
-    }
-
-    function renderSchedulePreview() {
-      const enabledEl = document.getElementById('sched-enabled');
-      const timeEl = document.getElementById('sched-time-utc');
-      const enabled = enabledEl ? enabledEl.checked : true;
-      const timeVal = timeEl ? timeEl.value || '02:00' : '02:00';
-      
-      const badge = document.getElementById('sched-status-badge');
-      if (badge) {
-        if (enabled) {
-          badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800';
-          badge.innerText = 'ACTIVE';
-        } else {
-          badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950 text-rose-300 border border-rose-800';
-          badge.innerText = 'PAUSED';
-        }
-      }
-
-      const runsContainer = document.getElementById('sched-upcoming-runs');
-      const snippetEl = document.getElementById('sched-unit-snippet');
-
-      if (!enabled) {
-        if (runsContainer) {
-          runsContainer.innerHTML = `<div class="text-rose-400 py-2">‚ö†Ô∏è Automated backups are currently paused. Manual triggers only.</div>`;
-        }
-        if (snippetEl) snippetEl.innerText = '# Schedule is paused';
-        return;
-      }
-
-      const projected = [];
-      const now = new Date();
-      const [h, m] = (timeVal || '02:00').split(':').map(Number);
-
-      const formatRunDate = (d) => {
-        return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' }) + ' @ ' + 
-               String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-      };
-
-      if (activeSchedFreq === 'hourly') {
-        for (let i = 1; i <= 5; i++) {
-          const d = new Date(now.getTime() + i * 3600 * 1000);
-          d.setMinutes(0, 0, 0);
-          projected.push(`Run #${i}: ${formatRunDate(d)} (${i}h from now)`);
-        }
-        if (snippetEl) snippetEl.innerText = 'systemd: OnCalendar=hourly (switch-backup.timer)';
-      } else if (activeSchedFreq === 'every_4h') {
-        for (let i = 1; i <= 5; i++) {
-          const d = new Date(now.getTime() + i * 4 * 3600 * 1000);
-          d.setMinutes(0, 0, 0);
-          projected.push(`Run #${i}: ${formatRunDate(d)}`);
-        }
-        if (snippetEl) snippetEl.innerText = 'systemd: OnCalendar=*-*-* 00,04,08,12,16,20:00:00 (switch-backup.timer)';
-      } else if (activeSchedFreq === 'weekly') {
-        for (let i = 1; i <= 5; i++) {
-          const d = new Date(now.getTime() + i * 7 * 86400 * 1000);
-          d.setHours(h || 2, m || 0, 0, 0);
-          projected.push(`Run #${i}: ${formatRunDate(d)}`);
-        }
-        if (snippetEl) snippetEl.innerText = `systemd: OnCalendar=Sun *-*-* ${String(h||2).padStart(2,'0')}:${String(m||0).padStart(2,'0')}:00 (switch-backup.timer)`;
-      } else {
-        // Daily
-        for (let i = 0; i < 5; i++) {
-          const d = new Date();
-          d.setDate(d.getDate() + i);
-          d.setHours(h || 2, m || 0, 0, 0);
-          if (d <= now) {
-            d.setDate(d.getDate() + 1);
-          }
-          projected.push(`Run #${i+1}: ${formatRunDate(d)} (Daily Nightly)`);
-        }
-        if (snippetEl) snippetEl.innerText = `systemd: OnCalendar=*-*-* ${String(h||2).padStart(2,'0')}:${String(m||0).padStart(2,'0')}:00 (switch-backup.timer)`;
-      }
-
-      if (runsContainer) {
-        runsContainer.innerHTML = projected.map(r => `<div class="flex items-center gap-2 text-slate-300"><span class="text-indigo-400 font-bold">‚ö°</span> <span>${r}</span></div>`).join('');
-      }
-    }
-
-    function copySchedSnippet() {
-      const el = document.getElementById('sched-unit-snippet');
-      if (el) {
-        navigator.clipboard.writeText(el.innerText);
-        showToast('Copied unit schedule snippet!');
-      }
-    }
-
-    async function saveScheduleModal() {
-      const btn = document.getElementById('btn-save-schedule');
-      if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = `<span class="animate-spin mr-1">‚öôÔ∏è</span> Saving Policy...`;
-      }
-
-      const enabled = document.getElementById('sched-enabled').checked;
-      const timeVal = document.getElementById('sched-time-utc').value || '02:00';
-      const retention = parseInt(document.getElementById('sched-retention').value, 10) || 30;
-      const autosave = document.getElementById('sched-autosave').checked;
-      const alertFail = document.getElementById('sched-alert-fail').checked;
-
-      const payload = {
-        config: {
-          enabled,
-          frequency: activeSchedFreq,
-          dailyTimeUtc: timeVal,
-          retentionDays: retention,
-          autoSaveConfig: autosave,
-          alertOnFailure: alertFail,
-          scriptName: 'BackupSave.py'
-        }
-      };
-
-      try {
-        const res = await fetch('/api/backup-schedule', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (data.success) {
-          closeModal('modal-schedule');
-          showToast('Backup schedule saved & updated in schedule_config.json!');
-          fetchStatus();
-        } else {
-          alert('Failed to save schedule: ' + (data.error || 'Unknown error'));
-        }
-      } catch (err) {
-        alert('Network error saving schedule: ' + err.message);
-      } finally {
-        if (btn) {
-          btn.disabled = false;
-          btn.innerHTML = `<span>üíæ Save Schedule &amp; Apply Policy</span>`;
-        }
-      }
-    }
-
-    initPortalAuth();
-    loadSwitches();
-    fetchStatus();
-    setInterval(fetchStatus, 2000);
-  </script>
-</body>
-</html>"""
-
-class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
-    daemon_threads = True
-    allow_reuse_address = True
-
-def run():
-    print(f"=======================================================")
-    print(f"üöÄ Extreme Switch Backup Portal (Zero-Dependencies)")
-    print(f"üåê Protocol: Telnet (Port 23) | Controller Port: {PORT}")
-    print(f"üìÇ Directory: {DIRECTORY}")
-    print(f"=======================================================")
-    try:
-        # Start background backup scheduler daemon
-        start_python_scheduler_daemon()
-        httpd = ThreadedHTTPServer(("", PORT), PortalHandler)
-        print(f"‚úÖ Web Portal active at: http://localhost:{PORT}")
-        print(f"Press Ctrl+C to stop.")
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        print("\nShutting down server...")
-    except Exception as e:
-        print(f"Server error: {e}")
-
-if __name__ == "__main__":
-    run()
+        textarea.value = (textarea.value.trim() ? textarea.value.trim() + '\n\nxúƒ=ÌnIrˇ˝mÆaígE˘k}ÙJéVíΩÃ…íNîˆêxjƒií≥ŒÃŒá$FK‡ øí‡Ç‹ÂÄ,∏\^!@p?Ç<å_ ˜©ÍÓôÈÓÈ·á,€ﬁµ%ŒtWWWU◊WW7Î§CÍı&y@bﬂCö<øCƒü4tÏÑû§…N0ôÿæ≥§~“hç‚qpyÿq“®ü–IËAb;uHêÔD®„&ATœªÕÓŸ;û˙2L˝A‚>°WtêÊ√Óª¥—$◊¢„ „Ñ$Ù*±#jìM‚ÉtB˝§5¢…ûGÒ◊Øß]ßQèxK†[Æ¶IÅáîΩH9–˘Ø≠€Ki+â‹	‡ÄtR{«‘£ÉÑ:ΩK7å)B√ûÿ î=o]/°Q#æ$õ[$æle5lÏ4	zˆ]f^ÿ6Ü∂¿∫´¥nBÉw¿ûI¢î>ø#0pá§q7#GAp`èG#`ÓëGÌòÄL#b'?&$)ŸŸÔÊåû˛µÍíêD4I#ø‡æ4¶N√ñG˝Q2&õõõ§]çÔ¶"í0¢}¢bá°7-xúÀ ≈Yqû¯Û∏ Ø≠(ı≠°Gib	*¿·uÀqc˚‹Bo
+BØ\ﬂß—7'Ø˜·›ŸWqh˚d‡ŸqºY≥}w+»äC◊'ì»⁄®mΩˇÈﬂˇÔœø˘jõm\Æ?"0Œﬁu˝fÇ†’:ìg#ÿî≤‡E‹ÑNbk¿Y;≤CÎ!	Ø¨ß$úZ[O@§S÷≥uÂ±Öa]≈d¯âux9Yˆ‰úF÷óÌ6}9xdêFqYó∂º	ÌÅõL≠gÌZ.nI4ïxÀi±d≥>C
+»7ÍÎvËÆKŸ∫#ÀïP_ìz2°…8p`ÅˆNÍk“õ1µ≈rMÍ;Ä5L“:ôÜ¥çQ<‹ÅçZg˝˚8Îd&w=úiá¸uÔ†É
+GÓp⁄êG%πh≠)OeÒwJjBmù-zıi”»&uHDâÌÌ§Q∏ü¬cXÔ•g≠¨=j)€ô∏~]Ö7L=Ô†^£0Î@~¸qŒpL+–‰2àﬁëm◊ZŸ®Ï’ÒÅáKœ€"\ü√ÌÛ˘H‡fÕ;≈ØπHebFÀŒÂd™ÖºïMV˛À2∆# %Î¬•ó®;qÌÏ√[`‚ı±ÜŒóu BàÄOÍ%q`D'ò:	ÊÍ@„ƒ1ö\¶aN`9!$¬ùÌqÂÏÄæ›Åîj%ê?∑`¿ÌÖÖºˇıí^:–§[Äâ˘gÊÃÖÇù_⁄.h∆ºÔê}Ãª∂y£≈5√>ƒâ=	±ÅO/….®…F∞ﬂ`∞qè≠“Fsv∂
+Ò@\˝xπ!∞€s5⁄±±#˚r«s{ú∏8~]8'∏˛Cè¬,[uÉxiV`h{1}Æº-Ç≠˜¯…¿ÔB˘ü©ùo]ëq"€s¨ß™*è«∂\Zﬁ®&ëµp˚ŒJƒ BPÖLâ=àÇ8^∆R›=+DzåxÉFQŸ	8„Ú#yôﬂÖÚ]Z ,±=¢≥≥ÊÛc«_˛¯”Ø…1Es%Ê˘âò¡≠*≤bz!Í‰èû(‹©]ÍıubY…)ùÄ0øDWÖt˝¿(ÄÈÏ1ü€ôº §~÷ù∑îºUåw∆\pê5Âí∫zyá_» :»#¢∑ô=o*ÓÉÍÔgÀ~¿›∂‡•Âù≈E*uJq—lÅ$„ƒ¿Œµ‡1–∂^H¥ÿN·º¡d:‡Ï`gï”Ñ±Ëu‡ÿ^£>¡VN5‹2ë≥v˙7à≥ê=≥ ¸û∑éº≈∫pXxí„,π+`65?û>2ïÉ:…≈‡AÒÿ◊,&Û0$ÛDåó[§MÓﬂ'wÛÁ`z¢$˛ïõÄXQoJ”cH(6„Ïﬁ5>◊oú‘ÍSﬂlÄ˚SØ£´C„˙‘=˙∑iDù33Á∆‡kz9Á^ÇƒúÜ(.™s&ár±+ÛEq≤4~”~´êö…1Ø †•≈qéŸÉBæyÉV‡3i›ÃQl–ãDórd?_IÄ–Eí°ƒùñœΩ“j+/o≈v'Ëƒ¬ÚΩwç4m°g<S¨‡ôI3hƒƒ€1
+QÉq∆,√ ÇQ«éM‚c¨_e›Uã}πøpπÈâÍw√XXèJ§QΩœÃÙõ∑π◊S'0ÿÍ&¡0π,q∏l'¨?∂´Xêª¢Mì…ÄÎßT ˛∫¥Ùyx∂¬4g=))√ûi®∫·kf 63§[¸‹Xo|Á\o¨=ö}◊™¸•πÆMJ ”ê„¿‚˝õç∑2íåÇ'≠±mû$c|‡ısÂÂB2ìû
+~◊*DÃ◊Kû;(-b‡˚¿ıUq[b-K	Ã!uò…ﬂ,ÂÈx‡Ê^ì±öfX5œ	”lïû”≠€’L±Vf/iÀ%r[8	Kw›>zr´g_`nãy™<muá≥Ñ˙gÀÂ¸—ÍD˙¿∏<Â[WAALóÒK‚Œ#ÇB∂˘bq»}¿Ì:uÓ™}Òa&⁄äØ[^”"P€CÔóÚ5√+ÍôÔ;3⁄∆e„?‰vu–7G»∑1
+-@‹0¸◊ˇ%,5ﬂûÑœ!"dé£†ÍëX/}b{ò°>bπ.≤ù&c†πê'†w0«ﬂæa^ƒz¢°+ÁÀ¿bÇ?Ò\s
+\ﬂM8l]“7"8˛zÒ∫OÇ∞úÕF˘+@»Ï(û.NçIm„d
+^RLì£Çò(ô6Í¿ë–≥ß∞VÎ>P
+∫Ã´≤Â(`6G†$ CcNÀà4Œ≤ëx£ŒiŸ«Ã•Ó+≤ÆÍ™2Qû-Ô–éb*z»kÉÌ5p`Û”ÆÍ-VRù/Y>úÂ#◊_&œhXq7°úx¨^å2çn{<eŸ‰ím kés[Jå2;©Á∂3öªØ&EÒ∞Xc›÷¢S??ÑïA`kÊµóáÄ≠’5»Á q©@~„ e∂∞FK±óCQB◊õn(´\jÿ\`~åÄµøyî¢5€a`;û‚WÙnz4∫pîÏ“¯]ΩÑâúòª}L§ı8ÖW÷FÎ	f¯⁄EÜè'Îﬁl¥√´∑Ê|Îœüàå^ˆ‡QªEÑ!8ˇëøy÷nÀ!ùï«t}«≈ê‚syDÒ,mëÇQÀíæÁií†ä	˙=ÉL-∏0ÏWn†çõCÒß1O¯¶¨»aŸ‹æ ®÷√h´W‚
+∆—ı1†≈}Á´
+i4´Í€1’r‹&	è,Òå◊Ô˚h*zÈ˘ƒMdKÉLÑè¥F=’]:¥SØî1»TQÀ<ñ–±Ã0YY/]Uá@#g5hY/Ûsó“¸k_ ô0 ,±HPºóΩ©‘X*·^®üU¿d3F€°êÏÖ˙YâEAïEôœª*Ë,ò∂”~Û_äªÌè ∞,<ˆƒó6@[ÁnÕÁ,3&≠∏Yå©ËJ|ºC)áõ˘ÁîyWãº‰º©u™Nylr ◊ÙiÉ~FO[IÙ˛äzÉ ©.ÿTwëäßáfwœÊ´Êlî∂ùE8Àˆü∫>, ◊)÷-D’Á[dK∫ÿ;æ’ä$à] & ﬁUy—≠‚ˇ´¡∏	Û3-∂ÒÛ©»\Áõ˛J∞˛ºoâX¡◊ıÑ›œUl´∑Áé|“ıEòﬂ√‹oùœçÛÁ€50¶Z‹b[ä©®ÍàÃQBË≠iô⁄j=ÙAö®Bï'"ß}—ó¢H’70+ûËåSıóã9q˝*aﬁ"Qú‘Â≤€é≥WueÚ,{f˚’Ém¯7ôÇïu@HO"XÂ∏ìô‡iQ_ÄÈ,õ¿ràwÏ¡ò õ;ÜÍèÅ„…ÕbÅî6æ\,‰qΩbû|—`ön;v‘jf,ÃÎ÷–\œ›„*ò'‘@∂UeÄuW÷:>–‘Qm}ï80†ág≥ˆ¥ñ•–YÃ&jJ ‰{ É∏´Æ≠«Ìvmk&ÄπVÜX˙0&√(òG}`/3˛ÃJú-¯'“u⁄™¿Eeﬂ†æ£$ÃÙ!0¥{oﬁÍ ó®$ê§AØ"‡<»+*vÔUúÚm¸cNL…`ÒÇ\^NêÁ…HôÕ¶QnG¢ r¿ÔûItlÉä‡≠ÿÑ6N\[)1µ£¡xa≈Ÿ≈WÈ€Ièó{/√≥p◊nDS“òíÒz!c))º∞íF;vÃ ï‰-‹{Ãë{Q¸^@⁄ﬁﬂØk±«ëπ'ö§âí¨√™}≤}aˇ:ﬁ˝óá$=¨SQÃjñÙI∏˛¿K7~hBÉRgŸè]π≥CXoÒç˙⁄\®n“ïo)u√¨ÛRÕø	‚d)*I·ö/Aˇ∆w9jü≥î\]€szäà@∞€›~u Œ[wg6£L“Kqr2uŸ˚£Ó¡´˛…∏ÖïØÎÛQ;:<>ÈÌoütz+‚ß˜Œ±04˚˙Ù`gœå(◊«v3ë Ãü–Œ·¡ÀÓ´SéQˇıˆ¡ˆ´Ω◊{'+Œ¨åΩ„√˝˝√”ì>ÔenÛro/k—Ã-Oèv∑Oˆ˙›Éoa¿√„øY0„Ø∑w~qz¥‚¸Dß
+ÜÒ∑FŒ àûw_Ω⁄;ÓÎ¿÷rP\oŒõ∆ˆÈ…7+NÇu1é∫¯™{P˘
+)?7Ü_00‚l èeÉ[Ï\∞˝´B›ﬂø/ê{ÖvÇò…)Y„Ã ®Ó.™1zæÑCπü€ıw@ïXÿr¿„±c?ÎÄeÕ≤Îû;I0yî5:.˜ÿ(◊π“RπÜ—yÕ¥T≤¶Ü≈
+s÷∂p≥4v;≤≤%π◊<⁄UŒ{ç'*JÛ</£A‹XbÓ±˚w|+°r‘¨d‰`aõ-ı–úqD,óä´Pêj&vÿhÙ◊à€D˜≈m~TjÇpözó{¨ËS%πo_∏#‹rÇYª·y`G“Ò“ıù‡≤Â∆=
+√Sñ
+πR*W[ó,aV†…Z∑0”’h4U_M)±˘À˚èá.∏{Ë_	O<Ûñàl]©µô5[,xX∫XÉU…ÈÍr¥|N®∞uSïm©ØsP,Æ±C⁄ùù±Î9EiÆ?$"Gà9<Í!N!7Í»}„¡+6œ}Té∂	´xcàåÇÌr!Ü∞b±¶≤ú‰-ßÓäÄ2+}»`œQ‡;5»{ ∂+´5“…‚æ}NÁ∆Ï<oÜ≠-€À:ˆ““'
+ƒr›Ø√;â÷ÀËK‘¶ô%9VS*j/äﬁøÅËyû¬¢Ñó¨öû˛ûfÏYâ¥å›9Û\y2•3”îSx&'óû`R· ‡éHëR`Yñ"ÕÑ’¶¥RÂaÎ2ÇnaI<∞$Ë>BaP‹bs
+zk¥ìT
+>OA€àxé;qΩ”ùùΩ^OÚ‚28í∞ÃuMJ«L±‡kQU(Ã´%,íF°’…öK:nVº!WÇ‘∂∂w_w≤}	ÉŒ≤pa»·ÚèÂÒ˘Û/ı·{{«ﬂvwˆ»Ó^Ô•=X·r⁄IF‘OÇ“ΩkØ’´∏É>+Û√ÖÁÕ	ßΩÍ`\´ÿ]yéÉ©Ìlgü 3dèK,G…:)ê)OLäÆº (⁄4√˘…Ä’ß…8ÊÛ‰ÀÂœÀ3l«v¡W›Ωyq˚áŒ7L£,^>aÒπ<cÒ¢4Â◊ß˚']"∞Zi“∆$¿Í3∏Y	õ:	éä{]„r-üaòõÄ˘öÙ°Üµ≈‹õ£^T”©™çòÂtk%N,ü#ƒ>ï±aèÁ†Úrªªø∑k–ØbKÜ˚∑¬+Ò‘Ã≠ni<∞CÍà¯
+=∏¢7xŸ°ghcΩ∂>Z#ı˚?§AÚÏo˛ºŒüÒËÁœÎz253∂ΩÙ8i{1SµÖiVÖ¥‘Q&6!‡ﬂdîŒçPt˝Àåå÷πf%ÒÌSn0»Ë$Ö÷„RShÏ∏Âa€Ìıü∑Âìﬁ°ı∏n¥’ÿ¯q[=>	¸¿0ò:\˘∞˘˜iú∏√©ué•>	œA‚&¯èNÅ‹vGÅqd¡’]éB¸ÃÁ›AcTÄÄ∑˛Ú«ﬂ˝3yâ≤øÕïl&g˜…	≈ ∑!ª~Ú
+!“fLÁΩõK-v4øQ^‡ZÒñê¿á qn≥fJG‘Ô]´hVo÷*AI˙ÅÎ⁄’Ω…Ô–\˛Òa°V7∞Í7W“U^^{·Ú›<3˚™1M‹ƒ£õ5õßB!∞°ïêπ™w°ô‡˘4ÜyúEæsUI∞ﬁ∏Ä*_2hdX∫˘JˆFF≤>´‡,gvWÃc@≠0¢÷edá‰<¢ˆ;ÎíENF„F≠Qœæ¬4XÑù˚ST¡ΩkY}£ ÜòÃv∆H€Àìa\∏ﬁK2ªÈÏGëÎ¸«B- #ûtäèè≈ïìÑK+ˇ!»ëîË≤˛LïNΩl°r›nïUêêBòá9∫NvÇ´8âàNÀÌa{ÙˆÂmNO›1ÌMcXuÙ˝ò≠JB-É‹1^y¥b,Fd,]ﬂæ-v<œvèVAd¿:âM’çá_∂⁄ﬂ∆m°$T=VùÕE™∞4´bóXçÿpÉf‹*^≥∆ÌI$?1˚©bÁFˆH$DS‡∏,û(äX\ö.”¬ï÷ÖZayå˚.˜Æ]Áj÷‘VÛiÑô·◊–Äµy$k'?`∫i¡˙\lQÕ∆øJ0™ô-ee^ê˙˚ﬂˇÀåΩˇ˝◊gU÷Äîì¸¶®ä∂ÜÿΩ$°>e4«>7'ÛX%eÓ]Áô*›‹2)Ó]g‰Ï6)∫î Ic™Ô® L—ù7öDì[Æ⁄i»]gÕ,–buC≥õSÀ\)„≠$`∫Î_Â‹*≥’[mIî˙®f…ƒæ≤.≠âSüës/º´eÓ_…π5öq$ñbñíπkZaâ8—&K¡c%Y"uäÆHe∂t±8Ú9©Àí¯åp¸≈“”ºı5(eIJÀP∑b¿B%ö.ê.*Bõ‚ZÌ÷Q˛˚µ=xóÜ§7S'ˇÂµÌ€#∂±A+“≠,∆¬a :æå(VÊ’êíiΩT¿⁄Àë†Uñ†>+ÚÁ◊ÿfÖÍCÄîR0Ìd–≤7Ïﬁxö‡e˚aß›Œ_Ç›∆3ÅøkO„y‘Œ^dósÚ—’±ÿ]á>ﬁEêFT}«/‰n÷9çL+úÚ„õ3Ωx"¶IF√_¶`÷O¿ÜyiºÒhØo˙,ÔQ‹ÇòÒ
+x≤Ì8dÉL\/≈√xåìêxxK"A€®Ó–¡0C–qi’¿{°ü∂…œ»Fª›÷Í«xgç∏s1ÉÉø	¿çi4õ≠–vÿä∆√5 ∏^ã9ôòªøf∏/ ·W>Úö›Òx÷πw=ôÁIäFKPc§ºÖM≠4h;é e_ÕUŒ«·ﬁ7GFﬁ¬Õ¬åßG≈?ÕgüΩˇÈOÑqù €;≈jB®(¸™_1∆å40≥®ëµiûô˜ßMó˙	ÿzQ˝*ﬂÁL†≠XÄ∫AŸw~•	ø”WKCõñ˝·˘˜XX:–˘çÎŸö°Ÿëaäô’#(ä†u≤‡í:&(¢©IóÈ^ñ≥å⁄ãÆ»c›s]eËøæ
+ }ÉΩ∏Ñ|<ä+≈µ˛®óÄ≠°8¥!-πúÕÇ+˘µÂõæ∑D3rwS;Úï≠`Ñ≈óFï¡»6Ç9+‹J®ÂŸùÉÛA)a=jk`ÄWM¡3˝ ¬rf?ì¡rﬁ5Á”L5mf“	^63¶.Ä®DbfÖëC{ﬂ0 »≠7#æ∞ﬂJÿBΩZæSSRzÂéÇ"∞Üö9ıúc á€Öä*;.ÿ-C‡Méw¿D¸7
+Åˇ¥ˇxåøÉ_˛ûæmÉhœù:48Ãø£ÎG¥∞hÊﬁıPπ@âUáú≥fJ≈3dõÿY’∏˙∂u9€yÂe˛2Ûª=:LJŸc¸É∆ dCs¿ü¥5œ;ø“V|∆Ã)˙–ì˝(öÕ/√˝”(¬ÛRøèätΩñwØ¨í‚o®¬◊ú/ÔÊ2¥RcÕ}¸¸¶.”◊õ./ æ£ñ(∆˛÷ˆÑœ≈:*öΩ–€§£kp–¬+Å¯x<•ﬂ	îﬂ«£üÏì–÷Wq)O.öÂm‡[ø)Êy	Ÿ–‘∑wN∫ﬂŒG‹&Ê+Ìh/B¯h˚¥∑∑kZB™/•~åQßÌ˙¸JÇ˘N√A0aª/–ØtÌˇVúe§=ıÒ oØπ4wb¡¸ SÌ˘ïV√'ÂÄîsÏrqºUÒ?˛Ôœø¡{/Ç	ª—è;Ï1±#önoJB;ç©”¬ò=≈‡0rG#≈$ΩiãÁ%'Öö »“,(§2Îã"åqc1ñ|=”ºo_	£‡{vWº8h ø´
+~˘€7„52yã%yôû(ÙA3ªê∂øbÖ·AäïD˙›(¸Ü›„‘Åq√—JEñﬂ…ø| äHó√8Ê¨ëkÇ¶ﬁ±1Z=¬ì˙`ËX˙Ãﬂ˙ Uë;ÄœSjG“∞Ä◊…_¡ﬂr… ˚#ÜtÊ›ÿøÉΩÂ÷Kƒÿ3E~K>÷	ˇF€¸ä^∑Ò~|µIû¿œLw“:ÛÚ.˘yÑ‡kŸ¸„‡"Ÿ,⁄kˇW‰ƒoï=ví/Ó]ª3<˝™pÿ;√úÆ;Ûs“ÄG”t'Â≤Ç≥]DßC˝ﬂ±£MN*ËÕ“∆_èl´"j%æEπñëﬁπ˘1)˛¯”Q˝∂â¸3˛#ÌˆZ˚ÒZ˚Ÿ⁄∆√µçßk€∞Ù·ˇ§Ω⁄?&ÂøÑøœû>ûCzæ»«®“`µNÿw•|N.úô∏–É—8'Ó]ù3˛Ò«áä¶AEÉ˘:Ò~Ú„èm√˚*¶ùiL+hΩæ‰ÖËÀÃ£6„—≤,*ìüS˘∆ ﬂnÃ$ñCâAu£›‡R5⁄Üa∂ÀlT)<F'r‡é∆‡
+|àæ3
+¡ß ŸFU˙R’ûTA6t"4ÛgKTãΩj¢rèÚ±∫G˘˛ß?%|√: ˆ'Ö√•o∑Tù8¬z3¶£zú+Â(ÔkALıpÕ¸√pÚAÛ)+q¿
+á#YB&ß™≥U¶k’+r◊+^k^J[≥`NΩ:rŒ%Á∑uÕ˘Q‡πÉ©¸ı|ÊîÙ
+Qz8WEÃKáÎ•X∫îjÊŸHvÔ_”Æü4ñœ[sËk`Âöjj¥»@«æSœAõgŒ2íòè\-] S£{*æÓD…÷±çA•Bô≥Cæ<K⁄ó‘‹πï∫G)ÿ&7–ˆ)Ûèr}À2£ë“F€∫ÃÈ$7Z¥áY¨X9Z¯ê}§œuü¢`ÏßΩ§ﬂ∞y¶ËL±≥^®Kvø˘˝¸ñ~P.Ÿª>óBÜìve?#wè•∞ñ∫±øÆ^≠ü—ah£∏∂üÈÜSˇ∏/>ñÆpw†-ªò*ﬂ†å)]U4˜˛?É_tŸˇ◊˝Á9~!‡6˚FYÆπM'V‰üBõÎwÛãÚ√W)xÖe¢ﬂ
+≥!Ω^#≥ ∞`ÎtÎŒWÎ(‹¯súLº≠Z≠vÁ3I‰dÃæb»˘Ê‰‰®«.Ölƒ(∏D‹…ﬂÈ_ªW]çåì$lâwEüfá°‰ÿt¯˝Ñı¡u}∂ë[lœ.˚Mc⁄∑'‚«3ŸÎ;¢÷@BXzIcX€ºŸüZSÅ¬nn‹ªJ"–Í‚€∂≤¬Òççø•Q`ÌR<Ñjÿ•q≥„ü˛ÖEAØÉÁ|ÿü<|vJÆc¡ß†}ƒŸ¨Á∑Ov›‹  UsΩ€=ﬁ€¡kYÙñ6w–≥ù\æ7U¢B±ú¨H˘Âk)|+º3Ï–ß†c˝~ﬁ™œ[5
+Uà≤ÄK« CçZmç ökÇŒ‚˚+äﬁŸ\ﬂˇ·»ØËy∆nâDD¯ùıuVü2‚§£PUÜqƒj'âº;L?%Aÿ™iòr±ÌC¿ÉŸ1z5†aB~AßÃue+*J√§£çQ˚ŒÔç”o	w·“œnPme√@{Ï˚zÇòP ∞∆È√ïH ≈Ÿ‹˝‘ÔcYbøO67I≠ﬂü@@“Ô◊x∂8Ó¸?   ˇˇ m\›

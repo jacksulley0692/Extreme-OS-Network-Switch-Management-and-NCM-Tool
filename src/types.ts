@@ -443,3 +443,51 @@ export interface AuditLogItem {
   clientIp?: string;
   status: "SUCCESS" | "WARNING" | "FAILED";
 }
+
+/** Detected Unmanaged / Rogue Switch on Edge Port */
+export interface DetectedMacEntry {
+  mac: string;
+  vlan: string | number;
+  ouiVendor?: string;
+  isConsumerOui?: boolean;
+  flags?: string;
+}
+
+export interface DiscoveredUnmanagedSwitch {
+  id: string;
+  switchIp: string;
+  switchHostname: string;
+  port: string;
+  macCount: number;
+  detectedMacs: DetectedMacEntry[];
+  identifiedVendor: string;
+  alertLevel: "HIGH" | "MEDIUM" | "LOW";
+  detectionReason: string;
+  isConsumerOui: boolean;
+  consumerMatchReason: string;
+  lldpDetails?: {
+    systemName?: string;
+    systemDesc?: string;
+    chassisId?: string;
+    portId?: string;
+    capabilities?: string[];
+  };
+  sharingStatus: "Access Port (No LAG)" | "Excluded LAG";
+  vlan: string | number;
+  recommendedAction: string;
+  timestamp: string;
+}
+
+export interface UnmanagedDiscoveryResult {
+  success: boolean;
+  targetSite: string;
+  targetSwitches: { ip: string; hostname: string; status: string }[];
+  scannedAt: string;
+  durationMs: number;
+  totalPortsScanned: number;
+  highRiskCount: number;
+  mediumRiskCount: number;
+  flaggedSwitches: DiscoveredUnmanagedSwitch[];
+  rawCliOutput: string;
+  executionLogs: string[];
+}

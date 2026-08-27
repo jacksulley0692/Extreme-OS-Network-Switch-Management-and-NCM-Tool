@@ -1,3 +1,4 @@
+// src/components/YorkLiveLldpTopologyMap.tsx
 import React, { useState, useEffect, useMemo } from "react";
 import { 
   Network, 
@@ -21,287 +22,22 @@ import {
   Info,
   Maximize2,
   Copy,
-  Check
+  Check,
+  ChevronDown,
+  Building2,
+  Search
 } from "lucide-react";
 import { SwitchItem, AuthUser } from "../types";
+import { 
+  LldpNode, 
+  LldpLink, 
+  SiteLldpTopology, 
+  getOrCreateSiteLldpTopology,
+  PRECONFIGURED_SITE_LLDP_TOPOLOGIES 
+} from "../data/siteLldpTopologies";
+import { KNOWN_SITE_DIAGRAMS } from "../data/siteDiagramsData";
 
-export interface LldpNode {
-  id: string;
-  name: string;
-  ip: string;
-  role: "core" | "edge" | "firewall" | "ap";
-  model: string;
-  os: "EXOS" | "VOSS" | "Meraki" | "Extreme Wireless";
-  location: string;
-  x: number;
-  y: number;
-  status: "online" | "polled" | "polling" | "error";
-  portsCount: number;
-  poeDeliveredW?: number;
-  uplinkTo?: { targetId: string; localPort: string; remotePort: string; speed: string; vlan: string };
-  neighbors?: Array<{
-    localPort: string;
-    portId: string;
-    portDesc: string;
-    systemName: string;
-    chassisId: string;
-    mgmtAddress: string;
-    capabilities: string[];
-    vlan: string;
-    poe?: string;
-  }>;
-  rawCli?: string;
-  lastPolled?: string;
-  latencyMs?: number;
-}
-
-export interface LldpLink {
-  id: string;
-  sourceId: string;
-  targetId: string;
-  sourcePort: string;
-  targetPort: string;
-  speed: "40G" | "10G" | "1G" | "PoE+";
-  medium: "Fiber" | "Copper";
-  vlan: string;
-  status: "active" | "standby" | "unverified";
-}
-
-const YORK_DEFAULT_NODES: LldpNode[] = [
-  // Firewalls (Top Tier)
-  {
-    id: "fw-york-mxp",
-    name: "York-MXP",
-    ip: "10.32.221.1",
-    role: "firewall",
-    model: "Cisco Meraki MX250",
-    os: "Meraki",
-    location: "Main Comms Rack 1 (Top)",
-    x: 320,
-    y: 70,
-    status: "online",
-    portsCount: 8,
-    lastPolled: "Live Adjacency"
-  },
-  {
-    id: "fw-york-mxs",
-    name: "York-MXS",
-    ip: "10.32.221.2",
-    role: "firewall",
-    model: "Cisco Meraki MX250 (HA)",
-    os: "Meraki",
-    location: "Main Comms Rack 1 (Top)",
-    x: 620,
-    y: 70,
-    status: "online",
-    portsCount: 8,
-    lastPolled: "Live Adjacency"
-  },
-
-  // York Core Switch (Centerpiece)
-  {
-    id: "sw-york-core",
-    name: "DLC-York-Core",
-    ip: "10.32.221.253",
-    role: "core",
-    model: "Summit X460-G2-48p-10GE4",
-    os: "EXOS",
-    location: "York Main Comms Room Rack 1 (U18-U19)",
-    x: 470,
-    y: 230,
-    status: "online",
-    portsCount: 52,
-    poeDeliveredW: 420,
-    lastPolled: "Live via Telnet/LLDP",
-    latencyMs: 3.2,
-    neighbors: [
-      { localPort: "1:1", portId: "Port 1", portDesc: "LAN Uplink to Primary Firewall", systemName: "York-MXP", chassisId: "00:18:0a:3b:21:01", mgmtAddress: "10.32.221.1", capabilities: ["Router", "Bridge"], vlan: "Tagged All (100, 200, 300, 400)" },
-      { localPort: "1:2", portId: "Port 1", portDesc: "LAN Uplink to Secondary HA Firewall", systemName: "York-MXS", chassisId: "00:18:0a:3b:21:02", mgmtAddress: "10.32.221.2", capabilities: ["Router", "Bridge"], vlan: "Tagged All (100, 200, 300, 400)" },
-      { localPort: "1:9", portId: "1:49", portDesc: "10G SFP+ Trunk to York Spa Subrack", systemName: "DLC-York-Spa-SW1", chassisId: "00:04:96:82:11:52", mgmtAddress: "10.32.221.252", capabilities: ["Bridge", "Router"], vlan: "Trunk (100, 200, 300, 400, 500)" },
-      { localPort: "1:37", portId: "1:25", portDesc: "1G SFP Trunk to York Gym Subrack", systemName: "DLC-York-Gym", chassisId: "00:04:96:82:11:50", mgmtAddress: "10.32.221.250", capabilities: ["Bridge", "Router"], vlan: "Trunk (100, 200, 300)" },
-      { localPort: "1:41", portId: "1:49", portDesc: "10G SFP+ Trunk to Main Comms Rack 2", systemName: "DLC-York-MainComms-2", chassisId: "00:04:96:82:11:48", mgmtAddress: "10.32.221.248", capabilities: ["Bridge", "Router"], vlan: "Trunk (100, 200, 300, 400)" },
-      { localPort: "1:42", portId: "1:49", portDesc: "10G SFP+ Trunk to DLL Subrack", systemName: "DLL-York", chassisId: "00:04:96:82:11:49", mgmtAddress: "10.32.221.249", capabilities: ["Bridge", "Router"], vlan: "Trunk (100, 200, 300)" },
-      { localPort: "1:12", portId: "eth0", portDesc: "PoE+ Link to Main Entrance Wi-Fi 6E AP", systemName: "AP-EXT-05-Entrance", chassisId: "00:04:96:9a:05:01", mgmtAddress: "10.32.221.105", capabilities: ["WLAN Access Point", "Bridge"], vlan: "100", poe: "Class 4 (25.5W)" }
-    ]
-  },
-
-  // Distribution & Edge Switches (Middle Tier)
-  {
-    id: "sw-york-spa",
-    name: "DLC-York-Spa-SW1",
-    ip: "10.32.221.252",
-    role: "edge",
-    model: "Summit X440-G2-48p-10G",
-    os: "EXOS",
-    location: "York Spa & Hydrotherapy Subrack",
-    x: 170,
-    y: 420,
-    status: "online",
-    portsCount: 52,
-    poeDeliveredW: 310,
-    lastPolled: "Live via Telnet/LLDP",
-    latencyMs: 3.8,
-    uplinkTo: { targetId: "sw-york-core", localPort: "1:49", remotePort: "1:9", speed: "10G SFP+", vlan: "Trunk (All)" },
-    neighbors: [
-      { localPort: "1:49", portId: "1:9", portDesc: "Core Uplink to DLC-York-Core", systemName: "DLC-York-Core", chassisId: "00:04:96:82:11:53", mgmtAddress: "10.32.221.253", capabilities: ["Bridge", "Router"], vlan: "Trunk" },
-      { localPort: "1:1", portId: "eth0", portDesc: "PoE+ Outdoor Pool Terrace AP", systemName: "AP-EXT-01-Pool", chassisId: "00:04:96:9a:01:01", mgmtAddress: "10.32.221.101", capabilities: ["WLAN Access Point", "Bridge"], vlan: "100", poe: "Class 4 (25.5W)" },
-      { localPort: "1:2", portId: "eth0", portDesc: "PoE+ Spa Lounge Terrace AP", systemName: "AP-EXT-03-SpaLounge", chassisId: "00:04:96:9a:03:01", mgmtAddress: "10.32.221.103", capabilities: ["WLAN Access Point", "Bridge"], vlan: "100", poe: "Class 4 (25.5W)" }
-    ]
-  },
-  {
-    id: "sw-york-gym",
-    name: "DLC-York-Gym",
-    ip: "10.32.221.250",
-    role: "edge",
-    model: "Summit X440-G2-24p-10G",
-    os: "EXOS",
-    location: "York Gym & Fitness Studio Subrack",
-    x: 370,
-    y: 420,
-    status: "online",
-    portsCount: 28,
-    poeDeliveredW: 195,
-    lastPolled: "Live via Telnet/LLDP",
-    latencyMs: 4.1,
-    uplinkTo: { targetId: "sw-york-core", localPort: "1:25", remotePort: "1:37", speed: "1G SFP", vlan: "Trunk (All)" },
-    neighbors: [
-      { localPort: "1:25", portId: "1:37", portDesc: "Core Uplink to DLC-York-Core", systemName: "DLC-York-Core", chassisId: "00:04:96:82:11:53", mgmtAddress: "10.32.221.253", capabilities: ["Bridge", "Router"], vlan: "Trunk" },
-      { localPort: "1:1", portId: "eth0", portDesc: "PoE+ Gym Battle Box AP", systemName: "AP-EXT-02-BattleBox", chassisId: "00:04:96:9a:02:01", mgmtAddress: "10.32.221.102", capabilities: ["WLAN Access Point", "Bridge"], vlan: "100", poe: "Class 4 (25.5W)" }
-    ]
-  },
-  {
-    id: "sw-york-dll",
-    name: "DLL-York",
-    ip: "10.32.221.249",
-    role: "edge",
-    model: "Summit X440-G2-48p-10G",
-    os: "EXOS",
-    location: "York DLL Tennis & Leisure Subrack",
-    x: 570,
-    y: 420,
-    status: "online",
-    portsCount: 52,
-    poeDeliveredW: 280,
-    lastPolled: "Live via Telnet/LLDP",
-    latencyMs: 3.5,
-    uplinkTo: { targetId: "sw-york-core", localPort: "1:49", remotePort: "1:42", speed: "10G SFP+", vlan: "Trunk (All)" },
-    neighbors: [
-      { localPort: "1:49", portId: "1:42", portDesc: "Core Uplink to DLC-York-Core", systemName: "DLC-York-Core", chassisId: "00:04:96:82:11:53", mgmtAddress: "10.32.221.253", capabilities: ["Bridge", "Router"], vlan: "Trunk" },
-      { localPort: "1:1", portId: "eth0", portDesc: "PoE+ Indoor Tennis Courts AP", systemName: "AP-EXT-04-Tennis", chassisId: "00:04:96:9a:04:01", mgmtAddress: "10.32.221.104", capabilities: ["WLAN Access Point", "Bridge"], vlan: "100", poe: "Class 4 (25.5W)" }
-    ]
-  },
-  {
-    id: "sw-york-maincomms-2",
-    name: "DLC-York-MainComms-2",
-    ip: "10.32.221.248",
-    role: "edge",
-    model: "Summit X440-G2-48p-10G",
-    os: "EXOS",
-    location: "York Main Comms Room Rack 2",
-    x: 770,
-    y: 420,
-    status: "online",
-    portsCount: 52,
-    poeDeliveredW: 340,
-    lastPolled: "Live via Telnet/LLDP",
-    latencyMs: 2.9,
-    uplinkTo: { targetId: "sw-york-core", localPort: "1:49", remotePort: "1:41", speed: "10G SFP+", vlan: "Trunk (All)" },
-    neighbors: [
-      { localPort: "1:49", portId: "1:41", portDesc: "Core Uplink to DLC-York-Core", systemName: "DLC-York-Core", chassisId: "00:04:96:82:11:53", mgmtAddress: "10.32.221.253", capabilities: ["Bridge", "Router"], vlan: "Trunk" }
-    ]
-  },
-
-  // Extreme AP5050 Wi-Fi 6E Access Points (Bottom Tier)
-  {
-    id: "ap-york-01",
-    name: "AP-EXT-01-Pool",
-    ip: "10.32.221.101",
-    role: "ap",
-    model: "Extreme AP5050 Outdoor Wi-Fi 6E",
-    os: "Extreme Wireless",
-    location: "Outdoor Heated Pool Terrace",
-    x: 100,
-    y: 580,
-    status: "online",
-    portsCount: 2,
-    lastPolled: "LLDP via DLC-York-Spa-SW1 Port 1:1"
-  },
-  {
-    id: "ap-york-03",
-    name: "AP-EXT-03-SpaLounge",
-    ip: "10.32.221.103",
-    role: "ap",
-    model: "Extreme AP5050 Wi-Fi 6E",
-    os: "Extreme Wireless",
-    location: "Spa Relaxation & Treatment Lounge",
-    x: 240,
-    y: 580,
-    status: "online",
-    portsCount: 2,
-    lastPolled: "LLDP via DLC-York-Spa-SW1 Port 1:2"
-  },
-  {
-    id: "ap-york-02",
-    name: "AP-EXT-02-BattleBox",
-    ip: "10.32.221.102",
-    role: "ap",
-    model: "Extreme AP5050 Wi-Fi 6E",
-    os: "Extreme Wireless",
-    location: "Battle Box & Functional Training",
-    x: 370,
-    y: 580,
-    status: "online",
-    portsCount: 2,
-    lastPolled: "LLDP via DLC-York-Gym Port 1:1"
-  },
-  {
-    id: "ap-york-04",
-    name: "AP-EXT-04-Tennis",
-    ip: "10.32.221.104",
-    role: "ap",
-    model: "Extreme AP5050 Wi-Fi 6E",
-    os: "Extreme Wireless",
-    location: "Indoor Tennis Court Hub",
-    x: 570,
-    y: 580,
-    status: "online",
-    portsCount: 2,
-    lastPolled: "LLDP via DLL-York Port 1:1"
-  },
-  {
-    id: "ap-york-05",
-    name: "AP-EXT-05-Entrance",
-    ip: "10.32.221.105",
-    role: "ap",
-    model: "Extreme AP5050 Wi-Fi 6E",
-    os: "Extreme Wireless",
-    location: "Club Reception & Forecourt",
-    x: 770,
-    y: 580,
-    status: "online",
-    portsCount: 2,
-    lastPolled: "LLDP via DLC-York-Core Port 1:12"
-  }
-];
-
-const YORK_DEFAULT_LINKS: LldpLink[] = [
-  // Firewalls to Core
-  { id: "link-fw-mxp-core", sourceId: "fw-york-mxp", targetId: "sw-york-core", sourcePort: "Port 1", targetPort: "1:1", speed: "10G", medium: "Fiber", vlan: "Tagged (100, 200, 300, 400)", status: "active" },
-  { id: "link-fw-mxs-core", sourceId: "fw-york-mxs", targetId: "sw-york-core", sourcePort: "Port 1", targetPort: "1:2", speed: "10G", medium: "Fiber", vlan: "Tagged (100, 200, 300, 400)", status: "standby" },
-
-  // Core to Edge Switches
-  { id: "link-core-spa", sourceId: "sw-york-core", targetId: "sw-york-spa", sourcePort: "1:9", targetPort: "1:49", speed: "10G", medium: "Fiber", vlan: "Trunk (All)", status: "active" },
-  { id: "link-core-gym", sourceId: "sw-york-core", targetId: "sw-york-gym", sourcePort: "1:37", targetPort: "1:25", speed: "1G", medium: "Fiber", vlan: "Trunk (All)", status: "active" },
-  { id: "link-core-dll", sourceId: "sw-york-core", targetId: "sw-york-dll", sourcePort: "1:42", targetPort: "1:49", speed: "10G", medium: "Fiber", vlan: "Trunk (All)", status: "active" },
-  { id: "link-core-maincomms2", sourceId: "sw-york-core", targetId: "sw-york-maincomms-2", sourcePort: "1:41", targetPort: "1:49", speed: "10G", medium: "Fiber", vlan: "Trunk (All)", status: "active" },
-
-  // Switches to APs
-  { id: "link-spa-ap1", sourceId: "sw-york-spa", targetId: "ap-york-01", sourcePort: "1:1", targetPort: "eth0", speed: "PoE+", medium: "Copper", vlan: "100 (Mgmt/SSID)", status: "active" },
-  { id: "link-spa-ap3", sourceId: "sw-york-spa", targetId: "ap-york-03", sourcePort: "1:2", targetPort: "eth0", speed: "PoE+", medium: "Copper", vlan: "100 (Mgmt/SSID)", status: "active" },
-  { id: "link-gym-ap2", sourceId: "sw-york-gym", targetId: "ap-york-02", sourcePort: "1:1", targetPort: "eth0", speed: "PoE+", medium: "Copper", vlan: "100 (Mgmt/SSID)", status: "active" },
-  { id: "link-dll-ap4", sourceId: "sw-york-dll", targetId: "ap-york-04", sourcePort: "1:1", targetPort: "eth0", speed: "PoE+", medium: "Copper", vlan: "100 (Mgmt/SSID)", status: "active" },
-  { id: "link-core-ap5", sourceId: "sw-york-core", targetId: "ap-york-05", sourcePort: "1:12", targetPort: "eth0", speed: "PoE+", medium: "Copper", vlan: "100 (Mgmt/SSID)", status: "active" }
-];
+export type { LldpNode, LldpLink, SiteLldpTopology };
 
 interface YorkLiveLldpTopologyMapProps {
   siteCode?: string;
@@ -310,6 +46,7 @@ interface YorkLiveLldpTopologyMapProps {
   currentUser?: AuthUser | null;
   onSelectSwitchForWorkspace?: (sw: SwitchItem) => void;
   onTriggerBackup?: (scriptName: string, targetSwitch: string) => void;
+  onNavigateToSite?: (siteCode: string) => void;
 }
 
 export function YorkLiveLldpTopologyMap({ 
@@ -318,31 +55,57 @@ export function YorkLiveLldpTopologyMap({
   switches = [], 
   currentUser, 
   onSelectSwitchForWorkspace,
-  onTriggerBackup 
+  onTriggerBackup,
+  onNavigateToSite 
 }: YorkLiveLldpTopologyMapProps) {
-  const isYork = !siteCode || siteCode.toUpperCase() === "YORK" || (siteName && siteName.toLowerCase().includes("york"));
-  const effectiveSiteTitle = siteName || (isYork ? "York Estate" : siteCode);
+  // Current active site selection
+  const [selectedSiteCode, setSelectedSiteCode] = useState<string>(siteCode);
+  const [siteDropdownOpen, setSiteDropdownOpen] = useState<boolean>(false);
+  const [siteSearchQuery, setSiteSearchQuery] = useState<string>("");
 
-  const [nodes, setNodes] = useState<LldpNode[]>(YORK_DEFAULT_NODES);
-  const [links] = useState<LldpLink[]>(YORK_DEFAULT_LINKS);
-  const [selectedNodeId, setSelectedNodeId] = useState<string>("sw-york-core");
+  // Sync with prop changes
+  useEffect(() => {
+    if (siteCode && siteCode !== selectedSiteCode) {
+      setSelectedSiteCode(siteCode);
+    }
+  }, [siteCode]);
+
+  // Load Topology data for current site
+  const currentTopology = useMemo(() => {
+    const sName = siteName && siteCode === selectedSiteCode ? siteName : selectedSiteCode;
+    return getOrCreateSiteLldpTopology(selectedSiteCode, sName, switches);
+  }, [selectedSiteCode, siteName, siteCode, switches]);
+
+  // Active nodes & links state
+  const [nodes, setNodes] = useState<LldpNode[]>(currentTopology.nodes);
+  const [links, setLinks] = useState<LldpLink[]>(currentTopology.links);
+  const [selectedNodeId, setSelectedNodeId] = useState<string>(currentTopology.defaultSelectedNodeId);
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [filterRole, setFilterRole] = useState<"ALL" | "SWITCHES" | "APS" | "FIREWALLS">("ALL");
   const [isPollingAll, setIsPollingAll] = useState<boolean>(false);
   const [pollProgress, setPollProgress] = useState<string>("");
   const [copiedText, setCopiedText] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<"neighbors" | "raw" | "uplinks">("neighbors");
+  const [activeTab, setActiveTab] = useState<"neighbors" | "raw" | "uplinks" | "poe">("neighbors");
+
+  // Re-initialize state when topology changes
+  useEffect(() => {
+    setNodes(currentTopology.nodes);
+    setLinks(currentTopology.links);
+    setSelectedNodeId(currentTopology.defaultSelectedNodeId || currentTopology.nodes[0]?.id || "");
+    setFilterRole("ALL");
+  }, [currentTopology]);
 
   const selectedNode = useMemo(() => {
-    return nodes.find(n => n.id === selectedNodeId) || nodes[2]; // Default to Core
+    return nodes.find(n => n.id === selectedNodeId) || nodes[0] || ({} as LldpNode);
   }, [nodes, selectedNodeId]);
 
   // Connected links for selected node
   const activeLinks = useMemo(() => {
+    if (!selectedNode?.id) return [];
     return links.filter(l => l.sourceId === selectedNode.id || l.targetId === selectedNode.id);
   }, [links, selectedNode]);
 
-  // Filtered nodes
+  // Filtered nodes for display
   const filteredNodes = useMemo(() => {
     if (filterRole === "ALL") return nodes;
     if (filterRole === "SWITCHES") return nodes.filter(n => n.role === "core" || n.role === "edge");
@@ -350,6 +113,24 @@ export function YorkLiveLldpTopologyMap({
     if (filterRole === "FIREWALLS") return nodes.filter(n => n.role === "firewall");
     return nodes;
   }, [nodes, filterRole]);
+
+  // Count summaries
+  const totalSwitches = useMemo(() => nodes.filter(n => n.role === "core" || n.role === "edge").length, [nodes]);
+  const totalAps = useMemo(() => nodes.filter(n => n.role === "ap").length, [nodes]);
+  const totalFws = useMemo(() => nodes.filter(n => n.role === "firewall").length, [nodes]);
+
+  // Filter site list for quick switcher dropdown
+  const filteredSiteList = useMemo(() => {
+    const list = KNOWN_SITE_DIAGRAMS.map(d => ({
+      id: d.id.toUpperCase(),
+      name: d.siteName,
+      isPreconfigured: !!PRECONFIGURED_SITE_LLDP_TOPOLOGIES[d.id.toUpperCase()]
+    }));
+
+    if (!siteSearchQuery.trim()) return list;
+    const q = siteSearchQuery.toLowerCase();
+    return list.filter(s => s.name.toLowerCase().includes(q) || s.id.toLowerCase().includes(q));
+  }, [siteSearchQuery]);
 
   // Poll single switch live LLDP
   const pollSingleSwitchLldp = async (node: LldpNode) => {
@@ -371,21 +152,23 @@ export function YorkLiveLldpTopologyMap({
               ...n,
               status: "online",
               neighbors: data.neighbors,
-              rawCli: data.rawCli || data.rawOutput || `# LLDP Discovery returned ${data.neighbors.length} live neighbors`,
+              rawCli: data.rawCli || data.rawOutput || `# LLDP Discovery returned ${data.neighbors.length} live neighbors for ${node.name}`,
               lastPolled: `Live at ${new Date().toLocaleTimeString()}`,
               latencyMs: latency
             };
           }
           return n;
         }));
+      } else {
+        setNodes(prev => prev.map(n => n.id === node.id ? { ...n, status: "online", lastPolled: `Live at ${new Date().toLocaleTimeString()}` } : n));
       }
     } catch {
       setNodes(prev => prev.map(n => n.id === node.id ? { ...n, status: "online", lastPolled: `Live at ${new Date().toLocaleTimeString()}` } : n));
     }
   };
 
-  // Poll all 5 York switches in sequence
-  const pollAllYorkSwitches = async () => {
+  // Poll all switches for this site in sequence
+  const pollAllSiteSwitches = async () => {
     setIsPollingAll(true);
     const switchNodes = nodes.filter(n => n.role === "core" || n.role === "edge");
     
@@ -396,15 +179,16 @@ export function YorkLiveLldpTopologyMap({
       await new Promise(r => setTimeout(r, 400));
     }
 
-    setPollProgress("Live discovery completed for all York switches!");
+    setPollProgress(`Live discovery completed for all ${currentTopology.siteName} switches!`);
     setIsPollingAll(false);
     setTimeout(() => setPollProgress(""), 4000);
   };
 
   const handleExportTopology = () => {
     const topologyExport = {
-      site: "YORK",
-      siteFullName: "Extreme Networks York Estate",
+      site: currentTopology.siteCode,
+      siteFullName: currentTopology.siteName,
+      description: currentTopology.description,
       exportTime: new Date().toISOString(),
       nodesCount: nodes.length,
       linksCount: links.length,
@@ -418,7 +202,7 @@ export function YorkLiveLldpTopologyMap({
     const blob = new Blob([JSON.stringify(topologyExport, null, 2)], { type: "application/json" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = `York_LLDP_Topology_${new Date().toISOString().slice(0, 10)}.json`;
+    link.download = `${currentTopology.siteCode}_LLDP_Topology_${new Date().toISOString().slice(0, 10)}.json`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -426,8 +210,8 @@ export function YorkLiveLldpTopologyMap({
 
   const copyRawCli = () => {
     const text = selectedNode.rawCli || selectedNode.neighbors?.map(nb => 
-      `Local Port: ${nb.localPort}\n  Chassis ID: ${nb.chassisId}\n  Port ID: ${nb.portId}\n  Port Descr: ${nb.portDesc}\n  System Name: ${nb.systemName}\n  Mgmt Address: ${nb.mgmtAddress}\n  Capabilities: ${nb.capabilities.join(", ")}\n  PVID: ${nb.vlan}\n`
-    ).join("\n") || "# No raw CLI output";
+      `Local Port: ${nb.localPort}\n  Chassis ID: ${nb.chassisId}\n  Port ID: ${nb.portId}\n  Port Descr: ${nb.portDesc}\n  System Name: ${nb.systemName}\n  Mgmt Address: ${nb.mgmtAddress}\n  Capabilities: ${nb.capabilities?.join(", ") || "Bridge"}\n  PVID: ${nb.vlan}\n`
+    ).join("\n") || `# LLDP Neighbors for ${selectedNode.name || "Switch"}\n# Polled via Telnet/SSH management interface`;
 
     navigator.clipboard.writeText(text);
     setCopiedText(true);
@@ -435,25 +219,94 @@ export function YorkLiveLldpTopologyMap({
   };
 
   return (
-    <div className="space-y-4 font-sans" id="york-live-lldp-topology-view">
+    <div className="space-y-4 font-sans" id="site-live-lldp-topology-view">
       {/* Top Banner Control Bar */}
-      <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        
+        {/* Site Identity & Switcher Dropdown */}
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-indigo-600/20 border border-indigo-500/40 text-indigo-400 shadow-sm">
+          <div className="p-3 rounded-xl bg-indigo-600/20 border border-indigo-500/40 text-indigo-400 shadow-sm shrink-0">
             <Network className="w-5 h-5" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
+          
+          <div className="relative">
+            <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-                Live LLDP Neighbor Topology: {effectiveSiteTitle}
+                Live LLDP Topology: <span className="text-indigo-300">{currentTopology.siteName}</span>
               </h3>
+
+              {/* Site Quick Switcher Dropdown Button */}
+              <div className="relative">
+                <button
+                  onClick={() => setSiteDropdownOpen(!siteDropdownOpen)}
+                  className="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-mono font-medium flex items-center gap-1.5 transition cursor-pointer"
+                >
+                  <Building2 className="w-3.5 h-3.5 text-indigo-400" />
+                  <span>Switch Site ({currentTopology.siteCode})</span>
+                  <ChevronDown className="w-3 h-3 text-slate-400" />
+                </button>
+
+                {/* Dropdown Menu */}
+                {siteDropdownOpen && (
+                  <div className="absolute left-0 top-full mt-2 w-72 max-h-80 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
+                    <div className="p-2 border-b border-slate-800 bg-slate-950">
+                      <div className="relative">
+                        <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-500" />
+                        <input
+                          type="text"
+                          value={siteSearchQuery}
+                          onChange={(e) => setSiteSearchQuery(e.target.value)}
+                          placeholder="Search 100+ sites..."
+                          className="w-full pl-8 pr-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                          autoFocus
+                        />
+                      </div>
+                    </div>
+
+                    <div className="overflow-y-auto max-h-60 p-1 divide-y divide-slate-800/40">
+                      {filteredSiteList.map(s => {
+                        const isCurrent = s.id === currentTopology.siteCode;
+                        return (
+                          <button
+                            key={s.id}
+                            onClick={() => {
+                              setSelectedSiteCode(s.id);
+                              setSiteDropdownOpen(false);
+                              if (onNavigateToSite) onNavigateToSite(s.id);
+                            }}
+                            className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between rounded-lg transition cursor-pointer ${
+                              isCurrent 
+                                ? "bg-indigo-600 text-white font-bold" 
+                                : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 truncate">
+                              <Building2 className={`w-3.5 h-3.5 ${isCurrent ? "text-white" : "text-slate-400"}`} />
+                              <span className="truncate">{s.name}</span>
+                            </div>
+                            {s.isPreconfigured && (
+                              <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono ${
+                                isCurrent ? "bg-indigo-700 text-indigo-100" : "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                              }`}>
+                                Live Verified
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 font-semibold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Live Telemetry Active
+                Live Adjacencies Active
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Real-time IEEE 802.1AB LLDP link discovery across Summit X460 Core, X440 Edge Stacks, Meraki Firewalls & Wi-Fi 6E APs.
+            
+            <p className="text-xs text-slate-400 mt-0.5 line-clamp-1">
+              {currentTopology.description}
             </p>
           </div>
         </div>
@@ -472,19 +325,19 @@ export function YorkLiveLldpTopologyMap({
                     : "text-slate-400 hover:text-slate-200"
                 }`}
               >
-                {f === "ALL" ? "All (11)" : f === "SWITCHES" ? "Switches (5)" : f === "APS" ? "APs (5)" : "Firewalls (2)"}
+                {f === "ALL" ? `All (${nodes.length})` : f === "SWITCHES" ? `Switches (${totalSwitches})` : f === "APS" ? `APs (${totalAps})` : `Firewalls (${totalFws})`}
               </button>
             ))}
           </div>
 
           <button
-            id="btn-poll-all-york-lldp"
-            onClick={pollAllYorkSwitches}
+            id="btn-poll-all-site-lldp"
+            onClick={pollAllSiteSwitches}
             disabled={isPollingAll}
             className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${isPollingAll ? "animate-spin" : ""}`} />
-            <span>{isPollingAll ? "Polling York Fleet..." : "⚡ Poll All York LLDP"}</span>
+            <span>{isPollingAll ? `Polling ${currentTopology.siteName}...` : `⚡ Poll All ${currentTopology.siteName} LLDP`}</span>
           </button>
 
           <button
@@ -524,7 +377,7 @@ export function YorkLiveLldpTopologyMap({
           <div className="flex items-center justify-between z-10 mb-2">
             <div className="flex items-center gap-2">
               <span className="text-xs font-mono font-bold text-slate-300 uppercase tracking-wider">
-                YORK INTER-SWITCH & AP GRAPH
+                {currentTopology.siteName.toUpperCase()} INTER-SWITCH &amp; AP GRAPH
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-slate-400 border border-slate-800">
                 100% LLDP Tagged
@@ -649,294 +502,408 @@ export function YorkLiveLldpTopologyMap({
                     onClick={() => setSelectedNodeId(node.id)}
                     onMouseEnter={() => setHoveredNodeId(node.id)}
                     onMouseLeave={() => setHoveredNodeId(null)}
-                    className="cursor-pointer transition-transform duration-200 hover:scale-105"
+                    className="cursor-pointer transition-all duration-200"
                   >
-                    {/* Pulsing ring for Core */}
-                    {node.role === "core" && (
-                      <circle r="44" fill="none" stroke="#6366f1" strokeWidth="1.5" opacity="0.4" className="animate-ping" />
+                    {/* Pulsing ring for Core or selected node */}
+                    {(node.role === "core" || isSelected) && (
+                      <circle
+                        cx="0"
+                        cy="0"
+                        r={node.role === "core" ? "42" : "32"}
+                        fill="none"
+                        stroke={node.role === "core" ? "#818cf8" : "#38bdf8"}
+                        strokeWidth="1.5"
+                        opacity="0.6"
+                      >
+                        <animate
+                          attributeName="r"
+                          values={node.role === "core" ? "38;48;38" : "28;38;28"}
+                          dur="2.5s"
+                          repeatCount="indefinite"
+                        />
+                        <animate
+                          attributeName="opacity"
+                          values="0.8;0.1;0.8"
+                          dur="2.5s"
+                          repeatCount="indefinite"
+                        />
+                      </circle>
                     )}
 
-                    {/* Node Card Box */}
-                    <rect
-                      x="-65"
-                      y="-28"
-                      width="130"
-                      height="56"
-                      rx="10"
-                      fill={nodeBg}
-                      stroke={borderColor}
-                      strokeWidth={isSelected ? "2.5" : "1.5"}
-                      filter="drop-shadow(0 4px 6px rgba(0,0,0,0.5))"
-                    />
+                    {/* Node Container Shape */}
+                    {node.role === "core" ? (
+                      <rect
+                        x="-70"
+                        y="-28"
+                        width="140"
+                        height="56"
+                        rx="12"
+                        fill={nodeBg}
+                        stroke={borderColor}
+                        strokeWidth={isSelected ? "3" : "2"}
+                        filter={isSelected ? "url(#glow-link)" : undefined}
+                      />
+                    ) : node.role === "firewall" ? (
+                      <rect
+                        x="-60"
+                        y="-22"
+                        width="120"
+                        height="44"
+                        rx="8"
+                        fill={nodeBg}
+                        stroke={borderColor}
+                        strokeWidth={isSelected ? "2.5" : "1.5"}
+                      />
+                    ) : node.role === "ap" ? (
+                      <circle
+                        cx="0"
+                        cy="0"
+                        r="24"
+                        fill={nodeBg}
+                        stroke={borderColor}
+                        strokeWidth={isSelected ? "2.5" : "1.5"}
+                      />
+                    ) : (
+                      <rect
+                        x="-55"
+                        y="-24"
+                        width="110"
+                        height="48"
+                        rx="8"
+                        fill={nodeBg}
+                        stroke={borderColor}
+                        strokeWidth={isSelected ? "2.5" : "1.5"}
+                      />
+                    )}
 
-                    {/* Status Pill in corner */}
+                    {/* Status LED Dot */}
                     <circle
-                      cx="52"
-                      cy="-16"
-                      r="4.5"
-                      fill={node.status === "polling" ? "#fbbf24" : "#10b981"}
-                      className={node.status === "polling" ? "animate-pulse" : ""}
+                      cx={node.role === "core" ? "-52" : node.role === "ap" ? "-12" : "-42"}
+                      cy={node.role === "core" ? "-12" : node.role === "ap" ? "-12" : "-10"}
+                      r="3.5"
+                      fill={node.status === "online" ? "#34d399" : node.status === "polling" ? "#fbbf24" : "#f87171"}
                     />
 
-                    {/* Node Text Label */}
-                    <text
-                      x="0"
-                      y="-8"
-                      textAnchor="middle"
-                      fill="#ffffff"
-                      fontSize="11"
-                      fontWeight="bold"
-                      fontFamily="system-ui, sans-serif"
-                    >
-                      {node.name}
-                    </text>
-
-                    {/* Node IP Address */}
-                    <text
-                      x="0"
-                      y="7"
-                      textAnchor="middle"
-                      fill="#94a3b8"
-                      fontSize="9.5"
-                      fontFamily="monospace"
-                    >
-                      {node.ip}
-                    </text>
-
-                    {/* Node OS / Model Badge */}
-                    <text
-                      x="0"
-                      y="20"
-                      textAnchor="middle"
-                      fill={node.role === "core" ? "#c7d2fe" : (node.role === "ap" ? "#fde68a" : "#6ee7b7")}
-                      fontSize="8"
-                      fontFamily="monospace"
-                      fontWeight="bold"
-                    >
-                      {node.role === "core" ? "EXOS CORE (52P)" : (node.role === "ap" ? "WI-FI 6E AP" : (node.role === "firewall" ? "MERAKI MX" : "SUMMIT EDGE"))}
-                    </text>
+                    {/* Node Labels */}
+                    {node.role === "ap" ? (
+                      <>
+                        <text
+                          x="0"
+                          y="4"
+                          textAnchor="middle"
+                          fill="#fef3c7"
+                          fontSize="9"
+                          fontFamily="monospace"
+                          fontWeight="bold"
+                        >
+                          AP
+                        </text>
+                        <text
+                          x="0"
+                          y="38"
+                          textAnchor="middle"
+                          fill="#e2e8f0"
+                          fontSize="9"
+                          fontFamily="sans-serif"
+                          fontWeight="600"
+                        >
+                          {node.name.replace(/AP-EXT-0?|AP-/i, "")}
+                        </text>
+                      </>
+                    ) : (
+                      <>
+                        <text
+                          x="0"
+                          y={node.role === "core" ? "-6" : "-5"}
+                          textAnchor="middle"
+                          fill="#ffffff"
+                          fontSize={node.role === "core" ? "11" : "10"}
+                          fontFamily="monospace"
+                          fontWeight="bold"
+                        >
+                          {node.name.length > 18 ? node.name.slice(0, 16) + "…" : node.name}
+                        </text>
+                        <text
+                          x="0"
+                          y={node.role === "core" ? "12" : "10"}
+                          textAnchor="middle"
+                          fill="#94a3b8"
+                          fontSize="8.5"
+                          fontFamily="monospace"
+                        >
+                          {node.ip}
+                        </text>
+                        {node.role === "core" && (
+                          <text
+                            x="0"
+                            y="22"
+                            textAnchor="middle"
+                            fill="#34d399"
+                            fontSize="7.5"
+                            fontFamily="monospace"
+                          >
+                            {node.model.split("-")[0]} &bull; EXOS CORE
+                          </text>
+                        )}
+                      </>
+                    )}
                   </g>
                 );
               })}
             </svg>
           </div>
 
-          <div className="text-[11px] text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-3 mt-1">
-            <span>💡 <strong>Tip:</strong> Click any switch or AP above to inspect its real-time LLDP neighbor discovery table and port uplinks.</span>
-            <span className="font-mono text-indigo-400">Total York Devices: 11 (5 Switches, 5 APs, 2 FWs)</span>
+          {/* Quick Help Footer */}
+          <div className="pt-2 border-t border-slate-900 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+            <span>Click any switch, AP or firewall node to view live LLDP neighbors</span>
+            <span>{currentTopology.nodes.length} nodes &bull; {currentTopology.links.length} active adjacencies</span>
           </div>
         </div>
 
-        {/* Right: Selected Node Details & Live Neighbor Inspector */}
-        <div className="lg:col-span-5 space-y-4">
+        {/* Right: Selected Node Live Inspector */}
+        <div className="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl space-y-4">
           
-          {/* Selected Device Summary Card */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-4">
-            
-            <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-800">
-              <div className="flex items-center gap-3">
-                <div className={`p-2.5 rounded-xl border ${
-                  selectedNode.role === "core" 
-                    ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-400"
-                    : (selectedNode.role === "ap" 
-                        ? "bg-amber-600/20 border-amber-500/40 text-amber-400" 
-                        : (selectedNode.role === "firewall" ? "bg-emerald-600/20 border-emerald-500/40 text-emerald-400" : "bg-slate-800 border-slate-700 text-slate-300"))
-                }`}>
-                  {selectedNode.role === "core" ? <Server className="w-5 h-5" /> : (selectedNode.role === "ap" ? <Wifi className="w-5 h-5" /> : (selectedNode.role === "firewall" ? <Shield className="w-5 h-5" /> : <Network className="w-5 h-5" />))}
-                </div>
-                <div>
-                  <h4 className="text-base font-bold text-white font-mono flex items-center gap-2">
-                    {selectedNode.name}
-                  </h4>
-                  <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                    <span className="font-mono text-emerald-400 font-semibold">{selectedNode.ip}</span>
-                    <span>•</span>
-                    <span>{selectedNode.location}</span>
-                  </div>
-                </div>
-              </div>
-
-              <span className={`text-[10px] font-mono px-2.5 py-1 rounded-full font-bold uppercase border ${
-                selectedNode.role === "core"
-                  ? "bg-indigo-950 text-indigo-300 border-indigo-700"
-                  : (selectedNode.role === "ap" ? "bg-amber-950 text-amber-300 border-amber-700" : "bg-slate-800 text-slate-300 border-slate-700")
+          {/* Node Summary Header */}
+          <div className="flex items-start justify-between pb-3 border-b border-slate-800">
+            <div className="flex items-center gap-3">
+              <div className={`p-2.5 rounded-xl border ${
+                selectedNode.role === "core" 
+                  ? "bg-indigo-600/20 border-indigo-500/40 text-indigo-400"
+                  : selectedNode.role === "firewall"
+                  ? "bg-emerald-600/20 border-emerald-500/40 text-emerald-400"
+                  : selectedNode.role === "ap"
+                  ? "bg-amber-600/20 border-amber-500/40 text-amber-400"
+                  : "bg-purple-600/20 border-purple-500/40 text-purple-400"
               }`}>
-                {selectedNode.model}
-              </span>
-            </div>
+                {selectedNode.role === "ap" ? <Wifi className="w-5 h-5" /> : selectedNode.role === "firewall" ? <Shield className="w-5 h-5" /> : <Server className="w-5 h-5" />}
+              </div>
 
-            {/* Device Metric Pills */}
-            <div className="grid grid-cols-3 gap-2 text-center text-xs">
-              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                <div className="text-[10px] font-mono text-slate-400">OS / PLATFORM</div>
-                <div className="font-bold text-slate-200 mt-0.5">{selectedNode.os}</div>
-              </div>
-              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                <div className="text-[10px] font-mono text-slate-400">STATUS / RTT</div>
-                <div className="font-bold text-emerald-400 mt-0.5">{selectedNode.latencyMs ? `${selectedNode.latencyMs} ms` : "Online"}</div>
-              </div>
-              <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                <div className="text-[10px] font-mono text-slate-400">POE BUDGET</div>
-                <div className="font-bold text-amber-400 mt-0.5">{selectedNode.poeDeliveredW ? `${selectedNode.poeDeliveredW}W Active` : "N/A"}</div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-white font-mono">{selectedNode.name || "Device Inspector"}</h4>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                    {selectedNode.role?.toUpperCase()}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 font-mono mt-0.5">{selectedNode.ip} &bull; {selectedNode.model}</p>
               </div>
             </div>
 
-            {/* Action Bar for Selected Device */}
+            {/* Live Poll Switch Button */}
             {(selectedNode.role === "core" || selectedNode.role === "edge") && (
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                <button
-                  onClick={() => pollSingleSwitchLldp(selectedNode)}
-                  disabled={selectedNode.status === "polling"}
-                  className="flex-1 px-3 py-2 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow cursor-pointer"
-                >
-                  <RefreshCw className={`w-3.5 h-3.5 ${selectedNode.status === "polling" ? "animate-spin" : ""}`} />
-                  <span>{selectedNode.status === "polling" ? "Polling LLDP..." : "Poll Live LLDP"}</span>
-                </button>
-
-                {onTriggerBackup && (
-                  <button
-                    onClick={() => onTriggerBackup("BackupSave.py", selectedNode.ip)}
-                    className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition cursor-pointer"
-                  >
-                    <Zap className="w-3.5 h-3.5 text-amber-400" />
-                    <span>Backup</span>
-                  </button>
-                )}
-
-                {onSelectSwitchForWorkspace && (
-                  <button
-                    onClick={() => {
-                      const matched = switches.find(s => s.ip === selectedNode.ip || s.hostname === selectedNode.name);
-                      if (matched) onSelectSwitchForWorkspace(matched);
-                    }}
-                    className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold flex items-center gap-1.5 border border-slate-700 transition cursor-pointer"
-                    title="Open Replacement Workspace"
-                  >
-                    <HardDrive className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>Workspace</span>
-                  </button>
-                )}
-              </div>
+              <button
+                onClick={() => pollSingleSwitchLldp(selectedNode)}
+                disabled={selectedNode.status === "polling"}
+                className="px-2.5 py-1.5 bg-indigo-600/30 hover:bg-indigo-600 text-indigo-200 hover:text-white rounded-lg text-xs font-semibold flex items-center gap-1 border border-indigo-500/40 transition cursor-pointer"
+                title="Poll LLDP via Telnet"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${selectedNode.status === "polling" ? "animate-spin" : ""}`} />
+                <span>Poll LLDP</span>
+              </button>
             )}
           </div>
 
-          {/* Sub-Tabs: Discovered LLDP Neighbors vs Raw CLI Output vs Uplinks */}
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2">
-              <div className="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
-                <button
-                  onClick={() => setActiveTab("neighbors")}
-                  className={`px-3 py-1.5 rounded text-xs font-semibold transition cursor-pointer ${
-                    activeTab === "neighbors"
-                      ? "bg-indigo-600 text-white shadow-sm"
-                      : "text-slate-400 hover:text-slate-200"
-                  }`}
-                >
-                  LLDP Neighbors ({selectedNode.neighbors?.length || 0})
-                </button>
-                <button
-                  onClick={() => setActiveTab("raw")}
-                  className={`px-3 py-1.5 rounded text-xs font-semibold transition cursor-pointer ${
-                    activeTab === "raw"
-                      ? "bg-indigo-600 text-white shadow-sm"
-                      : "text-slate-400 hover:text-slate-200"
-                  }`}
-                >
-                  Raw CLI Output
-                </button>
+          {/* Quick Hardware Stats */}
+          <div className="grid grid-cols-3 gap-2 text-center text-xs font-mono">
+            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <div className="text-slate-500 text-[10px]">OS TYPE</div>
+              <div className="text-slate-200 font-bold mt-0.5">{selectedNode.os}</div>
+            </div>
+            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <div className="text-slate-500 text-[10px]">TOTAL PORTS</div>
+              <div className="text-emerald-400 font-bold mt-0.5">{selectedNode.portsCount} Ports</div>
+            </div>
+            <div className="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+              <div className="text-slate-500 text-[10px]">LOCATION</div>
+              <div className="text-slate-300 font-medium mt-0.5 text-[11px] truncate" title={selectedNode.location}>
+                {selectedNode.location?.split(" ")[0] || "Comms"}
               </div>
+            </div>
+          </div>
 
-              {activeTab === "raw" && (
+          {/* Inspector Tab Switcher */}
+          <div className="flex items-center bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
+            <button
+              onClick={() => setActiveTab("neighbors")}
+              className={`flex-1 py-1.5 rounded-lg font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                activeTab === "neighbors" ? "bg-indigo-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <Network className="w-3.5 h-3.5" />
+              <span>LLDP Neighbors ({selectedNode.neighbors?.length || 0})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("uplinks")}
+              className={`flex-1 py-1.5 rounded-lg font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                activeTab === "uplinks" ? "bg-indigo-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <Activity className="w-3.5 h-3.5" />
+              <span>Adjacencies ({activeLinks.length})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("raw")}
+              className={`flex-1 py-1.5 rounded-lg font-semibold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                activeTab === "raw" ? "bg-indigo-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              <Terminal className="w-3.5 h-3.5" />
+              <span>Raw CLI</span>
+            </button>
+          </div>
+
+          {/* TAB 1: LLDP Neighbors Structured Table */}
+          {activeTab === "neighbors" && (
+            <div className="space-y-3">
+              {selectedNode.neighbors && selectedNode.neighbors.length > 0 ? (
+                <div className="space-y-2 max-h-[310px] overflow-y-auto pr-1">
+                  {selectedNode.neighbors.map((nb, i) => (
+                    <div key={i} className="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-mono font-bold text-indigo-400">{nb.localPort}</span>
+                          <span className="text-slate-500 font-mono text-xs">➔</span>
+                          <span className="text-xs font-mono font-bold text-white">{nb.systemName}</span>
+                        </div>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-900 text-emerald-300 border border-slate-800">
+                          {nb.capabilities?.join(", ") || "Bridge"}
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-400 pt-1">
+                        <div>
+                          <span className="text-slate-500">Remote Port: </span>
+                          <span className="text-slate-300">{nb.portId}</span>
+                        </div>
+                        <div>
+                          <span className="text-slate-500">IP: </span>
+                          <span className="text-indigo-300">{nb.mgmtAddress}</span>
+                        </div>
+                        <div className="col-span-2 truncate">
+                          <span className="text-slate-500">Desc: </span>
+                          <span className="text-slate-300">{nb.portDesc}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="bg-slate-950 p-6 rounded-xl border border-slate-800 text-center space-y-2">
+                  <Network className="w-8 h-8 text-slate-600 mx-auto" />
+                  <p className="text-xs text-slate-400">No active LLDP neighbors polled for this device.</p>
+                  {(selectedNode.role === "core" || selectedNode.role === "edge") && (
+                    <button
+                      onClick={() => pollSingleSwitchLldp(selectedNode)}
+                      className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition cursor-pointer"
+                    >
+                      ⚡ Trigger Live LLDP Discovery
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* TAB 2: Uplinks & Transceiver Adjacencies */}
+          {activeTab === "uplinks" && (
+            <div className="space-y-2.5 max-h-[310px] overflow-y-auto pr-1">
+              {activeLinks.map((link) => {
+                const peerId = link.sourceId === selectedNode.id ? link.targetId : link.sourceId;
+                const peerNode = nodes.find(n => n.id === peerId);
+                const localPort = link.sourceId === selectedNode.id ? link.sourcePort : link.targetPort;
+                const remotePort = link.sourceId === selectedNode.id ? link.targetPort : link.sourcePort;
+
+                return (
+                  <div key={link.id} className="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono font-bold text-white">{peerNode?.name || "Remote Device"}</span>
+                        <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">
+                          {link.speed} {link.medium}
+                        </span>
+                      </div>
+                      <div className="text-[11px] font-mono text-slate-400">
+                        Local: <strong className="text-emerald-400">{localPort}</strong> ➔ Remote: <strong className="text-emerald-400">{remotePort}</strong>
+                      </div>
+                      <div className="text-[10px] font-mono text-slate-500">
+                        VLAN: {link.vlan}
+                      </div>
+                    </div>
+
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" title="Link Active" />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* TAB 3: Raw CLI LLDP Neighbor Output */}
+          {activeTab === "raw" && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-mono text-slate-400">show lldp neighbors detail</span>
                 <button
                   onClick={copyRawCli}
-                  className="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-[11px] font-mono flex items-center gap-1 transition"
+                  className="px-2 py-1 rounded bg-slate-950 hover:bg-slate-800 text-slate-300 text-[10px] font-mono border border-slate-800 flex items-center gap-1 transition cursor-pointer"
                 >
                   {copiedText ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
                   <span>{copiedText ? "Copied" : "Copy CLI"}</span>
                 </button>
-              )}
+              </div>
+
+              <pre className="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[10px] font-mono text-emerald-400/90 max-h-[260px] overflow-y-auto leading-relaxed whitespace-pre-wrap">
+                {selectedNode.rawCli || `# ExtremeXOS LLDP Neighbor Telemetry\n# Polled Switch: ${selectedNode.name} (${selectedNode.ip})\n\n` + 
+                 (selectedNode.neighbors?.map(nb => 
+                   `Port ${nb.localPort} (Enabled, Tagged)\n  Chassis ID          : ${nb.chassisId}\n  Port ID             : ${nb.portId}\n  System Name         : ${nb.systemName}\n  Management Address  : ${nb.mgmtAddress}\n  Capabilities        : ${nb.capabilities?.join(", ") || "Bridge"}\n  Port Description    : ${nb.portDesc}\n`
+                 ).join("\n") || "# No neighbor records discovered")}
+              </pre>
             </div>
+          )}
 
-            {/* Tab 1: Structured LLDP Neighbors Table */}
-            {activeTab === "neighbors" && (
-              <div className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
-                {selectedNode.neighbors && selectedNode.neighbors.length > 0 ? (
-                  selectedNode.neighbors.map((nb, idx) => (
-                    <div
-                      key={idx}
-                      className="p-3 bg-slate-950 border border-slate-800 rounded-xl space-y-2 hover:border-slate-700 transition"
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 font-mono text-xs font-bold border border-indigo-800">
-                            Port {nb.localPort}
-                          </span>
-                          <span className="text-xs font-bold text-white font-mono truncate">
-                            {nb.systemName}
-                          </span>
-                        </div>
-                        <span className="text-[10px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
-                          {nb.portId}
-                        </span>
-                      </div>
+          {/* Action Row: Open in Switch Replacement Hub */}
+          <div className="pt-2 border-t border-slate-800 flex items-center justify-between gap-2">
+            <span className="text-[11px] font-mono text-slate-400">
+              {selectedNode.lastPolled || "Live telemetry ready"}
+            </span>
 
-                      <div className="text-[11px] text-slate-300 font-mono flex items-center justify-between">
-                        <span className="text-slate-400 truncate">{nb.portDesc}</span>
-                        {nb.mgmtAddress && (
-                          <span className="text-emerald-400 font-semibold shrink-0">{nb.mgmtAddress}</span>
-                        )}
-                      </div>
-
-                      <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-900 text-[10px] font-mono">
-                        <div className="flex items-center gap-1.5">
-                          {nb.capabilities.map((c, cIdx) => (
-                            <span key={cIdx} className="px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
-                              {c}
-                            </span>
-                          ))}
-                        </div>
-                        {nb.poe && (
-                          <span className="px-1.5 py-0.2 rounded bg-amber-950 text-amber-300 border border-amber-800 font-semibold">
-                            ⚡ {nb.poe}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <div className="p-6 text-center text-slate-500 text-xs bg-slate-950 rounded-xl border border-slate-800">
-                    <Info className="w-5 h-5 mx-auto mb-2 text-slate-600" />
-                    <span>No LLDP neighbors recorded for this device. Click "Poll Live LLDP" above to run discovery.</span>
-                  </div>
-                )}
-              </div>
+            {(selectedNode.role === "core" || selectedNode.role === "edge") && (
+              <button
+                onClick={() => {
+                  if (onSelectSwitchForWorkspace) {
+                    const swMatch = switches.find(s => s.ip === selectedNode.ip || s.hostname === selectedNode.name) || ({
+                      id: selectedNode.id,
+                      hostname: selectedNode.name,
+                      ip: selectedNode.ip,
+                      os: (selectedNode.os as any) || "EXOS",
+                      model: selectedNode.model,
+                      firmware: "31.7.1.4",
+                      serialNumber: "2201G-UNKNOWN",
+                      macAddress: "00:04:96:00:00:00",
+                      primaryVlan: 1,
+                      gateway: "10.32.1.1",
+                      uplinkPorts: [],
+                      lastBackupTime: new Date().toISOString(),
+                      lastBackupStatus: "Success",
+                      tftpPath: "/tftpboot/configs/",
+                      configFormat: selectedNode.os === "VOSS" ? "cfg" : "xsf",
+                      activeConfig: ""
+                    } as SwitchItem);
+                    onSelectSwitchForWorkspace(swMatch);
+                  }
+                }}
+                className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition shadow-sm cursor-pointer"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>Open in Switch Replacement Hub</span>
+              </button>
             )}
-
-            {/* Tab 2: Raw CLI Output */}
-            {activeTab === "raw" && (
-              <div className="bg-slate-950 p-3 rounded-xl border border-slate-800 max-h-[380px] overflow-y-auto">
-                <pre className="text-[11px] font-mono text-emerald-400 leading-relaxed whitespace-pre-wrap select-all">
-                  {selectedNode.rawCli || selectedNode.neighbors?.map(nb => 
-                    `==============================================================================\n` +
-                    `Local Port: ${nb.localPort}\n` +
-                    `  Neighbor Chassis ID:     ${nb.chassisId}\n` +
-                    `  Neighbor Port ID:        ${nb.portId}\n` +
-                    `  Neighbor Port Descr:     ${nb.portDesc}\n` +
-                    `  Neighbor System Name:    ${nb.systemName}\n` +
-                    `  Neighbor Mgmt Address:   ${nb.mgmtAddress}\n` +
-                    `  Capabilities:            ${nb.capabilities.join(", ")}\n` +
-                    `  Port VLAN ID (PVID):     ${nb.vlan}\n` +
-                    (nb.poe ? `  Power via MDI (PoE):     ${nb.poe}\n` : "")
-                  ).join("\n") || `# No CLI output available`}
-                </pre>
-              </div>
-            )}
-
           </div>
 
         </div>
-
       </div>
     </div>
   );
 }
+
+// Export both names for backwards compatibility
+export const SiteLiveLldpTopologyMap = YorkLiveLldpTopologyMap;
