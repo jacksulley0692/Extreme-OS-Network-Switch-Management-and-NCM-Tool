@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # -*- coding: utf-8 -*-
 """
 ===============================================================================
@@ -9,13 +11,13 @@ Features:
   - Asynchronous background worker thread (threading.Thread) with thread-safe Queue
     so network scanning never freezes the GUI.
   - Tabular results display (Treeview) showing:
-      • Severity (High/Medium Alert)
-      • Switch Hostname & IP
-      • Port Number
-      • Number of Learned MACs
-      • Identified Consumer Vendor (Netgear, TP-Link, D-Link, Linksys, etc.)
-      • Detection Reason & LLDP Signature
-      • Remediation Action
+      &bull; Severity (High/Medium Alert)
+      &bull; Switch Hostname & IP
+      &bull; Port Number
+      &bull; Number of Learned MACs
+      &bull; Identified Consumer Vendor (Netgear, TP-Link, D-Link, Linksys, etc.)
+      &bull; Detection Reason & LLDP Signature
+      &bull; Remediation Action
   - Real-time Console Log text area with auto-scrolling execution telemetry.
   - Pop-up Dialog Inspector with full MAC table and OUI breakdowns.
   - Hardcoded test target configured for "Northwood" site switches.
@@ -83,7 +85,7 @@ class UnmanagedSwitchDiscoveryGui:
 
         title_label = tk.Label(
             header_frame,
-            text=f"🏢 Site Management: {self.site_name.upper()} ESTATE",
+            text=f"&#x1F3E2; Site Management: {self.site_name.upper()} ESTATE",
             font=("Helvetica", 14, "bold"),
             fg=self.fg_text,
             bg=self.bg_panel
@@ -104,7 +106,7 @@ class UnmanagedSwitchDiscoveryGui:
         # Primary Action Button: "Discover Unmanaged Switches"
         self.btn_discover = tk.Button(
             header_frame,
-            text="🔍 Discover Unmanaged Switches",
+            text="&#x1F50D; Discover Unmanaged Switches",
             font=("Helvetica", 11, "bold"),
             bg=self.accent_indigo,
             fg="white",
@@ -149,7 +151,7 @@ class UnmanagedSwitchDiscoveryGui:
 
         # Tab 1: Tabular Findings
         tab_table = tk.Frame(self.notebook, bg=self.bg_panel)
-        self.notebook.add(tab_table, text="  📊 Discovered Unmanaged Switches  ")
+        self.notebook.add(tab_table, text="  &#x1F4CA; Discovered Unmanaged Switches  ")
 
         # Treeview for tabular output
         columns = ("alert", "switch", "port", "mac_count", "vendor", "reason", "action")
@@ -181,7 +183,7 @@ class UnmanagedSwitchDiscoveryGui:
 
         # Tab 2: Execution Console Logs
         tab_console = tk.Frame(self.notebook, bg=self.bg_panel)
-        self.notebook.add(tab_console, text="  📜 Live Console Output  ")
+        self.notebook.add(tab_console, text="  &#x1F4DC; Live Console Output  ")
 
         self.txt_console = scrolledtext.ScrolledText(
             tab_console,
@@ -195,7 +197,7 @@ class UnmanagedSwitchDiscoveryGui:
 
         # Tab 3: Raw Extreme-OS CLI Telemetry
         tab_raw = tk.Frame(self.notebook, bg=self.bg_panel)
-        self.notebook.add(tab_raw, text="  🖥️ Raw Extreme-OS CLI Dump  ")
+        self.notebook.add(tab_raw, text="  &#x1F5A5;&#xFE0F; Raw Extreme-OS CLI Dump  ")
 
         self.txt_raw = scrolledtext.ScrolledText(
             tab_raw,
@@ -213,7 +215,7 @@ class UnmanagedSwitchDiscoveryGui:
 
         btn_inspect = tk.Button(
             footer_frame,
-            text="🔎 Inspect Selected Port Details",
+            text="&#x1F50E; Inspect Selected Port Details",
             bg="#334155",
             fg="white",
             padx=10,
@@ -225,7 +227,7 @@ class UnmanagedSwitchDiscoveryGui:
 
         btn_export = tk.Button(
             footer_frame,
-            text="💾 Export Findings (JSON)",
+            text="&#x1F4BE; Export Findings (JSON)",
             bg="#334155",
             fg="white",
             padx=10,
@@ -254,7 +256,7 @@ class UnmanagedSwitchDiscoveryGui:
             return
 
         self.is_scanning = True
-        self.btn_discover.config(state=tk.DISABLED, text="⏳ Scanning Northwood Switches...")
+        self.btn_discover.config(state=tk.DISABLED, text="&#x23F3; Scanning Northwood Switches...")
         self.lbl_status.config(text="Connecting to Extreme-OS switches via Netmiko / Telnet / SSH...", fg="#38bdf8")
         self.progress.pack(fill=tk.X, padx=12, pady=(0, 4))
         self.progress.start(10)
@@ -313,7 +315,7 @@ class UnmanagedSwitchDiscoveryGui:
         self.current_results = res
         self.progress.stop()
         self.progress.pack_forget()
-        self.btn_discover.config(state=tk.NORMAL, text="🔍 Discover Unmanaged Switches")
+        self.btn_discover.config(state=tk.NORMAL, text="&#x1F50D; Discover Unmanaged Switches")
 
         # 1. Update Logs
         for line in res.get("executionLogs", []):
@@ -326,7 +328,7 @@ class UnmanagedSwitchDiscoveryGui:
         # 3. Update Table
         flagged = res.get("flaggedSwitches", [])
         for item in flagged:
-            alert = f"🚨 {item['alertLevel']}" if item["alertLevel"] == "HIGH" else f"⚠️ {item['alertLevel']}"
+            alert = f"&#x1F6A8; {item['alertLevel']}" if item["alertLevel"] == "HIGH" else f"[WARN]&#xFE0F; {item['alertLevel']}"
             sw_label = f"{item['switchHostname']} ({item['switchIp']})"
             self.tree.insert(
                 "",
@@ -373,7 +375,7 @@ class UnmanagedSwitchDiscoveryGui:
         self.is_scanning = False
         self.progress.stop()
         self.progress.pack_forget()
-        self.btn_discover.config(state=tk.NORMAL, text="🔍 Discover Unmanaged Switches")
+        self.btn_discover.config(state=tk.NORMAL, text="&#x1F50D; Discover Unmanaged Switches")
         self.lbl_status.config(text=f"Discovery Error: {err_msg}", fg="#f87171")
         messagebox.showerror("Discovery Failed", f"An error occurred while scanning switches:\n{err_msg}")
 
@@ -409,7 +411,7 @@ class UnmanagedSwitchDiscoveryGui:
 
         header = tk.Label(
             dialog,
-            text=f"🔍 Port {match['port']} Rogue Switch Telemetry",
+            text=f"&#x1F50D; Port {match['port']} Rogue Switch Telemetry",
             font=("Helvetica", 12, "bold"),
             fg="#f8fafc",
             bg="#0f172a",
@@ -435,7 +437,7 @@ class UnmanagedSwitchDiscoveryGui:
 
         for m in match.get("detectedMacs", []):
             oui_info = f"[{m.get('ouiVendor')}] (Consumer OUI Match)" if m.get("isConsumerOui") else f"[{m.get('ouiVendor') or 'Unknown OUI'}]"
-            mac_text.insert(tk.END, f"  • MAC: {m['mac']:<18} | VLAN: {m['vlan']:<15} | Vendor: {oui_info}\n")
+            mac_text.insert(tk.END, f"  &bull; MAC: {m['mac']:<18} | VLAN: {m['vlan']:<15} | Vendor: {oui_info}\n")
 
         tk.Button(dialog, text="Close", command=dialog.destroy, bg="#475569", fg="white", padx=12, pady=4).pack(pady=10)
 

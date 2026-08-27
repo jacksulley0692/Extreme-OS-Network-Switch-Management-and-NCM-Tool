@@ -70,14 +70,14 @@ def main():
         print("=" * 80)
         for idx, item in enumerate(res["flaggedSwitches"], 1):
             print(f"\n[{idx}] Switch: {item['switchHostname']} ({item['switchIp']}) -> Port {item['port']}")
-            print(f"    • Severity       : {item['alertLevel']} PROBABILITY ROGUE SWITCH")
-            print(f"    • Vendor / Model : {item['identifiedVendor']}")
-            print(f"    • Active MACs    : {item['macCount']} total learned addresses:")
+            print(f"    &bull; Severity       : {item['alertLevel']} PROBABILITY ROGUE SWITCH")
+            print(f"    &bull; Vendor / Model : {item['identifiedVendor']}")
+            print(f"    &bull; Active MACs    : {item['macCount']} total learned addresses:")
             for m in item["detectedMacs"]:
                 tag = f"[{m.get('ouiVendor')}] (Consumer OUI Match)" if m.get("isConsumerOui") else f"[{m.get('ouiVendor') or 'Unknown OUI'}]"
                 print(f"        - {m['mac']} (VLAN: {m['vlan']}) -> {tag}")
-            print(f"    • LLDP Signature : {item['lldpDetails'].get('systemName', 'None')} ({item['lldpDetails'].get('systemDesc', 'N/A')})")
-            print(f"    • Recommendation : {item['recommendedAction']}")
+            print(f"    &bull; LLDP Signature : {item['lldpDetails'].get('systemName', 'None')} ({item['lldpDetails'].get('systemDesc', 'N/A')})")
+            print(f"    &bull; Recommendation : {item['recommendedAction']}")
 
     print("\n" + "=" * 80)
 

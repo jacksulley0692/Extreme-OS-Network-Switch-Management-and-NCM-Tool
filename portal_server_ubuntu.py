@@ -11,7 +11,7 @@ Runs natively on Python 3.8+ using pure Python standard libraries:
 Key Capabilities:
   1. Real-time Status Polling: Reads status.json & status.txt to display live progress
   2. Backup Triggers: 1-click full estate backup and individual switch backup runs
-  3. Live Switch Telemetry: Queries CPU %, memory MB, temperature °C, fan RPM, uptime
+  3. Live Switch Telemetry: Queries CPU %, memory MB, temperature &deg;C, fan RPM, uptime
   4. Remote Port Operations: Live port bounce (disable/enable) and FDB MAC lookup
   5. LLDP Topology Engine: Live neighbor discovery, topology diagrams & site maps
   6. RBAC & Audit Trail: Role-based permissions (network_admin / service_desk)
@@ -1061,8 +1061,8 @@ SysContact          : Network Infrastructure Team
 SysLocation         : Primary MDF Core / Distribution
 SysUpTime           : 42 days, 18 hours, {base_seed % 60} mins
 Operational Status  : Normal
-Chassis Temp        : {temp_c}°C ({temp_f}°F) [Threshold: 75.0°C]
-Ambient Temp        : {round(temp_c - 10.2, 1)}°C
+Chassis Temp        : {temp_c}&deg;C ({temp_f}&deg;F) [Threshold: 75.0&deg;C]
+Ambient Temp        : {round(temp_c - 10.2, 1)}&deg;C
 Power Supply 1      : AC 450W - Normal (Online)
 Power Supply 2      : AC 450W - Normal (Online Redundant)
 -----------------------------------------------------------------------------
@@ -1082,9 +1082,9 @@ Top Active VOSS Engine Tasks:
 -----------------------------------------------------------------------------
 Sensor ID    Location                  Temp(C)   Temp(F)   Status      Warning(C)  Shutdown(C)
 -----------------------------------------------------------------------------
-Sensor-1     Main Board (ASIC-1)       {temp_c}°C    {temp_f}°F   NORMAL      68.0°C      75.0°C
-Sensor-2     Chassis Exhaust Ambient   {round(temp_c - 10.2, 1)}°C    {round((temp_c-10.2)*9/5+32, 1)}°F   NORMAL      58.0°C      65.0°C
-Sensor-3     Power Supply Bay 1        {round(temp_c - 3.1, 1)}°C    {round((temp_c-3.1)*9/5+32, 1)}°F   NORMAL      62.0°C      70.0°C
+Sensor-1     Main Board (ASIC-1)       {temp_c}&deg;C    {temp_f}&deg;F   NORMAL      68.0&deg;C      75.0&deg;C
+Sensor-2     Chassis Exhaust Ambient   {round(temp_c - 10.2, 1)}&deg;C    {round((temp_c-10.2)*9/5+32, 1)}&deg;F   NORMAL      58.0&deg;C      65.0&deg;C
+Sensor-3     Power Supply Bay 1        {round(temp_c - 3.1, 1)}&deg;C    {round((temp_c-3.1)*9/5+32, 1)}&deg;F   NORMAL      62.0&deg;C      70.0&deg;C
 
 Fan-1 (Tray 1)   : {fan_rpm_1} RPM - Status: Operational (Normal)
 Fan-2 (Tray 2)   : {fan_rpm_2} RPM - Status: Operational (Normal)
@@ -1128,9 +1128,9 @@ Slot  Process Name     PID      State   %CPU 5s   %CPU 1m   %CPU 5m
 -----------------------------------------------------------------------------
 Field Replaceable Units          Temp(C)   Temp(F)   Status      Threshold(C)
 -----------------------------------------------------------------------------
-Slot-1 : Chassis Primary Core    {temp_c}°C    {temp_f}°F   NORMAL      75.0°C
-Slot-1 : Ambient Sensor 1        {round(temp_c - 11.5, 1)}°C    {round((temp_c-11.5)*9/5+32, 1)}°F   NORMAL      65.0°C
-Slot-1 : PSU-1 Internal          {round(temp_c - 3.5, 1)}°C    {round((temp_c-3.5)*9/5+32, 1)}°F   NORMAL      70.0°C
+Slot-1 : Chassis Primary Core    {temp_c}&deg;C    {temp_f}&deg;F   NORMAL      75.0&deg;C
+Slot-1 : Ambient Sensor 1        {round(temp_c - 11.5, 1)}&deg;C    {round((temp_c-11.5)*9/5+32, 1)}&deg;F   NORMAL      65.0&deg;C
+Slot-1 : PSU-1 Internal          {round(temp_c - 3.5, 1)}&deg;C    {round((temp_c-3.5)*9/5+32, 1)}&deg;F   NORMAL      70.0&deg;C
 Fan-1  : Chassis Fan Tray 1      {fan_rpm_1} RPM           OPERATIONAL
 Fan-2  : Chassis Fan Tray 2      {fan_rpm_2} RPM           OPERATIONAL
 Fan-3  : Power Supply Fan 1      {fan_rpm_3} RPM           OPERATIONAL
@@ -1265,7 +1265,7 @@ Verification CLI: show ports {clean_port} state
 Port    Link-State   Speed    Duplex   Admin-State
 {clean_port:<7} READY/UP     1000M    FULL     ENABLED
 =============================================================================
-✅ PORT {clean_port} BOUNCE COMPLETED SUCCESSFULLY!"""
+[OK] PORT {clean_port} BOUNCE COMPLETED SUCCESSFULLY!"""
 
     return {
         "success": True,
@@ -1727,7 +1727,7 @@ def start_python_scheduler_daemon():
 
                 if should_run:
                     _last_executed_minute_key = current_min_key
-                    print(f"⏰ [Python Scheduler Daemon] Executing scheduled backup at {now.strftime('%Y-%m-%d %H:%M:%S')} (target: {target_time})")
+                    print(f"&#x23F0; [Python Scheduler Daemon] Executing scheduled backup at {now.strftime('%Y-%m-%d %H:%M:%S')} (target: {target_time})")
                     execute_python_backup_runner(
                         script_name=cfg.get("scriptName", "BackupSave.py"),
                         target_switch=cfg.get("targetScope", "ALL"),
@@ -1755,7 +1755,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         """
         ========================================================================
-        📌 DEVELOPER GUIDE: BACKEND GET API ROUTES (portal_server.py)
+        &#x1F4CC; DEVELOPER GUIDE: BACKEND GET API ROUTES (portal_server.py)
         ========================================================================
         To add a new GET endpoint:
           1. Add `if parsed.path == "/api/your-new-endpoint":` below.
@@ -2007,7 +2007,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         """
         ========================================================================
-        📌 DEVELOPER GUIDE: BACKEND POST API ROUTES (portal_server.py)
+        &#x1F4CC; DEVELOPER GUIDE: BACKEND POST API ROUTES (portal_server.py)
         ========================================================================
         To add a new POST action endpoint:
           1. Add `if parsed.path == "/api/your-new-action":` below.
@@ -2456,7 +2456,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
       <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
         <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/30 text-lg">
-          🔐
+          &#x1F510;
         </div>
         <div>
           <h2 class="text-base font-bold text-white tracking-tight">Extreme Portal Sign In</h2>
@@ -2471,7 +2471,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <form onsubmit="handlePortalLoginSubmit(event)" class="space-y-4">
         <div class="space-y-1.5">
           <label class="text-xs font-semibold text-slate-300 font-mono flex items-center gap-1.5">
-            <span>👤 Username</span>
+            <span>&#x1F464; Username</span>
           </label>
           <input
             type="text"
@@ -2484,13 +2484,13 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
 
         <div class="space-y-1.5">
           <label class="text-xs font-semibold text-slate-300 font-mono flex items-center gap-1.5">
-            <span>🔑 Password</span>
+            <span>&#x1F511; Password</span>
           </label>
           <input
             type="password"
             id="portal-login-password"
             required
-            placeholder="••••••••••••"
+            placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
             class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white font-mono placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
           />
         </div>
@@ -2500,7 +2500,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           id="btn-portal-login-submit"
           class="w-full py-2.5 px-4 rounded-xl text-xs font-bold font-mono bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 cursor-pointer"
         >
-          <span>🚀 Sign In &amp; Start Session</span>
+          <span>&#x1F680; Sign In &amp; Start Session</span>
         </button>
       </form>
 
@@ -2521,7 +2521,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
     <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
       <div>
         <h1 class="text-2xl font-black text-emerald-400 flex items-center gap-2.5 tracking-tight">
-          ⚡ Extreme Switch Backup Portal
+          &#x26A1; Extreme Switch Backup Portal
         </h1>
         <p class="text-xs text-slate-400 mt-1 font-mono">
           Zero-Dependency Python Controller &bull; Telnet (Port 23) Live Telemetry &bull; Port 3000
@@ -2530,29 +2530,29 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="flex items-center gap-3 flex-wrap">
         <!-- User Session Indicator -->
         <div id="portal-user-badge" class="hidden flex items-center gap-2 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-mono">
-          <span class="text-indigo-400">👤</span>
+          <span class="text-indigo-400">&#x1F464;</span>
           <span id="portal-user-name" class="font-bold text-slate-200">User</span>
           <span id="portal-user-role" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800">Role</span>
-          <button onclick="handlePortalLogout()" class="text-slate-400 hover:text-rose-400 ml-1" title="Sign Out">🚪 Sign Out</button>
+          <button onclick="handlePortalLogout()" class="text-slate-400 hover:text-rose-400 ml-1" title="Sign Out">&#x1F6AA; Sign Out</button>
         </div>
 
         <span id="badge-status" class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-slate-900 text-slate-300 border border-slate-700 font-mono shadow">
           Status: IDLE
         </span>
         <button onclick="openSwitchesEditor()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
-          <span>📋 Fleet Inventory (Switches.txt)</span>
+          <span>&#x1F4CB; Fleet Inventory (Switches.txt)</span>
         </button>
         <button onclick="openCheatSheetModal()" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/40 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
-          <span>📖 Recovery Cheat Sheet</span>
+          <span>&#x1F4D6; Recovery Cheat Sheet</span>
         </button>
         <button id="btn-top-audit-trail" onclick="openAuditTrailModal()" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
-          <span>📜 Activity Audit Trail</span>
+          <span>&#x1F4DC; Activity Audit Trail</span>
         </button>
         <button id="btn-top-rollout" onclick="openRolloutAuth()" class="hidden bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-amber-600/30 transition flex items-center gap-2" style="display: none !important;">
-          <span>🛡️ Rollout Configuration Change to Multiple switches</span>
+          <span>&#x1F6E1;&#xFE0F; Rollout Configuration Change to Multiple switches</span>
         </button>
         <button onclick="runBackup('ALL')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
-          🚀 Backup All Switches
+          &#x1F680; Backup All Switches
         </button>
       </div>
     </header>
@@ -2576,7 +2576,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
               <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Last Full Estate Backup Run</span>
             </div>
             <div id="estate-last-run" class="text-base font-bold text-white truncate pt-0.5">Today at 02:00:15 GMT</div>
-            <div id="estate-last-summary" class="text-xs text-emerald-400">✔ 100% Complete • Save Config &amp; TFTP Export</div>
+            <div id="estate-last-summary" class="text-xs text-emerald-400">[OK] 100% Complete &bull; Save Config &amp; TFTP Export</div>
           </div>
           <span id="estate-last-badge" class="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold shrink-0">
             SUCCESS
@@ -2595,7 +2595,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 class="ml-2 px-2 py-0.5 rounded bg-indigo-600/30 hover:bg-indigo-600 text-indigo-200 hover:text-white border border-indigo-500/40 text-[10px] font-bold transition flex items-center gap-1 shadow"
                 title="Configure backup cadence, times, retention, and auto-save"
               >
-                <span>⚙️</span> Configure Schedule
+                <span>&#x2699;&#xFE0F;</span> Configure Schedule
               </button>
             </div>
             <div id="estate-next-run" class="text-base font-bold text-indigo-300 truncate pt-0.5">Tonight @ 02:00 GMT</div>
@@ -2728,7 +2728,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <!-- Search Input -->
             <div class="relative flex-1">
               <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-mono text-sm">
-                🔍
+                &#x1F50D;
               </div>
               <input
                 id="search-input"
@@ -2742,7 +2742,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 onclick="clearSearch()"
                 class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white"
               >
-                ✕
+                [X]
               </button>
             </div>
 
@@ -2750,10 +2750,10 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <div class="flex items-center gap-2 text-xs font-mono text-slate-400 shrink-0">
               <span id="active-site-tag" class="hidden px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-[11px] font-bold">
                 Site: <b id="active-site-name">ALL</b>
-                <button onclick="selectSite(null)" class="ml-1 text-slate-400 hover:text-white">✕</button>
+                <button onclick="selectSite(null)" class="ml-1 text-slate-400 hover:text-white">[X]</button>
               </span>
               <span>Total: <strong id="total-switch-count" class="text-white">0</strong></span>
-              <span>•</span>
+              <span>&bull;</span>
               <span>Showing: <strong id="visible-switch-count" class="text-emerald-400">0</strong></span>
             </div>
           </div>
@@ -2794,7 +2794,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 class="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-slate-950 hover:bg-slate-800 text-cyan-300 border border-slate-800 hover:border-cyan-700 transition flex items-center gap-1.5 shadow"
                 title="Refresh live ping latency status for all switches in inventory"
               >
-                <span>🌐 Test All Reachability</span>
+                <span>&#x1F310; Test All Reachability</span>
               </button>
             </div>
           </div>
@@ -2823,7 +2823,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
-            📊
+            &#x1F4CA;
           </div>
           <div>
             <div class="flex items-center gap-2 flex-wrap">
@@ -2836,7 +2836,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-700/60 transition flex items-center gap-1"
                 title="Switch CLI command syntax profile between Extreme EXOS and Extreme VOSS (VSP)"
               >
-                <span>🔄 Profile: <span id="monitor-active-profile-label">EXOS Commands</span></span>
+                <span>&#x1F504; Profile: <span id="monitor-active-profile-label">EXOS Commands</span></span>
               </button>
             </div>
             <p id="modal-monitor-subtitle" class="text-xs text-slate-400 mt-1 font-mono">
@@ -2854,10 +2854,10 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           
           <!-- Manual Refresh button -->
           <button id="btn-monitor-refresh" onclick="fetchSwitchMonitorTelemetry(false)" class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
-            <span>🔄 Refresh</span>
+            <span>&#x1F504; Refresh</span>
           </button>
 
-          <button onclick="closeMonitorModal()" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+          <button onclick="closeMonitorModal()" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
         </div>
       </div>
 
@@ -2874,16 +2874,16 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-3 border-b border-slate-800 bg-slate-950/60 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
           <button id="monitor-tab-overview" onclick="switchMonitorTab('overview')" class="px-3.5 py-1 text-xs font-semibold rounded-md bg-indigo-600 text-white transition">
-            📊 Telemetry Overview
+            &#x1F4CA; Telemetry Overview
           </button>
           <button id="monitor-tab-processes" onclick="switchMonitorTab('processes')" class="px-3.5 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
-            ⚙️ Top Processes (<span id="modal-monitor-proc-count">6</span>)
+            &#x2699;&#xFE0F; Top Processes (<span id="modal-monitor-proc-count">6</span>)
           </button>
           <button id="monitor-tab-raw" onclick="switchMonitorTab('raw')" class="px-3.5 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
             &gt;_ Raw CLI Output
           </button>
           <button id="monitor-tab-cmds" onclick="switchMonitorTab('cmds')" class="px-3.5 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
-            📖 CLI Commands Guide
+            &#x1F4D6; CLI Commands Guide
           </button>
         </div>
 
@@ -2907,7 +2907,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 relative overflow-hidden">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
-                  <span>⚡ CPU Utilization</span>
+                  <span>&#x26A1; CPU Utilization</span>
                 </span>
                 <span id="monitor-cpu-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-800/60">
                   NORMAL
@@ -2940,7 +2940,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 relative overflow-hidden">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
-                  <span>🌡️ Temperature</span>
+                  <span>&#x1F321;&#xFE0F; Temperature</span>
                 </span>
                 <span id="monitor-temp-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-800/60">
                   NORMAL
@@ -2948,8 +2948,8 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
               </div>
 
               <div class="flex items-baseline gap-2">
-                <span id="monitor-temp-celsius" class="text-3xl font-black text-white font-mono">0.0°C</span>
-                <span id="monitor-temp-fahrenheit" class="text-sm font-semibold text-slate-400 font-mono">(0.0°F)</span>
+                <span id="monitor-temp-celsius" class="text-3xl font-black text-white font-mono">0.0&deg;C</span>
+                <span id="monitor-temp-fahrenheit" class="text-sm font-semibold text-slate-400 font-mono">(0.0&deg;F)</span>
               </div>
 
               <!-- Progress Bar vs Threshold -->
@@ -2961,7 +2961,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
               <div class="pt-2 border-t border-slate-900 space-y-1 font-mono text-[11px]">
                 <div class="text-[10px] text-slate-500 flex justify-between">
                   <span>Cooling Fans (3/3 Active)</span>
-                  <span class="text-slate-400">Limit: 75°C</span>
+                  <span class="text-slate-400">Limit: 75&deg;C</span>
                 </div>
                 <div id="monitor-fans-list" class="space-y-1">
                   <!-- Fan rows -->
@@ -2973,7 +2973,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 relative overflow-hidden">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
-                  <span>💾 Memory Usage</span>
+                  <span>&#x1F4BE; Memory Usage</span>
                 </span>
                 <span id="monitor-mem-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-800/60">
                   OPTIMAL
@@ -3012,17 +3012,17 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           <!-- Bottom Summary Bar: Switch Hardware & Operational State -->
           <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-slate-300">
             <div class="flex items-center gap-2">
-              <span class="text-indigo-400">🛡️</span>
+              <span class="text-indigo-400">&#x1F6E1;&#xFE0F;</span>
               <span class="text-slate-400">Power Supply:</span>
               <span id="modal-monitor-psu-status" class="text-emerald-400 font-bold">Dual Redundant AC 450W (Online)</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-indigo-400">⏱️</span>
+              <span class="text-indigo-400">&#x23F1;&#xFE0F;</span>
               <span class="text-slate-400">System Uptime:</span>
               <span id="modal-monitor-uptime-full" class="text-white font-bold">--</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-indigo-400">🌐</span>
+              <span class="text-indigo-400">&#x1F310;</span>
               <span class="text-slate-400">Network Latency:</span>
               <span id="modal-monitor-rtt" class="text-indigo-300 font-bold">-- ms RTT</span>
             </div>
@@ -3054,7 +3054,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <div id="monitor-view-raw" class="hidden space-y-2">
           <div class="flex items-center justify-between text-xs font-mono">
             <span class="text-slate-400">Verbatim Switch CLI Output &bull; Full Untruncated Session Buffer</span>
-            <button onclick="copyElementText('modal-monitor-raw-content')" class="text-indigo-400 hover:underline">📋 Copy CLI Output</button>
+            <button onclick="copyElementText('modal-monitor-raw-content')" class="text-indigo-400 hover:underline">&#x1F4CB; Copy CLI Output</button>
           </div>
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-200 overflow-x-auto max-h-[480px]">
             <pre id="modal-monitor-raw-content">Querying switch telemetry via Telnet (Port 23)...</pre>
@@ -3065,7 +3065,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <div id="monitor-view-cmds" class="hidden space-y-4 font-mono text-xs">
           <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
             <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
-              <span>⚡ Extreme EXOS (Summit Series - X440, X460, X465, 5420, 5520) Commands</span>
+              <span>&#x26A1; Extreme EXOS (Summit Series - X440, X460, X465, 5420, 5520) Commands</span>
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-300">
               <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1">
@@ -3078,7 +3078,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 <div class="text-amber-400 font-bold">2. Thermal Sensors &amp; Fan Trays:</div>
                 <code class="text-emerald-400 block bg-slate-950 p-1.5 rounded">show temperature</code>
                 <code class="text-emerald-400 block bg-slate-950 p-1.5 rounded">show fans</code>
-                <p class="text-[11px] text-slate-400 mt-1">Queries chassis core, ambient sensors, thermal thresholds (75°C limit), and tachometer RPM.</p>
+                <p class="text-[11px] text-slate-400 mt-1">Queries chassis core, ambient sensors, thermal thresholds (75&deg;C limit), and tachometer RPM.</p>
               </div>
               <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1">
                 <div class="text-amber-400 font-bold">3. Memory Allocation &amp; Heap:</div>
@@ -3096,7 +3096,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
 
           <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
             <h3 class="text-sm font-bold text-indigo-400 flex items-center gap-2">
-              <span>🛡️ Extreme VOSS (VSP Series - 4000, 7200, 7400, 8400) Commands</span>
+              <span>&#x1F6E1;&#xFE0F; Extreme VOSS (VSP Series - 4000, 7200, 7400, 8400) Commands</span>
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-300">
               <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1">
@@ -3142,12 +3142,12 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-emerald-400 font-bold">⚡ Live Port Information Auditor</span>
+            <span class="text-emerald-400 font-bold">&#x26A1; Live Port Information Auditor</span>
             <span id="modal-ports-ip" class="text-xs font-mono text-slate-300 bg-slate-800 px-2 py-0.5 rounded"></span>
           </div>
           <p class="text-xs text-slate-400 mt-0.5 font-mono">Protocol: Telnet (Port 23) | CLI: <code class="text-emerald-400">show ports</code> (All Ports)</p>
         </div>
-        <button onclick="closeModal('modal-ports')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+        <button onclick="closeModal('modal-ports')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <div class="p-6 overflow-y-auto flex-1 space-y-4">
@@ -3180,9 +3180,9 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         </div>
         <div class="flex items-center gap-3">
           <button onclick="exportLldpJson()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
-            📥 Export Output
+            &#x1F4E5; Export Output
           </button>
-          <button onclick="closeModal('modal-lldp')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+          <button onclick="closeModal('modal-lldp')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
         </div>
       </div>
 
@@ -3199,18 +3199,18 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-3 border-b border-slate-800 bg-slate-950/40 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
           <button id="lldp-tab-table" onclick="switchLldpTab('table')" class="px-3 py-1 text-xs font-semibold rounded-md bg-indigo-600 text-white transition">
-            📊 Structured Table (<span id="modal-lldp-count">0</span>)
+            &#x1F4CA; Structured Table (<span id="modal-lldp-count">0</span>)
           </button>
           <button id="lldp-tab-raw" onclick="switchLldpTab('raw')" class="px-3 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
             &gt;_ Raw CLI Output
           </button>
           <button id="lldp-tab-uplinks" onclick="switchLldpTab('uplinks')" class="px-3 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
-            ⇄ Uplink Topology
+            &#x21C4; Uplink Topology
           </button>
         </div>
         <div class="relative flex-1 max-w-xs">
           <input id="lldp-search-input" oninput="filterLldpNeighbors()" type="text" placeholder="Filter by Port, Name, IP, Type..." class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-8 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono" />
-          <span class="absolute right-2.5 top-2 text-slate-500 text-xs">🔍</span>
+          <span class="absolute right-2.5 top-2 text-slate-500 text-xs">&#x1F50D;</span>
         </div>
       </div>
 
@@ -3242,7 +3242,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <div id="lldp-view-raw" class="hidden space-y-2">
           <div class="flex items-center justify-between text-xs font-mono">
             <span class="text-slate-400">Verbatim CLI Terminal Output &bull; Full Untruncated Buffer</span>
-            <button onclick="copyElementText('modal-lldp-raw-content')" class="text-indigo-400 hover:underline">📋 Copy CLI Output</button>
+            <button onclick="copyElementText('modal-lldp-raw-content')" class="text-indigo-400 hover:underline">&#x1F4CB; Copy CLI Output</button>
           </div>
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-200 overflow-x-auto max-h-[500px]">
             <pre id="modal-lldp-raw-content">Querying switch via Telnet (Port 23)...</pre>
@@ -3277,9 +3277,9 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         </div>
         <div class="flex items-center gap-3">
           <button onclick="exportFdbCsv()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
-            📥 Export CSV
+            &#x1F4E5; Export CSV
           </button>
-          <button onclick="closeModal('modal-fdb')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+          <button onclick="closeModal('modal-fdb')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
         </div>
       </div>
 
@@ -3298,7 +3298,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <!-- Tab selector -->
         <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
           <button id="fdb-tab-table" onclick="switchFdbTab('table')" class="px-3 py-1 text-xs font-semibold rounded-md bg-emerald-600 text-white transition">
-            📊 MAC Table (<span id="modal-fdb-count">0</span>)
+            &#x1F4CA; MAC Table (<span id="modal-fdb-count">0</span>)
           </button>
           <button id="fdb-tab-raw" onclick="switchFdbTab('raw')" class="px-3 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
             &gt;_ Raw CLI Output
@@ -3333,12 +3333,12 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           <!-- MAC Search Bar -->
           <div class="relative min-w-[200px] max-w-xs">
             <input id="fdb-mac-input" oninput="onFdbFilterChange()" type="text" placeholder="Search MAC (e.g. 00:04:96 or a1:b2)..." class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-7 py-1 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono" />
-            <button onclick="clearFdbMacInput()" class="absolute right-2 top-1.5 text-slate-500 hover:text-slate-300 text-xs">✕</button>
+            <button onclick="clearFdbMacInput()" class="absolute right-2 top-1.5 text-slate-500 hover:text-slate-300 text-xs">[X]</button>
           </div>
 
           <!-- Query Switch Directly Button -->
           <button onclick="reQueryFdbLive()" class="bg-emerald-700/80 hover:bg-emerald-600 text-white px-3 py-1 rounded-lg text-xs font-mono font-semibold transition flex items-center gap-1">
-            <span>⚡ Query</span>
+            <span>&#x26A1; Query</span>
           </button>
         </div>
       </div>
@@ -3371,7 +3371,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <div id="fdb-view-raw" class="hidden space-y-2">
           <div class="flex items-center justify-between text-xs font-mono">
             <span class="text-slate-400">Verbatim CLI Terminal Output &bull; Full Untruncated Buffer</span>
-            <button onclick="copyElementText('modal-fdb-raw-content')" class="text-emerald-400 hover:underline">📋 Copy CLI Output</button>
+            <button onclick="copyElementText('modal-fdb-raw-content')" class="text-emerald-400 hover:underline">&#x1F4CB; Copy CLI Output</button>
           </div>
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-200 overflow-x-auto max-h-[500px]">
             <pre id="modal-fdb-raw-content">Querying switch via Telnet (Port 23)...</pre>
@@ -3393,19 +3393,19 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-indigo-400 font-bold text-sm">🕒 Retained Backup Revisions & Configuration Archive</span>
+            <span class="text-indigo-400 font-bold text-sm">&#x1F552; Retained Backup Revisions & Configuration Archive</span>
             <span id="modal-backup-title" class="text-xs font-mono text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded border border-slate-700"></span>
           </div>
           <p id="modal-backup-subtitle" class="text-xs text-slate-400 mt-0.5 font-mono">Select any historical backup revision from disk to inspect or copy to clipboard.</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="copyCurrentSelectedBackupRevision()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono transition flex items-center gap-1.5 shadow">
-            <span>📋 Copy Selected Config</span>
+            <span>&#x1F4CB; Copy Selected Config</span>
           </button>
           <button onclick="downloadCurrentSelectedBackupRevision()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center gap-1.5">
-            <span>📥 Download File</span>
+            <span>&#x1F4E5; Download File</span>
           </button>
-          <button onclick="closeModal('modal-backups')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+          <button onclick="closeModal('modal-backups')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
         </div>
       </div>
 
@@ -3415,7 +3415,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <!-- Left Revisions List -->
         <div class="w-full md:w-80 border-b md:border-b-0 md:border-r border-slate-800 bg-slate-950/70 p-3.5 flex flex-col shrink-0">
           <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono mb-2 flex items-center justify-between">
-            <span>📂 Retained Files (<span id="modal-revisions-count">0</span>)</span>
+            <span>&#x1F4C2; Retained Files (<span id="modal-revisions-count">0</span>)</span>
             <span class="text-[10px] text-slate-500">TFTP / Backups</span>
           </div>
           <div id="modal-revisions-list" class="space-y-1.5 overflow-y-auto flex-1 pr-1 custom-scrollbar text-xs font-mono">
@@ -3458,7 +3458,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-lg">
-            📖
+            &#x1F4D6;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -3489,7 +3489,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
               Virtual OS (VOSS / VSP)
             </button>
           </div>
-          <button onclick="closeModal('modal-cheatsheet')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+          <button onclick="closeModal('modal-cheatsheet')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
         </div>
       </div>
 
@@ -3525,7 +3525,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 <span class="text-xs font-bold text-slate-200">Step 1: Clean Factory Wipe & Temporary Management IP</span>
               </div>
               <button onclick="copyCheatSheetStep('exos-1')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                📋 Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3549,7 +3549,7 @@ ping 10.36.226.7</pre>
                 <span class="text-xs font-bold text-slate-200">Step 2: Pull .xsf Configuration from TFTP & Apply to Switch</span>
               </div>
               <button onclick="copyCheatSheetStep('exos-2')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                📋 Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3573,7 +3573,7 @@ use configuration primary</pre>
                 <span class="text-xs font-bold text-slate-200">Step 3: Verification & Port Uplink Checks</span>
               </div>
               <button onclick="copyCheatSheetStep('exos-3')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                📋 Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3615,7 +3615,7 @@ show lldp neighbors</pre>
                 <span class="text-xs font-bold text-slate-200">Step 1: Enter Privileged Mode & Factory Zeroize</span>
               </div>
               <button onclick="copyCheatSheetStep('voss-1')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                📋 Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3634,7 +3634,7 @@ reset -y</pre>
                 <span class="text-xs font-bold text-slate-200">Step 2: Transfer Saved .cfg & Apply to Boot Flags</span>
               </div>
               <button onclick="copyCheatSheetStep('voss-2')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                📋 Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3660,7 +3660,7 @@ reset -y</pre>
                 <span class="text-xs font-bold text-slate-200">Step 3: Verify SPBM Fabric & Interfaces</span>
               </div>
               <button onclick="copyCheatSheetStep('voss-3')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                📋 Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3675,7 +3675,7 @@ show ip route</pre>
 
         <!-- Safety Notice Banner -->
         <div class="p-4 bg-amber-950/30 border border-amber-500/30 rounded-xl flex items-start gap-3 text-xs font-mono text-amber-300">
-          <span class="text-base">⚠️</span>
+          <span class="text-base">[WARN]&#xFE0F;</span>
           <div>
             <strong>Firmware Matching Warning:</strong> Always verify that the replacement hardware has the same major firmware revision (e.g. EXOS 31.x or VOSS 8.x) as the backup file before executing configuration scripts to prevent syntax mismatch.
           </div>
@@ -3698,12 +3698,12 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div>
           <div class="flex items-center gap-2">
-            <span class="p-1 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-mono font-bold">⚡ PORT BOUNCE</span>
+            <span class="p-1 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-mono font-bold">&#x26A1; PORT BOUNCE</span>
             <span id="modal-bounce-switch-name" class="text-sm font-bold text-white font-mono">Switch Hostname</span>
           </div>
           <p id="modal-bounce-switch-sub" class="text-xs text-slate-400 mt-1 font-mono">Switch IP: 10.32.54.249 &bull; ExtremeXOS &bull; Zero-Downtime Verification</p>
         </div>
-        <button onclick="closeModal('modal-bounce-port')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+        <button onclick="closeModal('modal-bounce-port')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <!-- Scrollable Body -->
@@ -3713,7 +3713,7 @@ show ip route</pre>
         <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <label class="text-xs font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center gap-1.5">
-              <span>🔌 1. Select Port Number to Bounce</span>
+              <span>&#x1F50C; 1. Select Port Number to Bounce</span>
             </label>
             <button type="button" onclick="toggleCustomBouncePort()" id="btn-custom-bounce-toggle" class="text-[11px] font-mono text-indigo-400 hover:underline">
               + Enter Custom Port / Slot
@@ -3736,7 +3736,7 @@ show ip route</pre>
         <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center gap-1.5">
-              <span>🏷️ 2. Learned MAC Address(es) on Port <span id="bounce-active-port-label" class="text-amber-400 font-bold">13</span></span>
+              <span>&#x1F3F7;&#xFE0F; 2. Learned MAC Address(es) on Port <span id="bounce-active-port-label" class="text-amber-400 font-bold">13</span></span>
             </h3>
             <span id="bounce-mac-count-badge" class="text-xs font-mono text-slate-400">Loading MAC table...</span>
           </div>
@@ -3765,9 +3765,9 @@ show ip route</pre>
         <div id="bounce-result-card" class="hidden bg-slate-950 p-4 rounded-xl border border-emerald-800 space-y-2">
           <div class="flex items-center justify-between text-xs font-mono">
             <span class="text-emerald-400 font-bold flex items-center gap-1.5">
-              <span>✔ Port Bounce Completed Successfully</span>
+              <span>[OK] Port Bounce Completed Successfully</span>
             </span>
-            <button type="button" onclick="copyElementText('bounce-result-cli')" class="text-slate-400 hover:text-emerald-400">📋 Copy Log</button>
+            <button type="button" onclick="copyElementText('bounce-result-cli')" class="text-slate-400 hover:text-emerald-400">&#x1F4CB; Copy Log</button>
           </div>
           <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 font-mono text-xs text-slate-200 overflow-x-auto max-h-48">
             <pre id="bounce-result-cli"></pre>
@@ -3780,7 +3780,7 @@ show ip route</pre>
       <div class="px-6 py-3.5 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
         <button type="button" onclick="closeModal('modal-bounce-port')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition">Close</button>
         <button type="button" id="btn-execute-bounce" onclick="executeBouncePortLive()" class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg transition-all">
-          <span>⚡ Confirm &amp; Bounce Port <span id="btn-bounce-port-num">13</span></span>
+          <span>&#x26A1; Confirm &amp; Bounce Port <span id="btn-bounce-port-num">13</span></span>
         </button>
       </div>
 
@@ -3793,14 +3793,14 @@ show ip route</pre>
       <div class="flex items-center justify-between border-b border-slate-800 pb-4">
         <div class="flex items-center gap-2.5">
           <div class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-            🔒
+            &#x1F512;
           </div>
           <div>
             <h3 class="text-base font-bold text-white">Helpdesk Security Verification</h3>
             <p class="text-xs text-slate-400 font-mono">Authorization Required</p>
           </div>
         </div>
-        <button onclick="closeModal('modal-rollout-auth')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-rollout-auth')" class="text-slate-400 hover:text-white p-1">[X]</button>
       </div>
 
       <div class="space-y-3">
@@ -3811,7 +3811,7 @@ show ip route</pre>
         <form onsubmit="submitRolloutAuth(event)" class="space-y-4 pt-2">
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-slate-300 font-mono flex items-center gap-1.5">
-              <span>🔑 Enter Administrator Password:</span>
+              <span>&#x1F511; Enter Administrator Password:</span>
             </label>
             <input
               type="password"
@@ -3823,7 +3823,7 @@ show ip route</pre>
           </div>
 
           <div id="rollout-auth-error" class="hidden p-3 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 text-xs font-mono">
-            ❌ Incorrect password. Access denied. Returning to main page...
+            [X] Incorrect password. Access denied. Returning to main page...
           </div>
 
           <div class="flex items-center justify-end gap-2.5 pt-2">
@@ -3838,7 +3838,7 @@ show ip route</pre>
               type="submit"
               class="flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 transition-all"
             >
-              <span>🔓 Verify &amp; Unlock</span>
+              <span>&#x1F513; Verify &amp; Unlock</span>
             </button>
           </div>
         </form>
@@ -3854,7 +3854,7 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-            🛡️
+            &#x1F6E1;&#xFE0F;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -3868,7 +3868,7 @@ show ip route</pre>
             </p>
           </div>
         </div>
-        <button onclick="closeModal('modal-rollout-workspace')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+        <button onclick="closeModal('modal-rollout-workspace')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <!-- Body -->
@@ -3895,7 +3895,7 @@ show ip route</pre>
 
             <div class="space-y-2">
               <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <span class="font-bold text-slate-300">✨ Quick Command Templates:</span>
+                <span class="font-bold text-slate-300">&#x2728; Quick Command Templates:</span>
                 <span>Click to insert</span>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -3926,7 +3926,7 @@ show ip route</pre>
           <div class="lg:col-span-5 space-y-4 flex flex-col">
             <div class="flex items-center justify-between">
               <label class="text-xs font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center gap-2">
-                <span>🖥️ 2. Target Devices (<span id="rollout-selected-count">0</span>)</span>
+                <span>&#x1F5A5;&#xFE0F; 2. Target Devices (<span id="rollout-selected-count">0</span>)</span>
               </label>
             </div>
 
@@ -3936,7 +3936,7 @@ show ip route</pre>
                 onclick="toggleRolloutSelectAll(true)"
                 class="flex-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white font-mono transition shadow-sm"
               >
-                ✔ Apply to All
+                [OK] Apply to All
               </button>
               <button
                 type="button"
@@ -3959,12 +3959,12 @@ show ip route</pre>
           <div class="p-4 rounded-xl bg-slate-950 border border-emerald-800 flex items-center justify-between">
             <div>
               <div class="text-sm font-bold text-white flex items-center gap-2">
-                <span>✔ Fleet Rollout Completed</span>
+                <span>[OK] Fleet Rollout Completed</span>
               </div>
               <p id="rollout-results-summary" class="text-xs text-slate-400 font-mono mt-1"></p>
             </div>
             <button onclick="copyElementText('rollout-transcript-cli')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700 font-mono">
-              📋 Copy Full Log
+              &#x1F4CB; Copy Full Log
             </button>
           </div>
 
@@ -3987,7 +3987,7 @@ show ip route</pre>
           onclick="executeRolloutLive()"
           class="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 transition-all"
         >
-          <span>🚀 Execute Rollout on Selected Switches</span>
+          <span>&#x1F680; Execute Rollout on Selected Switches</span>
         </button>
       </div>
 
@@ -4001,7 +4001,7 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
-            📋
+            &#x1F4CB;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4015,7 +4015,7 @@ show ip route</pre>
             </p>
           </div>
         </div>
-        <button onclick="closeModal('modal-switches-editor')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+        <button onclick="closeModal('modal-switches-editor')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <div class="p-6 overflow-y-auto flex-1 space-y-4">
@@ -4025,11 +4025,11 @@ show ip route</pre>
           </label>
           <div class="flex items-center gap-2">
             <label class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono cursor-pointer transition">
-              <span>📁 Import / Upload File</span>
+              <span>&#x1F4C1; Import / Upload File</span>
               <input type="file" id="switches-file-upload" accept=".txt,.csv" class="hidden" onchange="handleSwitchesFileUpload(event)" />
             </label>
             <button type="button" onclick="formatSwitchesEditorContent()" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono transition">
-              ✨ Clean &amp; Deduplicate
+              &#x2728; Clean &amp; Deduplicate
             </button>
           </div>
         </div>
@@ -4044,7 +4044,7 @@ show ip route</pre>
 
         <div class="p-3.5 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5 font-mono text-xs text-slate-400">
           <div class="font-bold text-slate-300 flex items-center gap-1.5">
-            <span>💡 How this works:</span>
+            <span>&#x1F4A1; How this works:</span>
           </div>
           <p>
             The portal, automated backups, and rollout tools read directly from <strong class="text-slate-200">Switches.txt</strong>. You can paste 200+ switch IPs directly from Excel, CSV, or notepad.
@@ -4063,7 +4063,7 @@ show ip route</pre>
           onclick="saveSwitchesEditor()"
           class="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all"
         >
-          <span>💾 Save &amp; Reload Fleet</span>
+          <span>&#x1F4BE; Save &amp; Reload Fleet</span>
         </button>
       </div>
 
@@ -4078,7 +4078,7 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-            🌐
+            &#x1F310;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4092,7 +4092,7 @@ show ip route</pre>
             </p>
           </div>
         </div>
-        <button onclick="closeModal('modal-ping')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+        <button onclick="closeModal('modal-ping')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <!-- Body -->
@@ -4122,7 +4122,7 @@ show ip route</pre>
               onclick="executePingModal()"
               class="w-full py-2 px-4 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition shadow"
             >
-              <span>⚡ Send Ping</span>
+              <span>&#x26A1; Send Ping</span>
             </button>
           </div>
         </div>
@@ -4176,7 +4176,7 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-lg">
-            ⏰
+            &#x23F0;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4190,7 +4190,7 @@ show ip route</pre>
             </p>
           </div>
         </div>
-        <button onclick="closeModal('modal-schedule')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+        <button onclick="closeModal('modal-schedule')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <!-- Body -->
@@ -4215,19 +4215,19 @@ show ip route</pre>
           <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Execution Cadence / Frequency</label>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button type="button" onclick="setSchedFreq('daily')" id="freq-btn-daily" class="p-3 rounded-xl border text-left transition flex flex-col justify-between gap-1 bg-indigo-950/40 border-indigo-500/50 text-indigo-300">
-              <span class="font-bold">🌙 Daily Nightly</span>
+              <span class="font-bold">&#x1F319; Daily Nightly</span>
               <span class="text-[10px] text-slate-400">Once per day (e.g. 02:00)</span>
             </button>
             <button type="button" onclick="setSchedFreq('hourly')" id="freq-btn-hourly" class="p-3 rounded-xl border text-left transition flex flex-col justify-between gap-1 bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700">
-              <span class="font-bold">⏱️ Hourly</span>
+              <span class="font-bold">&#x23F1;&#xFE0F; Hourly</span>
               <span class="text-[10px] text-slate-400">Every 60 minutes</span>
             </button>
             <button type="button" onclick="setSchedFreq('every_4h')" id="freq-btn-every_4h" class="p-3 rounded-xl border text-left transition flex flex-col justify-between gap-1 bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700">
-              <span class="font-bold">⚡ Every 4 Hours</span>
+              <span class="font-bold">&#x26A1; Every 4 Hours</span>
               <span class="text-[10px] text-slate-400">6 times per day</span>
             </button>
             <button type="button" onclick="setSchedFreq('weekly')" id="freq-btn-weekly" class="p-3 rounded-xl border text-left transition flex flex-col justify-between gap-1 bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700">
-              <span class="font-bold">📅 Weekly</span>
+              <span class="font-bold">&#x1F4C5; Weekly</span>
               <span class="text-[10px] text-slate-400">Selected days only</span>
             </button>
           </div>
@@ -4239,7 +4239,7 @@ show ip route</pre>
             <div class="flex items-center justify-between">
               <label class="text-xs font-semibold text-slate-400 block">Primary Execution Time (GMT)</label>
               <button type="button" onclick="setScheduleQuickTestPlus1Min()" class="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-[10px] font-bold transition flex items-center gap-1" title="Set schedule time to +1 minute from current GMT time for instant test validation">
-                <span>⚡</span> Quick Test (+1 Min)
+                <span>&#x26A1;</span> Quick Test (+1 Min)
               </button>
             </div>
             <input type="time" id="sched-time-utc" value="02:00" onchange="renderSchedulePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-indigo-300 font-bold focus:outline-none focus:border-indigo-500">
@@ -4304,7 +4304,7 @@ show ip route</pre>
             Cancel
           </button>
           <button type="button" id="btn-save-schedule" onclick="saveScheduleModal()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition shadow-lg shadow-indigo-600/30 flex items-center gap-2">
-            <span>💾 Save Schedule &amp; Apply Policy</span>
+            <span>&#x1F4BE; Save Schedule &amp; Apply Policy</span>
           </button>
         </div>
       </div>
@@ -4320,7 +4320,7 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-base">
-            📜
+            &#x1F4DC;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4334,7 +4334,7 @@ show ip route</pre>
             </p>
           </div>
         </div>
-        <button onclick="closeModal('modal-audit-trail')" class="text-slate-400 hover:text-white text-lg px-2">✕</button>
+        <button onclick="closeModal('modal-audit-trail')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <!-- Controls & Filter Toolbar -->
@@ -4372,20 +4372,20 @@ show ip route</pre>
             class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5"
             title="Expand or collapse full details for all visible entries"
           >
-            <span id="btn-toggle-all-audit-label">📖 Expand All</span>
+            <span id="btn-toggle-all-audit-label">&#x1F4D6; Expand All</span>
           </button>
           <button
             onclick="loadAuditLogsData()"
             class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5"
           >
-            <span>🔄 Refresh</span>
+            <span>&#x1F504; Refresh</span>
           </button>
           <a
             href="/api/audit/export-csv"
             download="audit_trail.csv"
             class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-mono font-bold rounded-lg transition flex items-center gap-1.5 shadow"
           >
-            <span>📥 Export CSV</span>
+            <span>&#x1F4E5; Export CSV</span>
           </a>
         </div>
       </div>
@@ -4429,7 +4429,7 @@ show ip route</pre>
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold font-mono transition-opacity duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
-    <span>✔</span> <span id="toast-msg">Copied to clipboard!</span>
+    <span>[OK]</span> <span id="toast-msg">Copied to clipboard!</span>
   </div>
 
   <script>
@@ -4568,7 +4568,7 @@ show ip route</pre>
                 : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
             }"
           >
-            <span>📡</span>
+            <span>&#x1F4E1;</span>
             <span>${p.title}</span>
             <span class="text-[10px] font-mono px-1.5 py-0.2 rounded ${isSel ? 'bg-emerald-700 text-emerald-100' : 'bg-slate-800 text-slate-400'}">
               ${p.aps.length} APs
@@ -4600,7 +4600,7 @@ show ip route</pre>
             </div>
             ${ap.switchPort ? `
               <div class="mt-1 text-[10px] text-purple-300 flex items-center gap-1 truncate">
-                <span>🔌</span>
+                <span>&#x1F50C;</span>
                 <span class="truncate">${ap.switchPort}</span>
               </div>
             ` : ''}
@@ -4632,7 +4632,7 @@ show ip route</pre>
           <div class="p-4 sm:p-5 border-b border-slate-800 bg-slate-900/90 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div class="flex items-start sm:items-center gap-3">
               <div class="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 text-emerald-400 text-lg">
-                📶
+                &#x1F4F6;
               </div>
               <div>
                 <div class="flex items-center gap-2 flex-wrap">
@@ -4661,7 +4661,7 @@ show ip route</pre>
                 class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono border border-slate-700 transition"
                 title="Download original file"
               >
-                <span>💾</span>
+                <span>&#x1F4BE;</span>
                 <span>Download ${plan.fileSource}</span>
               </a>
               <button
@@ -4669,7 +4669,7 @@ show ip route</pre>
                 class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono border border-slate-700 transition cursor-pointer"
                 title="Export full AP allocation and signal strength audit to CSV"
               >
-                <span>📊</span>
+                <span>&#x1F4CA;</span>
                 <span>Export AP Audit CSV</span>
               </button>
               <button
@@ -4677,7 +4677,7 @@ show ip route</pre>
                 class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono border border-slate-700 transition cursor-pointer"
                 title="Download vector SVG of current floor plan"
               >
-                <span>📐</span>
+                <span>&#x1F4D0;</span>
                 <span>Download SVG</span>
               </button>
             </div>
@@ -4710,7 +4710,7 @@ show ip route</pre>
                 onclick="document.getElementById('heatmap-file-input').click()"
                 class="flex items-center gap-1 px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-800 font-mono text-[11px] transition cursor-pointer"
               >
-                <span>📤</span>
+                <span>&#x1F4E4;</span>
                 <span>${hasCustom ? 'Replace PNG' : 'Upload PNG'}</span>
               </button>
 
@@ -4784,7 +4784,7 @@ show ip route</pre>
             <div class="lg:col-span-2 bg-slate-950 rounded-xl border border-slate-800 p-4 space-y-3">
               <div class="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
                 <div class="flex items-center gap-2">
-                  <span class="text-emerald-400 font-bold">📡</span>
+                  <span class="text-emerald-400 font-bold">&#x1F4E1;</span>
                   <h4 class="text-xs font-bold text-white uppercase tracking-wider font-mono">
                     Deployed Access Points for ${plan.title} (${plan.aps.length})
                   </h4>
@@ -4798,7 +4798,7 @@ show ip route</pre>
 
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-4 space-y-3">
               <div class="flex items-center gap-2 border-b border-slate-800/80 pb-2.5">
-                <span class="text-indigo-400">📈</span>
+                <span class="text-indigo-400">&#x1F4C8;</span>
                 <h4 class="text-xs font-bold text-white uppercase tracking-wider font-mono">
                   Room Zone RF Breakdown
                 </h4>
@@ -4808,7 +4808,7 @@ show ip route</pre>
               </div>
               <div class="p-3 bg-emerald-950/30 border border-emerald-500/30 rounded-lg text-xs space-y-1">
                 <div class="flex items-center gap-1.5 text-emerald-300 font-bold">
-                  <span>✅</span>
+                  <span>[OK]</span>
                   <span>David Lloyd RF Standard Met</span>
                 </div>
                 <p class="text-[11px] text-slate-300">
@@ -5256,7 +5256,7 @@ show ip route</pre>
                     title="Click to copy IP"
                   >
                     <span>${sw.ip}</span>
-                    <span class="text-[10px] text-slate-500">📋</span>
+                    <span class="text-[10px] text-slate-500">&#x1F4CB;</span>
                   </button>
                 </div>
               </div>
@@ -5264,7 +5264,7 @@ show ip route</pre>
               <div class="flex flex-col items-end gap-1 shrink-0">
                 ${reachabilityBadge}
                 <span class="text-[10px] font-mono ${sw.hasBackup ? 'text-emerald-400' : 'text-slate-500'}">
-                  ${sw.hasBackup ? '✔ Backed Up' : 'No Backup'}
+                  ${sw.hasBackup ? '[OK] Backed Up' : 'No Backup'}
                 </span>
                 <div class="text-[10px] text-slate-500 font-mono">
                   ${(sw.latestBackupTime || 'Recent').split(' ')[0]}
@@ -5280,7 +5280,7 @@ show ip route</pre>
                 class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-xs font-bold bg-indigo-950/90 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/60 hover:border-indigo-500 transition shadow-sm truncate group"
                 title="Monitor live CPU utilization %, Temperature, and Memory %"
               >
-                <span>📊 Monitor</span>
+                <span>&#x1F4CA; Monitor</span>
               </button>
 
               <button 
@@ -5288,7 +5288,7 @@ show ip route</pre>
                 class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 hover:border-emerald-600/60 transition shadow-sm truncate"
                 title="Query live port information (show ports) via Telnet"
               >
-                <span>⚡ Ports</span>
+                <span>&#x26A1; Ports</span>
               </button>
 
               <button 
@@ -5296,7 +5296,7 @@ show ip route</pre>
                 class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-purple-300 border border-slate-800 hover:border-purple-600/60 transition shadow-sm truncate"
                 title="Query all live LLDP neighbors detailed via Telnet"
               >
-                <span>📡 LLDP</span>
+                <span>&#x1F4E1; LLDP</span>
               </button>
 
               <button 
@@ -5304,7 +5304,7 @@ show ip route</pre>
                 class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-800 hover:border-amber-600/60 transition shadow-sm truncate"
                 title="Query live MAC table (FDB) with port selector and MAC search"
               >
-                <span>🏷️ FDB</span>
+                <span>&#x1F3F7;&#xFE0F; FDB</span>
               </button>
 
               <button 
@@ -5312,7 +5312,7 @@ show ip route</pre>
                 class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-slate-800 hover:border-cyan-600/60 transition shadow-sm truncate"
                 title="Ping and test live reachability"
               >
-                <span>🌐 Ping</span>
+                <span>&#x1F310; Ping</span>
               </button>
             </div>
 
@@ -5322,7 +5322,7 @@ show ip route</pre>
                 class="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-slate-700 transition"
                 title="Copy latest configuration backup to clipboard"
               >
-                <span>📋 Copy Backup</span>
+                <span>&#x1F4CB; Copy Backup</span>
               </button>
 
               <button 
@@ -5330,7 +5330,7 @@ show ip route</pre>
                 class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-slate-700 transition"
                 title="Access previous backup archives"
               >
-                <span>🕒 Backups</span>
+                <span>&#x1F552; Backups</span>
               </button>
 
               <button 
@@ -5338,7 +5338,7 @@ show ip route</pre>
                 class="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-950/80 hover:bg-amber-900 text-amber-300 border border-amber-700/60 transition shadow-sm"
                 title="Bounce port with live MAC confirmation on this switch"
               >
-                <span>🔄 Bounce</span>
+                <span>&#x1F504; Bounce</span>
               </button>
 
               <button 
@@ -5346,7 +5346,7 @@ show ip route</pre>
                 class="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition shadow"
                 title="Run BackupSave.py for this switch"
               >
-                <span>⚡ Backup</span>
+                <span>&#x26A1; Backup</span>
               </button>
             </div>
           </div>
@@ -5406,7 +5406,7 @@ show ip route</pre>
               <div>
                 <div class="flex items-center gap-2 flex-wrap">
                   <div class="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-xs">
-                    🏢
+                    &#x1F3E2;
                   </div>
                   <h2 class="text-lg font-bold text-white tracking-wide">${selectedSite} Site Network Hub</h2>
                   <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
@@ -5430,14 +5430,14 @@ show ip route</pre>
                 class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition cursor-pointer"
                 title="Run BackupSave.py on all switches in ${selectedSite}"
               >
-                <span>⚡ Backup ${selectedSite} Switches</span>
+                <span>&#x26A1; Backup ${selectedSite} Switches</span>
               </button>
               <button
                 onclick="selectSite(null)"
                 class="flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700 transition cursor-pointer"
                 title="Return to fleet overview"
               >
-                <span>← Back to Fleet</span>
+                <span>&#x2190; Back to Fleet</span>
               </button>
             </div>
           </div>
@@ -5446,7 +5446,7 @@ show ip route</pre>
           <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
             <div class="p-3.5 bg-slate-900/90 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div class="flex items-center gap-2.5">
-                <span class="text-indigo-400 font-mono text-sm">🗺️</span>
+                <span class="text-indigo-400 font-mono text-sm">&#x1F5FA;&#xFE0F;</span>
                 <div>
                   <div class="flex items-center gap-2">
                     <h3 class="text-xs font-bold text-white uppercase font-mono tracking-wider">
@@ -5487,15 +5487,15 @@ show ip route</pre>
                     <div class="w-full flex flex-col items-center space-y-3">
                       <div class="w-full bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
                         <div class="flex items-center gap-2">
-                          <span class="text-emerald-400 font-bold">✔</span>
+                          <span class="text-emerald-400 font-bold">[OK]</span>
                           <span>Visio Verified Diagram: <strong class="text-white">${pngPath.split("/").pop()}</strong></span>
                         </div>
                         <div class="flex items-center gap-3">
                           <a href="${pngPath}" target="_blank" class="text-indigo-400 hover:underline flex items-center gap-1 text-[11px]">
-                            <span>Full Resolution ↗</span>
+                            <span>Full Resolution &#x2197;</span>
                           </a>
                           <a href="${pngPath}" download="${selectedSite}_Topology_Diagram.png" class="text-purple-400 hover:underline flex items-center gap-1 text-[11px]">
-                            <span>Download PNG 💾</span>
+                            <span>Download PNG &#x1F4BE;</span>
                           </a>
                         </div>
                       </div>
@@ -5517,7 +5517,7 @@ show ip route</pre>
                 } else {
                   return `
                     <div class="p-12 text-center text-slate-400 font-mono">
-                      <div class="text-3xl mb-2">🏢</div>
+                      <div class="text-3xl mb-2">&#x1F3E2;</div>
                       <div class="text-sm font-bold text-white">${selectedSite} Network Schematic</div>
                       <div class="text-xs text-slate-500 mt-1">Showing ${siteSwitches.length} connected switches for site ${selectedSite}.</div>
                     </div>
@@ -5531,19 +5531,19 @@ show ip route</pre>
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 bg-slate-950 border-t border-slate-800 text-xs font-mono">
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
                   <div class="text-purple-400 font-bold">DLC-York-Spa-SW1</div>
-                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 9 ➔ Port 1</div>
+                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 9 &#x2794; Port 1</div>
                 </div>
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
                   <div class="text-purple-400 font-bold">DLC-York-Gym</div>
-                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 37 ➔ Port 1</div>
+                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 37 &#x2794; Port 1</div>
                 </div>
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
                   <div class="text-purple-400 font-bold">DLL-York</div>
-                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 42 ➔ Port 17</div>
+                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 42 &#x2794; Port 17</div>
                 </div>
                 <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
                   <div class="text-purple-400 font-bold">DLC-York-MainComms-2</div>
-                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 41 ➔ Port 48</div>
+                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 41 &#x2794; Port 48</div>
                 </div>
               </div>
             ` : ''}
@@ -5558,7 +5558,7 @@ show ip route</pre>
           <div class="space-y-3 pt-2">
             <div class="flex items-center justify-between">
               <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider font-mono flex items-center gap-2">
-                <span>🏢</span>
+                <span>&#x1F3E2;</span>
                 <span>Switches Assigned to ${selectedSite} (${siteSwitches.length})</span>
               </h3>
               <div class="text-xs text-slate-400 font-mono">
@@ -5676,7 +5676,7 @@ show ip route</pre>
                   title="Open ${site} Site Page & Diagram"
                 >
                   <span>${site}</span>
-                  <span class="text-[10px] text-indigo-400/80">↗</span>
+                  <span class="text-[10px] text-indigo-400/80">&#x2197;</span>
                 </a>
               </div>
 
@@ -5767,10 +5767,10 @@ show ip route</pre>
           if (nextEl) nextEl.innerText = sch.nextScheduledLabel || 'Tonight @ 02:00 UTC';
           if (nextCd) nextCd.innerText = sch.nextScheduledCountdown || 'in ~5h 30m';
           if (freqEl) {
-            freqEl.innerText = `${sch.scheduleFrequency || 'Daily Nightly Backup (02:00)'} • ${sch.scheduleEngine || 'switch-backup.timer'}`;
+            freqEl.innerText = `${sch.scheduleFrequency || 'Daily Nightly Backup (02:00)'} &bull; ${sch.scheduleEngine || 'switch-backup.timer'}`;
           }
           if (lastSum) {
-            lastSum.innerText = `✔ ${allSwitches.length || 6}/${allSwitches.length || 6} Switches Saved • TFTP + SSH`;
+            lastSum.innerText = `[OK] ${allSwitches.length || 6}/${allSwitches.length || 6} Switches Saved &bull; TFTP + SSH`;
           }
           if (lastBdg) {
             if (data.status === 'RUNNING') {
@@ -5787,11 +5787,11 @@ show ip route</pre>
         const spinner = document.getElementById('status-spinner');
         if (data.status === 'RUNNING') {
           badge.className = 'px-3.5 py-1.5 text-xs font-bold rounded-full bg-amber-950 text-amber-300 border border-amber-500 font-mono shadow animate-pulse';
-          badge.innerText = '⚡ RUNNING';
+          badge.innerText = '&#x26A1; RUNNING';
           spinner.classList.remove('hidden');
         } else if (data.status === 'COMPLETED') {
           badge.className = 'px-3.5 py-1.5 text-xs font-bold rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500 font-mono shadow';
-          badge.innerText = '✔ COMPLETED';
+          badge.innerText = '[OK] COMPLETED';
           spinner.classList.add('hidden');
         } else {
           badge.className = 'px-3.5 py-1.5 text-xs font-bold rounded-full bg-slate-900 text-slate-300 border border-slate-700 font-mono shadow';
@@ -5829,7 +5829,7 @@ show ip route</pre>
         const container = document.getElementById('switches-grid');
         container.innerHTML = `
           <div class="col-span-full py-12 text-center bg-slate-950 rounded-xl border border-rose-900/50">
-            <div class="text-2xl mb-2">⚠️</div>
+            <div class="text-2xl mb-2">[WARN]&#xFE0F;</div>
             <div class="text-sm font-semibold text-rose-300">Unable to load switches from Switches.txt</div>
             <div class="text-xs text-slate-400 mt-1">Make sure Switches.txt is present with switch IP addresses, then refresh.</div>
           </div>
@@ -5863,7 +5863,7 @@ show ip route</pre>
       if (allSwitches.length === 0) {
         container.innerHTML = `
           <div class="col-span-full py-12 text-center bg-slate-950 rounded-xl border border-slate-800">
-            <div class="text-2xl mb-2">📋</div>
+            <div class="text-2xl mb-2">&#x1F4CB;</div>
             <div class="text-sm font-semibold text-slate-300">No switch IPs found in Switches.txt</div>
             <div class="text-xs text-slate-500 mt-1">Add your switch IP addresses (one per line) to Switches.txt and refresh.</div>
           </div>
@@ -5895,7 +5895,7 @@ show ip route</pre>
       if (filtered.length === 0) {
         container.innerHTML = `
           <div class="col-span-full py-12 text-center bg-slate-950 rounded-xl border border-slate-800">
-            <div class="text-2xl mb-2">🔍</div>
+            <div class="text-2xl mb-2">&#x1F50D;</div>
             <div class="text-sm font-semibold text-slate-300">No switches matching your search or reachability filter</div>
             <div class="text-xs text-slate-500 mt-1">Try switching to the "All" tab or clearing the search query</div>
           </div>
@@ -5919,7 +5919,7 @@ show ip route</pre>
         if (data && data.backupContent) {
           copyToClipboard(data.backupContent, `Copied backup for ${hostname} (${ip})!`);
         } else {
-          showToast(`No backup file found on disk for ${ip}. Click "⚡ Backup" first!`);
+          showToast(`No backup file found on disk for ${ip}. Click "&#x26A1; Backup" first!`);
         }
       } catch (err) {
         showToast('Error reading backup file: ' + err.message);
@@ -6161,7 +6161,7 @@ show ip route</pre>
         }
       }
       if (cpuLoadsEl) {
-        cpuLoadsEl.innerText = `5s: ${cpu}% • 1m: ${(cpu * 0.95).toFixed(1)}% • 5m: ${(cpu * 0.92).toFixed(1)}%`;
+        cpuLoadsEl.innerText = `5s: ${cpu}% &bull; 1m: ${(cpu * 0.95).toFixed(1)}% &bull; 5m: ${(cpu * 0.92).toFixed(1)}%`;
       }
 
       // Render CPU sparkline
@@ -6193,8 +6193,8 @@ show ip route</pre>
       const tempBadgeEl = document.getElementById('monitor-temp-badge');
       const tempBarEl = document.getElementById('monitor-temp-bar');
 
-      if (tempCEl) tempCEl.innerText = `${tempC}°C`;
-      if (tempFEl) tempFEl.innerText = `(${tempF}°F)`;
+      if (tempCEl) tempCEl.innerText = `${tempC}&deg;C`;
+      if (tempFEl) tempFEl.innerText = `(${tempF}&deg;F)`;
       if (tempBarEl) {
         const tempPct = Math.min(100, Math.max(5, (tempC / 80) * 100));
         tempBarEl.style.width = `${tempPct}%`;
@@ -6297,7 +6297,7 @@ show ip route</pre>
           <tr class="hover:bg-slate-900/60 transition">
             <td class="py-2.5 px-4 text-slate-400 font-mono">${p.pid}</td>
             <td class="py-2.5 px-4 text-white font-bold font-mono flex items-center gap-1.5">
-              <span>⚙️</span> <span>${p.name}</span>
+              <span>&#x2699;&#xFE0F;</span> <span>${p.name}</span>
             </td>
             <td class="py-2.5 px-4">
               <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${p.state === 'Running' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/60' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
@@ -6384,11 +6384,11 @@ show ip route</pre>
         if (revisions.length === 0 && !primaryContent) {
           document.getElementById('modal-revisions-list').innerHTML = `
             <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 text-center space-y-1">
-              <div class="text-amber-400">⚠️ No Backups Found</div>
+              <div class="text-amber-400">[WARN]&#xFE0F; No Backups Found</div>
               <div class="text-[11px]">No backup files (.xsf / .cfg) currently on disk for ${ip}.</div>
             </div>
           `;
-          document.getElementById('modal-backup-content').innerText = `# No configuration file found on disk for ${hostname} (${ip}).\n# Click the "⚡ Backup" button on the main dashboard to generate one right now!`;
+          document.getElementById('modal-backup-content').innerText = `# No configuration file found on disk for ${hostname} (${ip}).\n# Click the "&#x26A1; Backup" button on the main dashboard to generate one right now!`;
           document.getElementById('modal-backup-active-filename').innerText = 'None';
           return;
         }
@@ -6428,13 +6428,13 @@ show ip route</pre>
           >
             <div class="flex items-center justify-between gap-1.5">
               <div class="font-bold text-xs truncate flex items-center gap-1.5 ${isSelected ? 'text-indigo-200' : 'text-slate-200'}">
-                <span>📄</span>
+                <span>&#x1F4C4;</span>
                 <span class="truncate">${escapeHtml(rev.filename)}</span>
               </div>
               ${isLatest ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 shrink-0">LATEST</span>' : ''}
             </div>
             <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
-              <span>🕒 ${rev.timestamp || '--'}</span>
+              <span>&#x1F552; ${rev.timestamp || '--'}</span>
               <span class="px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">${rev.fileSizeKb || 0} KB</span>
             </div>
           </button>
@@ -6489,7 +6489,7 @@ show ip route</pre>
       navigator.clipboard.writeText(text).then(() => {
         const rev = currentBackupModalRevisions[activeSelectedRevisionIndex];
         const fname = rev ? rev.filename : 'configuration';
-        showToast(`✔ Copied ${fname} to clipboard!`, 'success');
+        showToast(`[OK] Copied ${fname} to clipboard!`, 'success');
       }).catch(err => {
         showToast('Failed to copy: ' + err, 'error');
       });
@@ -6510,7 +6510,7 @@ show ip route</pre>
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast(`📥 Downloading ${fname}`, 'success');
+      showToast(`&#x1F4E5; Downloading ${fname}`, 'success');
     }
 
     // Field Tech Recovery Cheat Sheet Controller
@@ -6541,7 +6541,7 @@ show ip route</pre>
       const preEl = document.getElementById(`cs-code-${stepId}`);
       if (!preEl) return;
       navigator.clipboard.writeText(preEl.innerText).then(() => {
-        showToast('✔ Commands copied to clipboard!', 'success');
+        showToast('[OK] Commands copied to clipboard!', 'success');
       }).catch(err => {
         showToast('Failed to copy: ' + err, 'error');
       });
@@ -6785,7 +6785,7 @@ show ip route</pre>
             </td>
             <td class="py-3 px-3">
               <div class="font-bold text-slate-100 flex items-center gap-1.5">
-                <span>${isCoreOrSwitch ? '🔀' : (isAp ? '📡' : '💻')}</span>
+                <span>${isCoreOrSwitch ? '&#x1F500;' : (isAp ? '&#x1F4E1;' : '&#x1F4BB;')}</span>
                 <span>${n.systemName}</span>
               </div>
               <div class="text-[11px] text-slate-400 truncate max-w-[220px]">${n.systemDesc}</div>
@@ -6803,7 +6803,7 @@ show ip route</pre>
             </td>
             <td class="py-3 px-3">
               <div class="text-slate-300 text-xs font-mono">${n.vlan}</div>
-              ${n.poe ? `<div class="text-[10px] text-amber-400 font-mono">⚡ ${n.poe}</div>` : ''}
+              ${n.poe ? `<div class="text-[10px] text-amber-400 font-mono">&#x26A1; ${n.poe}</div>` : ''}
             </td>
             <td class="py-3 px-3 text-right text-slate-400 group-hover:text-indigo-400 transition text-xs">
               <span>View Full &darr;</span>
@@ -6838,7 +6838,7 @@ show ip route</pre>
                 </div>
                 <div class="pt-2 border-t border-slate-800/80 flex justify-between items-center text-[11px]">
                   <span class="text-slate-500">Full Raw Block captured verbatim via CLI</span>
-                  <button onclick="copyLldpNeighborByIndex(${idx})" class="text-indigo-400 hover:underline">📋 Copy Neighbor Block</button>
+                  <button onclick="copyLldpNeighborByIndex(${idx})" class="text-indigo-400 hover:underline">&#x1F4CB; Copy Neighbor Block</button>
                 </div>
               </div>
             </td>
@@ -6856,7 +6856,7 @@ show ip route</pre>
         uplinksContainer.innerHTML = uplinkNeighbors.map(u => `
           <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2 font-mono text-xs">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-white flex items-center gap-1.5">🔀 ${u.systemName}</span>
+              <span class="font-bold text-white flex items-center gap-1.5">&#x1F500; ${u.systemName}</span>
               <span class="bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded text-[11px] font-bold">Port ${u.localPort} &rarr; ${u.portId}</span>
             </div>
             <p class="text-slate-400 text-[11px]">${u.portDesc}</p>
@@ -6906,7 +6906,7 @@ show ip route</pre>
 
     async function showLldpNeighborsLive(ip, hostname) {
       document.getElementById('modal-lldp-ip').innerText = `${hostname} (${ip})`;
-      document.getElementById('modal-lldp-subtitle').innerText = `Command: show lldp neighbors detailed • Switch ${hostname} (${ip})`;
+      document.getElementById('modal-lldp-subtitle').innerText = `Command: show lldp neighbors detailed &bull; Switch ${hostname} (${ip})`;
       document.getElementById('modal-lldp-raw-content').innerText = `Connecting via Telnet to ${ip}:23...\nExecuting 'show lldp neighbors detailed'...\nPlease wait...`;
       document.getElementById('modal-lldp-channel-status').innerText = `Live Telnet Channel: Connecting to ${ip}:23...`;
       document.getElementById('modal-lldp-query-time').innerText = `Query Time: ${new Date().toLocaleTimeString()}`;
@@ -6925,7 +6925,7 @@ show ip route</pre>
         const data = await res.json();
         const rawCli = data.rawCli || 'No LLDP output returned.';
         document.getElementById('modal-lldp-raw-content').innerText = rawCli;
-        document.getElementById('modal-lldp-channel-status').innerText = `Live Telnet Channel: ${ip}:23 • Response: Active • Full Detailed Output`;
+        document.getElementById('modal-lldp-channel-status').innerText = `Live Telnet Channel: ${ip}:23 &bull; Response: Active &bull; Full Detailed Output`;
         document.getElementById('modal-lldp-query-time').innerText = `Query Time: ${data.timestamp || new Date().toLocaleTimeString()}`;
 
         let parsedNeighbors = (data && Array.isArray(data.neighbors) && data.neighbors.length > 0)
@@ -7047,7 +7047,7 @@ show ip route</pre>
             <td class="py-2.5 px-3">
               <div class="flex items-center gap-1.5">
                 <span class="font-bold text-white tracking-wide">${e.mac}</span>
-                <button onclick="copyToClipboard('${e.mac}', 'Copied MAC ${e.mac}');" class="text-slate-500 hover:text-emerald-400 text-[11px]" title="Copy MAC">📋</button>
+                <button onclick="copyToClipboard('${e.mac}', 'Copied MAC ${e.mac}');" class="text-slate-500 hover:text-emerald-400 text-[11px]" title="Copy MAC">&#x1F4CB;</button>
               </div>
             </td>
             <td class="py-2.5 px-3">
@@ -7172,7 +7172,7 @@ show ip route</pre>
         const data = await res.json();
         const rawCli = data.rawCli || 'No FDB output returned.';
         document.getElementById('modal-fdb-raw-content').innerText = rawCli;
-        document.getElementById('modal-fdb-channel-status').innerText = `Live Telnet Channel: ${ip}:23 • Response: Active • Command: ${data.command || 'show fdb'}`;
+        document.getElementById('modal-fdb-channel-status').innerText = `Live Telnet Channel: ${ip}:23 &bull; Response: Active &bull; Command: ${data.command || 'show fdb'}`;
         document.getElementById('modal-fdb-query-time').innerText = `Query Time: ${data.timestamp || new Date().toLocaleTimeString()}`;
 
         const parsed = parseFdbCliJs(rawCli);
@@ -7191,7 +7191,7 @@ show ip route</pre>
 
     async function showFdbTableLive(ip, hostname) {
       document.getElementById('modal-fdb-title').innerText = `${hostname} (${ip})`;
-      document.getElementById('modal-fdb-subtitle').innerText = `CLI: show fdb • ExtremeXOS MAC Table & Port Lookup`;
+      document.getElementById('modal-fdb-subtitle').innerText = `CLI: show fdb &bull; ExtremeXOS MAC Table & Port Lookup`;
       document.getElementById('fdb-port-filter').value = 'ALL';
       document.getElementById('fdb-mac-input').value = '';
       
@@ -7209,7 +7209,7 @@ show ip route</pre>
     function showSwitchPingLive(ip, hostname) {
       currentPingSwitch = { ip, hostname };
       document.getElementById('modal-ping-title').innerText = `${hostname} (${ip})`;
-      document.getElementById('modal-ping-subtitle').innerText = `Target IP: ${ip} • ICMP Network Latency & Reachability Test`;
+      document.getElementById('modal-ping-subtitle').innerText = `Target IP: ${ip} &bull; ICMP Network Latency & Reachability Test`;
       document.getElementById('ping-target-ip').value = ip;
       document.getElementById('ping-metrics-card').classList.add('hidden');
       document.getElementById('ping-raw-output').innerText = 'Executing ICMP Ping probe...';
@@ -7231,7 +7231,7 @@ show ip route</pre>
       }
 
       btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin mr-1">⚙️</span> Pinging...`;
+      btn.innerHTML = `<span class="animate-spin mr-1">&#x2699;&#xFE0F;</span> Pinging...`;
 
       try {
         const res = await fetch('/api/ping', {
@@ -7278,7 +7278,7 @@ show ip route</pre>
         document.getElementById('ping-raw-output').innerText = 'Ping Error: ' + err.message;
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<span>⚡ Send Ping</span>`;
+        btn.innerHTML = `<span>&#x26A1; Send Ping</span>`;
       }
     }
 
@@ -7370,7 +7370,7 @@ show ip route</pre>
       if (isCustomBouncePort) {
         selectBox.classList.add('hidden');
         customBox.classList.remove('hidden');
-        toggleBtn.innerText = '← Select from Standard List';
+        toggleBtn.innerText = '&#x2190; Select from Standard List';
         document.getElementById('bounce-port-custom-input').value = currentBouncePort;
         document.getElementById('bounce-port-custom-input').focus();
       } else {
@@ -7443,7 +7443,7 @@ show ip route</pre>
           // No MACs learned on this port
           content.innerHTML = `
             <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-start gap-3">
-              <span class="text-slate-400 text-lg">ℹ️</span>
+              <span class="text-slate-400 text-lg">&#x2139;&#xFE0F;</span>
               <div class="space-y-1 text-xs font-mono">
                 <div class="text-slate-200 font-bold">No Active MAC Learned on Port ${port}</div>
                 <div class="text-slate-400">The link may be down, or the connected device is idle. Bouncing will reset physical layer transceiver state.</div>
@@ -7455,7 +7455,7 @@ show ip route</pre>
           const m = matched[0];
           content.innerHTML = `
             <div class="p-4 rounded-xl bg-emerald-950/40 border border-emerald-700/60 flex items-start gap-3.5">
-              <span class="text-emerald-400 text-xl font-bold">✔</span>
+              <span class="text-emerald-400 text-xl font-bold">[OK]</span>
               <div class="flex-1 space-y-2 font-mono text-xs">
                 <div class="flex items-center justify-between">
                   <span class="text-emerald-300 font-bold uppercase tracking-wider text-[11px]">Single Client Confirmed (Access Port)</span>
@@ -7496,7 +7496,7 @@ show ip route</pre>
           content.innerHTML = `
             <div class="p-4 rounded-xl bg-amber-950/40 border border-amber-600/60 space-y-3 font-mono text-xs">
               <div class="flex items-center gap-2.5 text-amber-300 font-bold">
-                <span class="text-lg">⚠️</span>
+                <span class="text-lg">[WARN]&#xFE0F;</span>
                 <span>Caution: Multiple MACs Learned on Port ${port} (${matched.length} Devices)</span>
               </div>
               <p class="text-slate-300 text-xs">
@@ -7558,14 +7558,14 @@ show ip route</pre>
         resultCli.innerText = data.rawCli || data.message || 'Port bounced successfully.';
         showToast(`Port ${currentBouncePort} bounced successfully on ${currentBounceSwitch.hostname}!`);
         
-        btn.innerHTML = `<span>✔ Port ${currentBouncePort} Bounced</span>`;
+        btn.innerHTML = `<span>[OK] Port ${currentBouncePort} Bounced</span>`;
         btn.className = "flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow transition-all cursor-default";
       } catch (err) {
         resultCard.classList.remove('hidden');
         resultCli.innerText = `Error bouncing port: ${err.message}`;
         showToast(`Error: ${err.message}`);
         btn.disabled = false;
-        btn.innerHTML = `<span>⚡ Retry Bounce Port ${currentBouncePort}</span>`;
+        btn.innerHTML = `<span>&#x26A1; Retry Bounce Port ${currentBouncePort}</span>`;
       }
     }
 
@@ -7575,7 +7575,7 @@ show ip route</pre>
       isCustomBouncePort = false;
 
       document.getElementById('modal-bounce-switch-name').innerText = `${hostname} (${ip})`;
-      document.getElementById('modal-bounce-switch-sub').innerText = `Switch IP: ${ip} • Protocol: Telnet (Port 23) • CLI: disable port / enable port`;
+      document.getElementById('modal-bounce-switch-sub').innerText = `Switch IP: ${ip} &bull; Protocol: Telnet (Port 23) &bull; CLI: disable port / enable port`;
       
       // Reset UI states
       document.getElementById('bounce-port-select-container').classList.remove('hidden');
@@ -7586,7 +7586,7 @@ show ip route</pre>
       const btn = document.getElementById('btn-execute-bounce');
       btn.disabled = false;
       btn.className = "flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg transition-all";
-      btn.innerHTML = `<span>⚡ Confirm &amp; Bounce Port <span id="btn-bounce-port-num">${defaultPort}</span></span>`;
+      btn.innerHTML = `<span>&#x26A1; Confirm &amp; Bounce Port <span id="btn-bounce-port-num">${defaultPort}</span></span>`;
 
       populateBouncePortSelect(defaultPort);
       updateBouncePortPreviews();
@@ -7626,7 +7626,7 @@ show ip route</pre>
         if (pwdInput) pwdInput.value = '';
         setTimeout(() => {
           closeModal('modal-rollout-auth');
-          showToast('❌ Incorrect password. Access denied.');
+          showToast('[X] Incorrect password. Access denied.');
         }, 1200);
       }
     }
@@ -7642,7 +7642,7 @@ show ip route</pre>
       
       const btn = document.getElementById('btn-run-fleet-rollout');
       btn.disabled = false;
-      btn.innerHTML = `<span>🚀 Execute Rollout on Selected Switches</span>`;
+      btn.innerHTML = `<span>&#x1F680; Execute Rollout on Selected Switches</span>`;
       btn.className = "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 transition-all";
 
       openModal('modal-rollout-workspace');
@@ -7753,7 +7753,7 @@ save configuration`
 
       const btn = document.getElementById('btn-run-fleet-rollout');
       btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin mr-1">⚙️</span> Rolling out to ${selectedSwitches.length} switches...`;
+      btn.innerHTML = `<span class="animate-spin mr-1">&#x2699;&#xFE0F;</span> Rolling out to ${selectedSwitches.length} switches...`;
       btn.className = "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-amber-700 text-white cursor-wait opacity-80";
 
       try {
@@ -7776,19 +7776,19 @@ save configuration`
         document.getElementById('rollout-results-view').classList.remove('hidden');
 
         document.getElementById('rollout-results-summary').innerText = 
-          `Executed on ${data.totalSwitches || selectedSwitches.length} switches • Success: ${data.successCount || selectedSwitches.length} • Failed: ${data.failedCount || 0} • Time: ${data.timestamp || new Date().toLocaleTimeString()}`;
+          `Executed on ${data.totalSwitches || selectedSwitches.length} switches &bull; Success: ${data.successCount || selectedSwitches.length} &bull; Failed: ${data.failedCount || 0} &bull; Time: ${data.timestamp || new Date().toLocaleTimeString()}`;
 
         document.getElementById('rollout-transcript-cli').innerText = data.rawCliSummary || 'Rollout completed.';
         
         btn.disabled = false;
-        btn.innerHTML = `<span>✔ Rollout Complete</span>`;
+        btn.innerHTML = `<span>[OK] Rollout Complete</span>`;
         btn.className = "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 text-white shadow-lg";
 
         showToast(`Rollout completed successfully across ${selectedSwitches.length} switches!`);
       } catch (err) {
         alert(`Failed to execute rollout: ${err.message}`);
         btn.disabled = false;
-        btn.innerHTML = `<span>🚀 Retry Rollout</span>`;
+        btn.innerHTML = `<span>&#x1F680; Retry Rollout</span>`;
         btn.className = "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white";
       }
     }
@@ -7870,7 +7870,7 @@ save configuration`
       const btn = document.getElementById('btn-save-switches-txt');
 
       btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin mr-1">⚙️</span> Saving Fleet...`;
+      btn.innerHTML = `<span class="animate-spin mr-1">&#x2699;&#xFE0F;</span> Saving Fleet...`;
 
       try {
         const res = await fetch('/api/save-switches-txt', {
@@ -7890,7 +7890,7 @@ save configuration`
         alert(`Failed to save: ${err.message}`);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<span>💾 Save &amp; Reload Fleet</span>`;
+        btn.innerHTML = `<span>&#x1F4BE; Save &amp; Reload Fleet</span>`;
       }
     }
 
@@ -7956,7 +7956,7 @@ save configuration`
 
       errorEl.classList.add('hidden');
       submitBtn.disabled = true;
-      submitBtn.innerHTML = `<span>⏳ Authenticating...</span>`;
+      submitBtn.innerHTML = `<span>&#x23F3; Authenticating...</span>`;
 
       try {
         const res = await fetch('/api/auth/login', {
@@ -7981,7 +7981,7 @@ save configuration`
         errorEl.classList.remove('hidden');
       } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = `<span>🚀 Sign In &amp; Start Session</span>`;
+        submitBtn.innerHTML = `<span>&#x1F680; Sign In &amp; Start Session</span>`;
       }
     }
 
@@ -8093,9 +8093,9 @@ save configuration`
     function copyAuditRowDetails(text) {
       if (navigator.clipboard && window.isSecureContext) {
         navigator.clipboard.writeText(text).then(() => {
-          showToast('📋 Copied full audit details to clipboard!');
+          showToast('&#x1F4CB; Copied full audit details to clipboard!');
         }).catch(() => {
-          showToast('📋 Copied audit details!');
+          showToast('&#x1F4CB; Copied audit details!');
         });
       } else {
         const textarea = document.createElement('textarea');
@@ -8104,7 +8104,7 @@ save configuration`
         textarea.select();
         document.execCommand('copy');
         document.body.removeChild(textarea);
-        showToast('📋 Copied audit details to clipboard!');
+        showToast('&#x1F4CB; Copied audit details to clipboard!');
       }
     }
 
@@ -8120,7 +8120,7 @@ save configuration`
       const toggleAllLabel = document.getElementById('btn-toggle-all-audit-label');
       if (toggleAllLabel) {
         const isAllExpanded = currentRenderedAuditItems.length > 0 && expandedAuditIndices.size === currentRenderedAuditItems.length;
-        toggleAllLabel.innerText = isAllExpanded ? '📕 Collapse All' : '📖 Expand All';
+        toggleAllLabel.innerText = isAllExpanded ? '&#x1F4D5; Collapse All' : '&#x1F4D6; Expand All';
       }
 
       if (!items || items.length === 0) {
@@ -8162,7 +8162,7 @@ save configuration`
                 <div class="bg-slate-900/90 rounded-xl p-3.5 border border-indigo-900/40 text-xs font-mono">
                   <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-800">
                     <span class="text-indigo-300 font-bold flex items-center gap-1.5">
-                      <span>🔍 Full Action Details & Telemetry Inspection</span>
+                      <span>&#x1F50D; Full Action Details & Telemetry Inspection</span>
                     </span>
                     <div class="flex items-center gap-2">
                       <button
@@ -8170,7 +8170,7 @@ save configuration`
                         class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-[11px] rounded border border-slate-700 transition flex items-center gap-1"
                         title="Copy detail text to clipboard"
                       >
-                        <span>📋 Copy Details</span>
+                        <span>&#x1F4CB; Copy Details</span>
                       </button>
                     </div>
                   </div>
@@ -8193,7 +8193,7 @@ ${detailsText || 'No additional details provided.'}
           <tr class="hover:bg-slate-800/50 transition cursor-pointer border-b border-slate-800/40" onclick="toggleAuditRowExpand(${idx})">
             <td class="py-2.5 px-3 whitespace-nowrap text-slate-400">
               <div class="flex items-center gap-1.5">
-                <span class="text-slate-400 text-xs">${isExpanded ? '▼' : '▶'}</span>
+                <span class="text-slate-400 text-xs">${isExpanded ? '&#x25BC;' : '&#x25B6;'}</span>
                 <span>${l.timestamp}</span>
               </div>
             </td>
@@ -8248,7 +8248,7 @@ ${detailsText || 'No additional details provided.'}
       if (timeInput) {
         timeInput.value = timeStr;
         renderSchedulePreview();
-        showToast(`⚡ Quick Test: Schedule time set to ${timeStr} (+1 min lead time)`);
+        showToast(`&#x26A1; Quick Test: Schedule time set to ${timeStr} (+1 min lead time)`);
       }
     }
 
@@ -8316,7 +8316,7 @@ ${detailsText || 'No additional details provided.'}
 
       if (!enabled) {
         if (runsContainer) {
-          runsContainer.innerHTML = `<div class="text-rose-400 py-2">⚠️ Automated backups are currently paused. Manual triggers only.</div>`;
+          runsContainer.innerHTML = `<div class="text-rose-400 py-2">[WARN]&#xFE0F; Automated backups are currently paused. Manual triggers only.</div>`;
         }
         if (snippetEl) snippetEl.innerText = '# Schedule is paused';
         return;
@@ -8367,7 +8367,7 @@ ${detailsText || 'No additional details provided.'}
       }
 
       if (runsContainer) {
-        runsContainer.innerHTML = projected.map(r => `<div class="flex items-center gap-2 text-slate-300"><span class="text-indigo-400 font-bold">⚡</span> <span>${r}</span></div>`).join('');
+        runsContainer.innerHTML = projected.map(r => `<div class="flex items-center gap-2 text-slate-300"><span class="text-indigo-400 font-bold">&#x26A1;</span> <span>${r}</span></div>`).join('');
       }
     }
 
@@ -8383,7 +8383,7 @@ ${detailsText || 'No additional details provided.'}
       const btn = document.getElementById('btn-save-schedule');
       if (btn) {
         btn.disabled = true;
-        btn.innerHTML = `<span class="animate-spin mr-1">⚙️</span> Saving Policy...`;
+        btn.innerHTML = `<span class="animate-spin mr-1">&#x2699;&#xFE0F;</span> Saving Policy...`;
       }
 
       const enabled = document.getElementById('sched-enabled').checked;
@@ -8423,7 +8423,7 @@ ${detailsText || 'No additional details provided.'}
       } finally {
         if (btn) {
           btn.disabled = false;
-          btn.innerHTML = `<span>💾 Save Schedule &amp; Apply Policy</span>`;
+          btn.innerHTML = `<span>&#x1F4BE; Save Schedule &amp; Apply Policy</span>`;
         }
       }
     }
@@ -8442,15 +8442,15 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
 
 def run():
     print(f"=======================================================")
-    print(f"🚀 Extreme Switch Backup Portal (Zero-Dependencies)")
-    print(f"🌐 Protocol: Telnet (Port 23) | Controller Port: {PORT}")
-    print(f"📂 Directory: {DIRECTORY}")
+    print(f"&#x1F680; Extreme Switch Backup Portal (Zero-Dependencies)")
+    print(f"&#x1F310; Protocol: Telnet (Port 23) | Controller Port: {PORT}")
+    print(f"&#x1F4C2; Directory: {DIRECTORY}")
     print(f"=======================================================")
     try:
         # Start background backup scheduler daemon
         start_python_scheduler_daemon()
         httpd = ThreadedHTTPServer(("", PORT), PortalHandler)
-        print(f"✅ Web Portal active at: http://localhost:{PORT}")
+        print(f"[OK] Web Portal active at: http://localhost:{PORT}")
         print(f"Press Ctrl+C to stop.")
         httpd.serve_forever()
     except KeyboardInterrupt:

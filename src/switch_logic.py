@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 # -*- coding: utf-8 -*-
 """
 ===============================================================================
@@ -588,7 +590,7 @@ def run_unmanaged_switch_discovery(
             }
 
             flagged_switches.append(flagged_item)
-            logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] ⚠️ [{alert_level} ALERT] [{sw_host}] Port {port}: Detected {mac_count} MACs -> Vendor: {primary_vendor}")
+            logs.append(f"[{datetime.now().strftime('%H:%M:%S')}] [WARN]&#xFE0F; [{alert_level} ALERT] [{sw_host}] Port {port}: Detected {mac_count} MACs -> Vendor: {primary_vendor}")
 
     duration_ms = round((datetime.now() - start_time).total_seconds() * 1000)
     high_risk_count = sum(1 for f in flagged_switches if f["alertLevel"] == "HIGH")

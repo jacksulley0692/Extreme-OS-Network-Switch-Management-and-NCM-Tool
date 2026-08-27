@@ -11,7 +11,7 @@ Runs natively on Python 3.8+ using pure Python standard libraries:
 Key Capabilities:
   1. Real-time Status Polling: Reads status.json & status.txt to display live progress
   2. Backup Triggers: 1-click full estate backup and individual switch backup runs
-  3. Live Switch Telemetry: Queries CPU %, memory MB, temperature Â°C, fan RPM, uptime
+  3. Live Switch Telemetry: Queries CPU %, memory MB, temperature &deg;C, fan RPM, uptime
   4. Remote Port Operations: Live port bounce (disable/enable) and FDB MAC lookup
   5. LLDP Topology Engine: Live neighbor discovery, topology diagrams & site maps
   6. RBAC & Audit Trail: Role-based permissions (network_admin / service_desk)
@@ -1061,8 +1061,8 @@ SysContact          : Network Infrastructure Team
 SysLocation         : Primary MDF Core / Distribution
 SysUpTime           : 42 days, 18 hours, {base_seed % 60} mins
 Operational Status  : Normal
-Chassis Temp        : {temp_c}Â°C ({temp_f}Â°F) [Threshold: 75.0Â°C]
-Ambient Temp        : {round(temp_c - 10.2, 1)}Â°C
+Chassis Temp        : {temp_c}&deg;C ({temp_f}&deg;F) [Threshold: 75.0&deg;C]
+Ambient Temp        : {round(temp_c - 10.2, 1)}&deg;C
 Power Supply 1      : AC 450W - Normal (Online)
 Power Supply 2      : AC 450W - Normal (Online Redundant)
 -----------------------------------------------------------------------------
@@ -1082,9 +1082,9 @@ Top Active VOSS Engine Tasks:
 -----------------------------------------------------------------------------
 Sensor ID    Location                  Temp(C)   Temp(F)   Status      Warning(C)  Shutdown(C)
 -----------------------------------------------------------------------------
-Sensor-1     Main Board (ASIC-1)       {temp_c}Â°C    {temp_f}Â°F   NORMAL      68.0Â°C      75.0Â°C
-Sensor-2     Chassis Exhaust Ambient   {round(temp_c - 10.2, 1)}Â°C    {round((temp_c-10.2)*9/5+32, 1)}Â°F   NORMAL      58.0Â°C      65.0Â°C
-Sensor-3     Power Supply Bay 1        {round(temp_c - 3.1, 1)}Â°C    {round((temp_c-3.1)*9/5+32, 1)}Â°F   NORMAL      62.0Â°C      70.0Â°C
+Sensor-1     Main Board (ASIC-1)       {temp_c}&deg;C    {temp_f}&deg;F   NORMAL      68.0&deg;C      75.0&deg;C
+Sensor-2     Chassis Exhaust Ambient   {round(temp_c - 10.2, 1)}&deg;C    {round((temp_c-10.2)*9/5+32, 1)}&deg;F   NORMAL      58.0&deg;C      65.0&deg;C
+Sensor-3     Power Supply Bay 1        {round(temp_c - 3.1, 1)}&deg;C    {round((temp_c-3.1)*9/5+32, 1)}&deg;F   NORMAL      62.0&deg;C      70.0&deg;C
 
 Fan-1 (Tray 1)   : {fan_rpm_1} RPM - Status: Operational (Normal)
 Fan-2 (Tray 2)   : {fan_rpm_2} RPM - Status: Operational (Normal)
@@ -1128,9 +1128,9 @@ Slot  Process Name     PID      State   %CPU 5s   %CPU 1m   %CPU 5m
 -----------------------------------------------------------------------------
 Field Replaceable Units          Temp(C)   Temp(F)   Status      Threshold(C)
 -----------------------------------------------------------------------------
-Slot-1 : Chassis Primary Core    {temp_c}Â°C    {temp_f}Â°F   NORMAL      75.0Â°C
-Slot-1 : Ambient Sensor 1        {round(temp_c - 11.5, 1)}Â°C    {round((temp_c-11.5)*9/5+32, 1)}Â°F   NORMAL      65.0Â°C
-Slot-1 : PSU-1 Internal          {round(temp_c - 3.5, 1)}Â°C    {round((temp_c-3.5)*9/5+32, 1)}Â°F   NORMAL      70.0Â°C
+Slot-1 : Chassis Primary Core    {temp_c}&deg;C    {temp_f}&deg;F   NORMAL      75.0&deg;C
+Slot-1 : Ambient Sensor 1        {round(temp_c - 11.5, 1)}&deg;C    {round((temp_c-11.5)*9/5+32, 1)}&deg;F   NORMAL      65.0&deg;C
+Slot-1 : PSU-1 Internal          {round(temp_c - 3.5, 1)}&deg;C    {round((temp_c-3.5)*9/5+32, 1)}&deg;F   NORMAL      70.0&deg;C
 Fan-1  : Chassis Fan Tray 1      {fan_rpm_1} RPM           OPERATIONAL
 Fan-2  : Chassis Fan Tray 2      {fan_rpm_2} RPM           OPERATIONAL
 Fan-3  : Power Supply Fan 1      {fan_rpm_3} RPM           OPERATIONAL
@@ -1265,7 +1265,7 @@ Verification CLI: show ports {clean_port} state
 Port    Link-State   Speed    Duplex   Admin-State
 {clean_port:<7} READY/UP     1000M    FULL     ENABLED
 =============================================================================
-âœ… PORT {clean_port} BOUNCE COMPLETED SUCCESSFULLY!"""
+[OK] PORT {clean_port} BOUNCE COMPLETED SUCCESSFULLY!"""
 
     return {
         "success": True,
@@ -1727,7 +1727,7 @@ def start_python_scheduler_daemon():
 
                 if should_run:
                     _last_executed_minute_key = current_min_key
-                    print(f"â° [Python Scheduler Daemon] Executing scheduled backup at {now.strftime('%Y-%m-%d %H:%M:%S')} (target: {target_time})")
+                    print(f"&#x23F0; [Python Scheduler Daemon] Executing scheduled backup at {now.strftime('%Y-%m-%d %H:%M:%S')} (target: {target_time})")
                     execute_python_backup_runner(
                         script_name=cfg.get("scriptName", "BackupSave.py"),
                         target_switch=cfg.get("targetScope", "ALL"),
@@ -1755,7 +1755,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         """
         ========================================================================
-        ğŸ“Œ DEVELOPER GUIDE: BACKEND GET API ROUTES (portal_server.py)
+        &#x1F4CC; DEVELOPER GUIDE: BACKEND GET API ROUTES (portal_server.py)
         ========================================================================
         To add a new GET endpoint:
           1. Add `if parsed.path == "/api/your-new-endpoint":` below.
@@ -2007,7 +2007,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         """
         ========================================================================
-        ğŸ“Œ DEVELOPER GUIDE: BACKEND POST API ROUTES (portal_server.py)
+        &#x1F4CC; DEVELOPER GUIDE: BACKEND POST API ROUTES (portal_server.py)
         ========================================================================
         To add a new POST action endpoint:
           1. Add `if parsed.path == "/api/your-new-action":` below.
@@ -2456,7 +2456,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
     <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
       <div class="flex items-center gap-3 border-b border-slate-800 pb-4">
         <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/30 text-lg">
-          ğŸ”
+          &#x1F510;
         </div>
         <div>
           <h2 class="text-base font-bold text-white tracking-tight">Extreme Portal Sign In</h2>
@@ -2471,7 +2471,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <form onsubmit="handlePortalLoginSubmit(event)" class="space-y-4">
         <div class="space-y-1.5">
           <label class="text-xs font-semibold text-slate-300 font-mono flex items-center gap-1.5">
-            <span>ğŸ‘¤ Username</span>
+            <span>&#x1F464; Username</span>
           </label>
           <input
             type="text"
@@ -2484,13 +2484,13 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
 
         <div class="space-y-1.5">
           <label class="text-xs font-semibold text-slate-300 font-mono flex items-center gap-1.5">
-            <span>ğŸ”‘ Password</span>
+            <span>&#x1F511; Password</span>
           </label>
           <input
             type="password"
             id="portal-login-password"
             required
-            placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+            placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
             class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3.5 py-2.5 text-sm text-white font-mono placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
           />
         </div>
@@ -2500,7 +2500,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           id="btn-portal-login-submit"
           class="w-full py-2.5 px-4 rounded-xl text-xs font-bold font-mono bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition flex items-center justify-center gap-2 cursor-pointer"
         >
-          <span>ğŸš€ Sign In &amp; Start Session</span>
+          <span>&#x1F680; Sign In &amp; Start Session</span>
         </button>
       </form>
 
@@ -2521,7 +2521,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
     <header class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
       <div>
         <h1 class="text-2xl font-black text-emerald-400 flex items-center gap-2.5 tracking-tight">
-          âš¡ Extreme Switch Backup Portal
+          &#x26A1; Extreme Switch Backup Portal
         </h1>
         <p class="text-xs text-slate-400 mt-1 font-mono">
           Zero-Dependency Python Controller &bull; Telnet (Port 23) Live Telemetry &bull; Port 3000
@@ -2530,10 +2530,10 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="flex items-center gap-2 flex-wrap">
         <!-- User Session Indicator -->
         <div id="portal-user-badge" class="hidden flex items-center gap-2 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-mono">
-          <span class="text-indigo-400">ğŸ‘¤</span>
+          <span class="text-indigo-400">&#x1F464;</span>
           <span id="portal-user-name" class="font-bold text-slate-200">User</span>
           <span id="portal-user-role" class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-indigo-950 text-indigo-300 border border-indigo-800">Role</span>
-          <button onclick="handlePortalLogout()" class="text-slate-400 hover:text-rose-400 ml-1" title="Sign Out">ğŸšª Sign Out</button>
+          <button onclick="handlePortalLogout()" class="text-slate-400 hover:text-rose-400 ml-1" title="Sign Out">&#x1F6AA; Sign Out</button>
         </div>
 
         <span id="badge-status" class="px-3 py-1.5 text-xs font-bold rounded-full bg-slate-900 text-slate-300 border border-slate-700 font-mono shadow">
@@ -2542,34 +2542,34 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
 
         <!-- Primary Top Navigation Tabs & Tool Buttons -->
         <button onclick="openSwitchReplacementModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition flex items-center gap-1.5 cursor-pointer">
-          <span>ğŸ”„ Switch Replacement Hub</span>
+          <span>&#x1F504; Switch Replacement Hub</span>
         </button>
         <button onclick="openVisualNodeGraphModal('YORK')" class="bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 border border-indigo-600/60 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
-          <span class="text-indigo-400">ğŸ—ºï¸</span>
+          <span class="text-indigo-400">&#x1F5FA;&#xFE0F;</span>
           <span>Visual Node Graph</span>
           <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">Live LLDP</span>
         </button>
         <button onclick="openSiteDiagramsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
-          <span>ğŸ“ Site Diagrams</span>
+          <span>&#x1F4D0; Site Diagrams</span>
           <span class="text-[10px] px-1.5 py-0.2 rounded bg-slate-950 text-slate-400 border border-slate-800">130+</span>
         </button>
         <button onclick="openSwitchesEditor()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
-          <span>ğŸ“‹ Fleet Inventory</span>
+          <span>&#x1F4CB; Fleet Inventory</span>
         </button>
         <button onclick="openCheatSheetModal()" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/40 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
-          <span>ğŸ“– Cheat Sheets</span>
+          <span>&#x1F4D6; Cheat Sheets</span>
         </button>
         <button id="btn-top-audit-trail" onclick="openAuditTrailModal()" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
-          <span>ğŸ“œ Audit Trail</span>
+          <span>&#x1F4DC; Audit Trail</span>
         </button>
         <button onclick="openUbuntuMigrationModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-700/40 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
-          <span>ğŸ§ Ubuntu Kit</span>
+          <span>&#x1F427; Ubuntu Kit</span>
         </button>
         <button id="btn-top-rollout" onclick="openRolloutAuth()" class="hidden bg-amber-600 hover:bg-amber-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-amber-600/30 transition flex items-center gap-2" style="display: none !important;">
-          <span>ğŸ›¡ï¸ Rollout Configuration</span>
+          <span>&#x1F6E1;&#xFE0F; Rollout Configuration</span>
         </button>
         <button onclick="runBackup('ALL')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-emerald-600/30 transition flex items-center gap-1.5 cursor-pointer">
-          <span>ğŸš€ Backup All</span>
+          <span>&#x1F680; Backup All</span>
         </button>
       </div>
     </header>
@@ -2593,7 +2593,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
               <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Last Full Estate Backup Run</span>
             </div>
             <div id="estate-last-run" class="text-base font-bold text-white truncate pt-0.5">Today at 02:00:15 GMT</div>
-            <div id="estate-last-summary" class="text-xs text-emerald-400">âœ” 100% Complete â€¢ Save Config &amp; TFTP Export</div>
+            <div id="estate-last-summary" class="text-xs text-emerald-400">[OK] 100% Complete &bull; Save Config &amp; TFTP Export</div>
           </div>
           <span id="estate-last-badge" class="px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold shrink-0">
             SUCCESS
@@ -2612,7 +2612,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 class="ml-2 px-2 py-0.5 rounded bg-indigo-600/30 hover:bg-indigo-600 text-indigo-200 hover:text-white border border-indigo-500/40 text-[10px] font-bold transition flex items-center gap-1 shadow"
                 title="Configure backup cadence, times, retention, and auto-save"
               >
-                <span>âš™ï¸</span> Configure Schedule
+                <span>&#x2699;&#xFE0F;</span> Configure Schedule
               </button>
             </div>
             <div id="estate-next-run" class="text-base font-bold text-indigo-300 truncate pt-0.5">Tonight @ 02:00 GMT</div>
@@ -2745,7 +2745,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <!-- Search Input -->
             <div class="relative flex-1">
               <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 font-mono text-sm">
-                ğŸ”
+                &#x1F50D;
               </div>
               <input
                 id="search-input"
@@ -2759,7 +2759,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 onclick="clearSearch()"
                 class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-white"
               >
-                âœ•
+                [X]
               </button>
             </div>
 
@@ -2767,10 +2767,10 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <div class="flex items-center gap-2 text-xs font-mono text-slate-400 shrink-0">
               <span id="active-site-tag" class="hidden px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-[11px] font-bold">
                 Site: <b id="active-site-name">ALL</b>
-                <button onclick="selectSite(null)" class="ml-1 text-slate-400 hover:text-white">âœ•</button>
+                <button onclick="selectSite(null)" class="ml-1 text-slate-400 hover:text-white">[X]</button>
               </span>
               <span>Total: <strong id="total-switch-count" class="text-white">0</strong></span>
-              <span>â€¢</span>
+              <span>&bull;</span>
               <span>Showing: <strong id="visible-switch-count" class="text-emerald-400">0</strong></span>
             </div>
           </div>
@@ -2811,7 +2811,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 class="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-slate-950 hover:bg-slate-800 text-cyan-300 border border-slate-800 hover:border-cyan-700 transition flex items-center gap-1.5 shadow"
                 title="Refresh live ping latency status for all switches in inventory"
               >
-                <span>ğŸŒ Test All Reachability</span>
+                <span>&#x1F310; Test All Reachability</span>
               </button>
             </div>
           </div>
@@ -2840,7 +2840,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
-            ğŸ“Š
+            &#x1F4CA;
           </div>
           <div>
             <div class="flex items-center gap-2 flex-wrap">
@@ -2853,7 +2853,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 class="px-2.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-700/60 transition flex items-center gap-1"
                 title="Switch CLI command syntax profile between Extreme EXOS and Extreme VOSS (VSP)"
               >
-                <span>ğŸ”„ Profile: <span id="monitor-active-profile-label">EXOS Commands</span></span>
+                <span>&#x1F504; Profile: <span id="monitor-active-profile-label">EXOS Commands</span></span>
               </button>
             </div>
             <p id="modal-monitor-subtitle" class="text-xs text-slate-400 mt-1 font-mono">
@@ -2871,10 +2871,10 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           
           <!-- Manual Refresh button -->
           <button id="btn-monitor-refresh" onclick="fetchSwitchMonitorTelemetry(false)" class="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
-            <span>ğŸ”„ Refresh</span>
+            <span>&#x1F504; Refresh</span>
           </button>
 
-          <button onclick="closeMonitorModal()" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+          <button onclick="closeMonitorModal()" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
         </div>
       </div>
 
@@ -2891,16 +2891,16 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-3 border-b border-slate-800 bg-slate-950/60 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
           <button id="monitor-tab-overview" onclick="switchMonitorTab('overview')" class="px-3.5 py-1 text-xs font-semibold rounded-md bg-indigo-600 text-white transition">
-            ğŸ“Š Telemetry Overview
+            &#x1F4CA; Telemetry Overview
           </button>
           <button id="monitor-tab-processes" onclick="switchMonitorTab('processes')" class="px-3.5 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
-            âš™ï¸ Top Processes (<span id="modal-monitor-proc-count">6</span>)
+            &#x2699;&#xFE0F; Top Processes (<span id="modal-monitor-proc-count">6</span>)
           </button>
           <button id="monitor-tab-raw" onclick="switchMonitorTab('raw')" class="px-3.5 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
             &gt;_ Raw CLI Output
           </button>
           <button id="monitor-tab-cmds" onclick="switchMonitorTab('cmds')" class="px-3.5 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
-            ğŸ“– CLI Commands Guide
+            &#x1F4D6; CLI Commands Guide
           </button>
         </div>
 
@@ -2924,7 +2924,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 relative overflow-hidden">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
-                  <span>âš¡ CPU Utilization</span>
+                  <span>&#x26A1; CPU Utilization</span>
                 </span>
                 <span id="monitor-cpu-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-800/60">
                   NORMAL
@@ -2957,7 +2957,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 relative overflow-hidden">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
-                  <span>ğŸŒ¡ï¸ Temperature</span>
+                  <span>&#x1F321;&#xFE0F; Temperature</span>
                 </span>
                 <span id="monitor-temp-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-950 text-emerald-300 border border-emerald-800/60">
                   NORMAL
@@ -2965,8 +2965,8 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
               </div>
 
               <div class="flex items-baseline gap-2">
-                <span id="monitor-temp-celsius" class="text-3xl font-black text-white font-mono">0.0Â°C</span>
-                <span id="monitor-temp-fahrenheit" class="text-sm font-semibold text-slate-400 font-mono">(0.0Â°F)</span>
+                <span id="monitor-temp-celsius" class="text-3xl font-black text-white font-mono">0.0&deg;C</span>
+                <span id="monitor-temp-fahrenheit" class="text-sm font-semibold text-slate-400 font-mono">(0.0&deg;F)</span>
               </div>
 
               <!-- Progress Bar vs Threshold -->
@@ -2978,7 +2978,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
               <div class="pt-2 border-t border-slate-900 space-y-1 font-mono text-[11px]">
                 <div class="text-[10px] text-slate-500 flex justify-between">
                   <span>Cooling Fans (3/3 Active)</span>
-                  <span class="text-slate-400">Limit: 75Â°C</span>
+                  <span class="text-slate-400">Limit: 75&deg;C</span>
                 </div>
                 <div id="monitor-fans-list" class="space-y-1">
                   <!-- Fan rows -->
@@ -2990,7 +2990,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
             <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3 relative overflow-hidden">
               <div class="flex items-center justify-between">
                 <span class="text-xs font-bold text-slate-400 uppercase tracking-wider font-mono flex items-center gap-1.5">
-                  <span>ğŸ’¾ Memory Usage</span>
+                  <span>&#x1F4BE; Memory Usage</span>
                 </span>
                 <span id="monitor-mem-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-800/60">
                   OPTIMAL
@@ -3029,17 +3029,17 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           <!-- Bottom Summary Bar: Switch Hardware & Operational State -->
           <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 font-mono text-xs text-slate-300">
             <div class="flex items-center gap-2">
-              <span class="text-indigo-400">ğŸ›¡ï¸</span>
+              <span class="text-indigo-400">&#x1F6E1;&#xFE0F;</span>
               <span class="text-slate-400">Power Supply:</span>
               <span id="modal-monitor-psu-status" class="text-emerald-400 font-bold">Dual Redundant AC 450W (Online)</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-indigo-400">â±ï¸</span>
+              <span class="text-indigo-400">&#x23F1;&#xFE0F;</span>
               <span class="text-slate-400">System Uptime:</span>
               <span id="modal-monitor-uptime-full" class="text-white font-bold">--</span>
             </div>
             <div class="flex items-center gap-2">
-              <span class="text-indigo-400">ğŸŒ</span>
+              <span class="text-indigo-400">&#x1F310;</span>
               <span class="text-slate-400">Network Latency:</span>
               <span id="modal-monitor-rtt" class="text-indigo-300 font-bold">-- ms RTT</span>
             </div>
@@ -3071,7 +3071,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <div id="monitor-view-raw" class="hidden space-y-2">
           <div class="flex items-center justify-between text-xs font-mono">
             <span class="text-slate-400">Verbatim Switch CLI Output &bull; Full Untruncated Session Buffer</span>
-            <button onclick="copyElementText('modal-monitor-raw-content')" class="text-indigo-400 hover:underline">ğŸ“‹ Copy CLI Output</button>
+            <button onclick="copyElementText('modal-monitor-raw-content')" class="text-indigo-400 hover:underline">&#x1F4CB; Copy CLI Output</button>
           </div>
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-200 overflow-x-auto max-h-[480px]">
             <pre id="modal-monitor-raw-content">Querying switch telemetry via Telnet (Port 23)...</pre>
@@ -3082,7 +3082,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <div id="monitor-view-cmds" class="hidden space-y-4 font-mono text-xs">
           <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
             <h3 class="text-sm font-bold text-emerald-400 flex items-center gap-2">
-              <span>âš¡ Extreme EXOS (Summit Series - X440, X460, X465, 5420, 5520) Commands</span>
+              <span>&#x26A1; Extreme EXOS (Summit Series - X440, X460, X465, 5420, 5520) Commands</span>
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-300">
               <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1">
@@ -3095,7 +3095,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 <div class="text-amber-400 font-bold">2. Thermal Sensors &amp; Fan Trays:</div>
                 <code class="text-emerald-400 block bg-slate-950 p-1.5 rounded">show temperature</code>
                 <code class="text-emerald-400 block bg-slate-950 p-1.5 rounded">show fans</code>
-                <p class="text-[11px] text-slate-400 mt-1">Queries chassis core, ambient sensors, thermal thresholds (75Â°C limit), and tachometer RPM.</p>
+                <p class="text-[11px] text-slate-400 mt-1">Queries chassis core, ambient sensors, thermal thresholds (75&deg;C limit), and tachometer RPM.</p>
               </div>
               <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1">
                 <div class="text-amber-400 font-bold">3. Memory Allocation &amp; Heap:</div>
@@ -3113,7 +3113,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
 
           <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-3">
             <h3 class="text-sm font-bold text-indigo-400 flex items-center gap-2">
-              <span>ğŸ›¡ï¸ Extreme VOSS (VSP Series - 4000, 7200, 7400, 8400) Commands</span>
+              <span>&#x1F6E1;&#xFE0F; Extreme VOSS (VSP Series - 4000, 7200, 7400, 8400) Commands</span>
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-slate-300">
               <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 space-y-1">
@@ -3159,12 +3159,12 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-emerald-400 font-bold">âš¡ Live Port Information Auditor</span>
+            <span class="text-emerald-400 font-bold">&#x26A1; Live Port Information Auditor</span>
             <span id="modal-ports-ip" class="text-xs font-mono text-slate-300 bg-slate-800 px-2 py-0.5 rounded"></span>
           </div>
           <p class="text-xs text-slate-400 mt-0.5 font-mono">Protocol: Telnet (Port 23) | CLI: <code class="text-emerald-400">show ports</code> (All Ports)</p>
         </div>
-        <button onclick="closeModal('modal-ports')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+        <button onclick="closeModal('modal-ports')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <div class="p-6 overflow-y-auto flex-1 space-y-4">
@@ -3197,9 +3197,9 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         </div>
         <div class="flex items-center gap-3">
           <button onclick="exportLldpJson()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
-            ğŸ“¥ Export Output
+            &#x1F4E5; Export Output
           </button>
-          <button onclick="closeModal('modal-lldp')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+          <button onclick="closeModal('modal-lldp')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
         </div>
       </div>
 
@@ -3216,18 +3216,18 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-3 border-b border-slate-800 bg-slate-950/40 flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
           <button id="lldp-tab-table" onclick="switchLldpTab('table')" class="px-3 py-1 text-xs font-semibold rounded-md bg-indigo-600 text-white transition">
-            ğŸ“Š Structured Table (<span id="modal-lldp-count">0</span>)
+            &#x1F4CA; Structured Table (<span id="modal-lldp-count">0</span>)
           </button>
           <button id="lldp-tab-raw" onclick="switchLldpTab('raw')" class="px-3 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
             &gt;_ Raw CLI Output
           </button>
           <button id="lldp-tab-uplinks" onclick="switchLldpTab('uplinks')" class="px-3 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
-            â‡„ Uplink Topology
+            &#x21C4; Uplink Topology
           </button>
         </div>
         <div class="relative flex-1 max-w-xs">
           <input id="lldp-search-input" oninput="filterLldpNeighbors()" type="text" placeholder="Filter by Port, Name, IP, Type..." class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-8 py-1.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono" />
-          <span class="absolute right-2.5 top-2 text-slate-500 text-xs">ğŸ”</span>
+          <span class="absolute right-2.5 top-2 text-slate-500 text-xs">&#x1F50D;</span>
         </div>
       </div>
 
@@ -3259,7 +3259,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <div id="lldp-view-raw" class="hidden space-y-2">
           <div class="flex items-center justify-between text-xs font-mono">
             <span class="text-slate-400">Verbatim CLI Terminal Output &bull; Full Untruncated Buffer</span>
-            <button onclick="copyElementText('modal-lldp-raw-content')" class="text-indigo-400 hover:underline">ğŸ“‹ Copy CLI Output</button>
+            <button onclick="copyElementText('modal-lldp-raw-content')" class="text-indigo-400 hover:underline">&#x1F4CB; Copy CLI Output</button>
           </div>
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-200 overflow-x-auto max-h-[500px]">
             <pre id="modal-lldp-raw-content">Querying switch via Telnet (Port 23)...</pre>
@@ -3294,9 +3294,9 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         </div>
         <div class="flex items-center gap-3">
           <button onclick="exportFdbCsv()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 transition flex items-center gap-1.5">
-            ğŸ“¥ Export CSV
+            &#x1F4E5; Export CSV
           </button>
-          <button onclick="closeModal('modal-fdb')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+          <button onclick="closeModal('modal-fdb')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
         </div>
       </div>
 
@@ -3315,7 +3315,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <!-- Tab selector -->
         <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
           <button id="fdb-tab-table" onclick="switchFdbTab('table')" class="px-3 py-1 text-xs font-semibold rounded-md bg-emerald-600 text-white transition">
-            ğŸ“Š MAC Table (<span id="modal-fdb-count">0</span>)
+            &#x1F4CA; MAC Table (<span id="modal-fdb-count">0</span>)
           </button>
           <button id="fdb-tab-raw" onclick="switchFdbTab('raw')" class="px-3 py-1 text-xs font-semibold rounded-md text-slate-400 hover:text-slate-200 transition">
             &gt;_ Raw CLI Output
@@ -3350,12 +3350,12 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           <!-- MAC Search Bar -->
           <div class="relative min-w-[200px] max-w-xs">
             <input id="fdb-mac-input" oninput="onFdbFilterChange()" type="text" placeholder="Search MAC (e.g. 00:04:96 or a1:b2)..." class="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-7 py-1 text-xs text-slate-200 focus:outline-none focus:border-emerald-500 font-mono" />
-            <button onclick="clearFdbMacInput()" class="absolute right-2 top-1.5 text-slate-500 hover:text-slate-300 text-xs">âœ•</button>
+            <button onclick="clearFdbMacInput()" class="absolute right-2 top-1.5 text-slate-500 hover:text-slate-300 text-xs">[X]</button>
           </div>
 
           <!-- Query Switch Directly Button -->
           <button onclick="reQueryFdbLive()" class="bg-emerald-700/80 hover:bg-emerald-600 text-white px-3 py-1 rounded-lg text-xs font-mono font-semibold transition flex items-center gap-1">
-            <span>âš¡ Query</span>
+            <span>&#x26A1; Query</span>
           </button>
         </div>
       </div>
@@ -3388,7 +3388,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <div id="fdb-view-raw" class="hidden space-y-2">
           <div class="flex items-center justify-between text-xs font-mono">
             <span class="text-slate-400">Verbatim CLI Terminal Output &bull; Full Untruncated Buffer</span>
-            <button onclick="copyElementText('modal-fdb-raw-content')" class="text-emerald-400 hover:underline">ğŸ“‹ Copy CLI Output</button>
+            <button onclick="copyElementText('modal-fdb-raw-content')" class="text-emerald-400 hover:underline">&#x1F4CB; Copy CLI Output</button>
           </div>
           <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs text-slate-200 overflow-x-auto max-h-[500px]">
             <pre id="modal-fdb-raw-content">Querying switch via Telnet (Port 23)...</pre>
@@ -3410,19 +3410,19 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div>
           <div class="flex items-center gap-2">
-            <span class="text-indigo-400 font-bold text-sm">ğŸ•’ Retained Backup Revisions & Configuration Archive</span>
+            <span class="text-indigo-400 font-bold text-sm">&#x1F552; Retained Backup Revisions & Configuration Archive</span>
             <span id="modal-backup-title" class="text-xs font-mono text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded border border-slate-700"></span>
           </div>
           <p id="modal-backup-subtitle" class="text-xs text-slate-400 mt-0.5 font-mono">Select any historical backup revision from disk to inspect or copy to clipboard.</p>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="copyCurrentSelectedBackupRevision()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-1.5 rounded-lg text-xs font-bold font-mono transition flex items-center gap-1.5 shadow">
-            <span>ğŸ“‹ Copy Selected Config</span>
+            <span>&#x1F4CB; Copy Selected Config</span>
           </button>
           <button onclick="downloadCurrentSelectedBackupRevision()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-mono font-bold transition flex items-center gap-1.5">
-            <span>ğŸ“¥ Download File</span>
+            <span>&#x1F4E5; Download File</span>
           </button>
-          <button onclick="closeModal('modal-backups')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+          <button onclick="closeModal('modal-backups')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
         </div>
       </div>
 
@@ -3432,7 +3432,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
         <!-- Left Revisions List -->
         <div class="w-full md:w-80 border-b md:border-b-0 md:border-r border-slate-800 bg-slate-950/70 p-3.5 flex flex-col shrink-0">
           <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 font-mono mb-2 flex items-center justify-between">
-            <span>ğŸ“‚ Retained Files (<span id="modal-revisions-count">0</span>)</span>
+            <span>&#x1F4C2; Retained Files (<span id="modal-revisions-count">0</span>)</span>
             <span class="text-[10px] text-slate-500">TFTP / Backups</span>
           </div>
           <div id="modal-revisions-list" class="space-y-1.5 overflow-y-auto flex-1 pr-1 custom-scrollbar text-xs font-mono">
@@ -3475,7 +3475,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-lg">
-            ğŸ“–
+            &#x1F4D6;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -3506,7 +3506,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
               Virtual OS (VOSS / VSP)
             </button>
           </div>
-          <button onclick="closeModal('modal-cheatsheet')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+          <button onclick="closeModal('modal-cheatsheet')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
         </div>
       </div>
 
@@ -3542,7 +3542,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 <span class="text-xs font-bold text-slate-200">Step 1: Clean Factory Wipe & Temporary Management IP</span>
               </div>
               <button onclick="copyCheatSheetStep('exos-1')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                ğŸ“‹ Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3566,7 +3566,7 @@ ping 10.36.226.7</pre>
                 <span class="text-xs font-bold text-slate-200">Step 2: Pull .xsf Configuration from TFTP & Apply to Switch</span>
               </div>
               <button onclick="copyCheatSheetStep('exos-2')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                ğŸ“‹ Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3590,7 +3590,7 @@ use configuration primary</pre>
                 <span class="text-xs font-bold text-slate-200">Step 3: Verification & Port Uplink Checks</span>
               </div>
               <button onclick="copyCheatSheetStep('exos-3')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                ğŸ“‹ Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3632,7 +3632,7 @@ show lldp neighbors</pre>
                 <span class="text-xs font-bold text-slate-200">Step 1: Enter Privileged Mode & Factory Zeroize</span>
               </div>
               <button onclick="copyCheatSheetStep('voss-1')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                ğŸ“‹ Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3651,7 +3651,7 @@ reset -y</pre>
                 <span class="text-xs font-bold text-slate-200">Step 2: Transfer Saved .cfg & Apply to Boot Flags</span>
               </div>
               <button onclick="copyCheatSheetStep('voss-2')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                ğŸ“‹ Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3677,7 +3677,7 @@ reset -y</pre>
                 <span class="text-xs font-bold text-slate-200">Step 3: Verify SPBM Fabric & Interfaces</span>
               </div>
               <button onclick="copyCheatSheetStep('voss-3')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition">
-                ğŸ“‹ Copy Commands
+                &#x1F4CB; Copy Commands
               </button>
             </div>
             <div class="p-4 text-xs space-y-2 bg-slate-950 text-slate-300 select-text">
@@ -3692,7 +3692,7 @@ show ip route</pre>
 
         <!-- Safety Notice Banner -->
         <div class="p-4 bg-amber-950/30 border border-amber-500/30 rounded-xl flex items-start gap-3 text-xs font-mono text-amber-300">
-          <span class="text-base">âš ï¸</span>
+          <span class="text-base">[WARN]&#xFE0F;</span>
           <div>
             <strong>Firmware Matching Warning:</strong> Always verify that the replacement hardware has the same major firmware revision (e.g. EXOS 31.x or VOSS 8.x) as the backup file before executing configuration scripts to prevent syntax mismatch.
           </div>
@@ -3715,12 +3715,12 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div>
           <div class="flex items-center gap-2">
-            <span class="p-1 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-mono font-bold">âš¡ PORT BOUNCE</span>
+            <span class="p-1 rounded-md bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs font-mono font-bold">&#x26A1; PORT BOUNCE</span>
             <span id="modal-bounce-switch-name" class="text-sm font-bold text-white font-mono">Switch Hostname</span>
           </div>
           <p id="modal-bounce-switch-sub" class="text-xs text-slate-400 mt-1 font-mono">Switch IP: 10.32.54.249 &bull; ExtremeXOS &bull; Zero-Downtime Verification</p>
         </div>
-        <button onclick="closeModal('modal-bounce-port')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+        <button onclick="closeModal('modal-bounce-port')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <!-- Scrollable Body -->
@@ -3730,7 +3730,7 @@ show ip route</pre>
         <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <label class="text-xs font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center gap-1.5">
-              <span>ğŸ”Œ 1. Select Port Number to Bounce</span>
+              <span>&#x1F50C; 1. Select Port Number to Bounce</span>
             </label>
             <button type="button" onclick="toggleCustomBouncePort()" id="btn-custom-bounce-toggle" class="text-[11px] font-mono text-indigo-400 hover:underline">
               + Enter Custom Port / Slot
@@ -3753,7 +3753,7 @@ show ip route</pre>
         <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center gap-1.5">
-              <span>ğŸ·ï¸ 2. Learned MAC Address(es) on Port <span id="bounce-active-port-label" class="text-amber-400 font-bold">13</span></span>
+              <span>&#x1F3F7;&#xFE0F; 2. Learned MAC Address(es) on Port <span id="bounce-active-port-label" class="text-amber-400 font-bold">13</span></span>
             </h3>
             <span id="bounce-mac-count-badge" class="text-xs font-mono text-slate-400">Loading MAC table...</span>
           </div>
@@ -3782,9 +3782,9 @@ show ip route</pre>
         <div id="bounce-result-card" class="hidden bg-slate-950 p-4 rounded-xl border border-emerald-800 space-y-2">
           <div class="flex items-center justify-between text-xs font-mono">
             <span class="text-emerald-400 font-bold flex items-center gap-1.5">
-              <span>âœ” Port Bounce Completed Successfully</span>
+              <span>[OK] Port Bounce Completed Successfully</span>
             </span>
-            <button type="button" onclick="copyElementText('bounce-result-cli')" class="text-slate-400 hover:text-emerald-400">ğŸ“‹ Copy Log</button>
+            <button type="button" onclick="copyElementText('bounce-result-cli')" class="text-slate-400 hover:text-emerald-400">&#x1F4CB; Copy Log</button>
           </div>
           <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 font-mono text-xs text-slate-200 overflow-x-auto max-h-48">
             <pre id="bounce-result-cli"></pre>
@@ -3797,7 +3797,7 @@ show ip route</pre>
       <div class="px-6 py-3.5 border-t border-slate-800 bg-slate-950/80 flex items-center justify-between">
         <button type="button" onclick="closeModal('modal-bounce-port')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 transition">Close</button>
         <button type="button" id="btn-execute-bounce" onclick="executeBouncePortLive()" class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg transition-all">
-          <span>âš¡ Confirm &amp; Bounce Port <span id="btn-bounce-port-num">13</span></span>
+          <span>&#x26A1; Confirm &amp; Bounce Port <span id="btn-bounce-port-num">13</span></span>
         </button>
       </div>
 
@@ -3810,14 +3810,14 @@ show ip route</pre>
       <div class="flex items-center justify-between border-b border-slate-800 pb-4">
         <div class="flex items-center gap-2.5">
           <div class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-            ğŸ”’
+            &#x1F512;
           </div>
           <div>
             <h3 class="text-base font-bold text-white">Helpdesk Security Verification</h3>
             <p class="text-xs text-slate-400 font-mono">Authorization Required</p>
           </div>
         </div>
-        <button onclick="closeModal('modal-rollout-auth')" class="text-slate-400 hover:text-white p-1">âœ•</button>
+        <button onclick="closeModal('modal-rollout-auth')" class="text-slate-400 hover:text-white p-1">[X]</button>
       </div>
 
       <div class="space-y-3">
@@ -3828,7 +3828,7 @@ show ip route</pre>
         <form onsubmit="submitRolloutAuth(event)" class="space-y-4 pt-2">
           <div class="space-y-1.5">
             <label class="text-xs font-semibold text-slate-300 font-mono flex items-center gap-1.5">
-              <span>ğŸ”‘ Enter Administrator Password:</span>
+              <span>&#x1F511; Enter Administrator Password:</span>
             </label>
             <input
               type="password"
@@ -3840,7 +3840,7 @@ show ip route</pre>
           </div>
 
           <div id="rollout-auth-error" class="hidden p-3 rounded-xl bg-rose-950/60 border border-rose-800 text-rose-300 text-xs font-mono">
-            âŒ Incorrect password. Access denied. Returning to main page...
+            [X] Incorrect password. Access denied. Returning to main page...
           </div>
 
           <div class="flex items-center justify-end gap-2.5 pt-2">
@@ -3855,7 +3855,7 @@ show ip route</pre>
               type="submit"
               class="flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 transition-all"
             >
-              <span>ğŸ”“ Verify &amp; Unlock</span>
+              <span>&#x1F513; Verify &amp; Unlock</span>
             </button>
           </div>
         </form>
@@ -3871,7 +3871,7 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400">
-            ğŸ›¡ï¸
+            &#x1F6E1;&#xFE0F;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -3885,7 +3885,7 @@ show ip route</pre>
             </p>
           </div>
         </div>
-        <button onclick="closeModal('modal-rollout-workspace')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+        <button onclick="closeModal('modal-rollout-workspace')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <!-- Body -->
@@ -3912,7 +3912,7 @@ show ip route</pre>
 
             <div class="space-y-2">
               <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
-                <span class="font-bold text-slate-300">âœ¨ Quick Command Templates:</span>
+                <span class="font-bold text-slate-300">&#x2728; Quick Command Templates:</span>
                 <span>Click to insert</span>
               </div>
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -3943,7 +3943,7 @@ show ip route</pre>
           <div class="lg:col-span-5 space-y-4 flex flex-col">
             <div class="flex items-center justify-between">
               <label class="text-xs font-bold uppercase tracking-wider text-slate-300 font-mono flex items-center gap-2">
-                <span>ğŸ–¥ï¸ 2. Target Devices (<span id="rollout-selected-count">0</span>)</span>
+                <span>&#x1F5A5;&#xFE0F; 2. Target Devices (<span id="rollout-selected-count">0</span>)</span>
               </label>
             </div>
 
@@ -3953,7 +3953,7 @@ show ip route</pre>
                 onclick="toggleRolloutSelectAll(true)"
                 class="flex-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white font-mono transition shadow-sm"
               >
-                âœ” Apply to All
+                [OK] Apply to All
               </button>
               <button
                 type="button"
@@ -3976,12 +3976,12 @@ show ip route</pre>
           <div class="p-4 rounded-xl bg-slate-950 border border-emerald-800 flex items-center justify-between">
             <div>
               <div class="text-sm font-bold text-white flex items-center gap-2">
-                <span>âœ” Fleet Rollout Completed</span>
+                <span>[OK] Fleet Rollout Completed</span>
               </div>
               <p id="rollout-results-summary" class="text-xs text-slate-400 font-mono mt-1"></p>
             </div>
             <button onclick="copyElementText('rollout-transcript-cli')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700 font-mono">
-              ğŸ“‹ Copy Full Log
+              &#x1F4CB; Copy Full Log
             </button>
           </div>
 
@@ -4004,7 +4004,7 @@ show ip route</pre>
           onclick="executeRolloutLive()"
           class="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 transition-all"
         >
-          <span>ğŸš€ Execute Rollout on Selected Switches</span>
+          <span>&#x1F680; Execute Rollout on Selected Switches</span>
         </button>
       </div>
 
@@ -4018,7 +4018,7 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400">
-            ğŸ“‹
+            &#x1F4CB;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4032,7 +4032,7 @@ show ip route</pre>
             </p>
           </div>
         </div>
-        <button onclick="closeModal('modal-switches-editor')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+        <button onclick="closeModal('modal-switches-editor')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <div class="p-6 overflow-y-auto flex-1 space-y-4">
@@ -4042,11 +4042,11 @@ show ip route</pre>
           </label>
           <div class="flex items-center gap-2">
             <label class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono cursor-pointer transition">
-              <span>ğŸ“ Import / Upload File</span>
+              <span>&#x1F4C1; Import / Upload File</span>
               <input type="file" id="switches-file-upload" accept=".txt,.csv" class="hidden" onchange="handleSwitchesFileUpload(event)" />
             </label>
             <button type="button" onclick="formatSwitchesEditorContent()" class="px-3 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-mono transition">
-              âœ¨ Clean &amp; Deduplicate
+              &#x2728; Clean &amp; Deduplicate
             </button>
           </div>
         </div>
@@ -4061,7 +4061,7 @@ show ip route</pre>
 
         <div class="p-3.5 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5 font-mono text-xs text-slate-400">
           <div class="font-bold text-slate-300 flex items-center gap-1.5">
-            <span>ğŸ’¡ How this works:</span>
+            <span>&#x1F4A1; How this works:</span>
           </div>
           <p>
             The portal, automated backups, and rollout tools read directly from <strong class="text-slate-200">Switches.txt</strong>. You can paste 200+ switch IPs directly from Excel, CSV, or notepad.
@@ -4080,7 +4080,7 @@ show ip route</pre>
           onclick="saveSwitchesEditor()"
           class="flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all"
         >
-          <span>ğŸ’¾ Save &amp; Reload Fleet</span>
+          <span>&#x1F4BE; Save &amp; Reload Fleet</span>
         </button>
       </div>
 
@@ -4095,7 +4095,7 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-            ğŸŒ
+            &#x1F310;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4109,7 +4109,7 @@ show ip route</pre>
             </p>
           </div>
         </div>
-        <button onclick="closeModal('modal-ping')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+        <button onclick="closeModal('modal-ping')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <!-- Body -->
@@ -4139,7 +4139,7 @@ show ip route</pre>
               onclick="executePingModal()"
               class="w-full py-2 px-4 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition shadow"
             >
-              <span>âš¡ Send Ping</span>
+              <span>&#x26A1; Send Ping</span>
             </button>
           </div>
         </div>
@@ -4193,7 +4193,7 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-lg">
-            â°
+            &#x23F0;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4207,7 +4207,7 @@ show ip route</pre>
             </p>
           </div>
         </div>
-        <button onclick="closeModal('modal-schedule')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+        <button onclick="closeModal('modal-schedule')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <!-- Body -->
@@ -4232,19 +4232,19 @@ show ip route</pre>
           <label class="text-xs font-bold uppercase tracking-wider text-slate-400">Execution Cadence / Frequency</label>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <button type="button" onclick="setSchedFreq('daily')" id="freq-btn-daily" class="p-3 rounded-xl border text-left transition flex flex-col justify-between gap-1 bg-indigo-950/40 border-indigo-500/50 text-indigo-300">
-              <span class="font-bold">ğŸŒ™ Daily Nightly</span>
+              <span class="font-bold">&#x1F319; Daily Nightly</span>
               <span class="text-[10px] text-slate-400">Once per day (e.g. 02:00)</span>
             </button>
             <button type="button" onclick="setSchedFreq('hourly')" id="freq-btn-hourly" class="p-3 rounded-xl border text-left transition flex flex-col justify-between gap-1 bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700">
-              <span class="font-bold">â±ï¸ Hourly</span>
+              <span class="font-bold">&#x23F1;&#xFE0F; Hourly</span>
               <span class="text-[10px] text-slate-400">Every 60 minutes</span>
             </button>
             <button type="button" onclick="setSchedFreq('every_4h')" id="freq-btn-every_4h" class="p-3 rounded-xl border text-left transition flex flex-col justify-between gap-1 bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700">
-              <span class="font-bold">âš¡ Every 4 Hours</span>
+              <span class="font-bold">&#x26A1; Every 4 Hours</span>
               <span class="text-[10px] text-slate-400">6 times per day</span>
             </button>
             <button type="button" onclick="setSchedFreq('weekly')" id="freq-btn-weekly" class="p-3 rounded-xl border text-left transition flex flex-col justify-between gap-1 bg-slate-950 border-slate-800 text-slate-300 hover:border-slate-700">
-              <span class="font-bold">ğŸ“… Weekly</span>
+              <span class="font-bold">&#x1F4C5; Weekly</span>
               <span class="text-[10px] text-slate-400">Selected days only</span>
             </button>
           </div>
@@ -4256,7 +4256,7 @@ show ip route</pre>
             <div class="flex items-center justify-between">
               <label class="text-xs font-semibold text-slate-400 block">Primary Execution Time (GMT)</label>
               <button type="button" onclick="setScheduleQuickTestPlus1Min()" class="px-2 py-0.5 rounded bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-[10px] font-bold transition flex items-center gap-1" title="Set schedule time to +1 minute from current GMT time for instant test validation">
-                <span>âš¡</span> Quick Test (+1 Min)
+                <span>&#x26A1;</span> Quick Test (+1 Min)
               </button>
             </div>
             <input type="time" id="sched-time-utc" value="02:00" onchange="renderSchedulePreview()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-indigo-300 font-bold focus:outline-none focus:border-indigo-500">
@@ -4321,7 +4321,7 @@ show ip route</pre>
             Cancel
           </button>
           <button type="button" id="btn-save-schedule" onclick="saveScheduleModal()" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white transition shadow-lg shadow-indigo-600/30 flex items-center gap-2">
-            <span>ğŸ’¾ Save Schedule &amp; Apply Policy</span>
+            <span>&#x1F4BE; Save Schedule &amp; Apply Policy</span>
           </button>
         </div>
       </div>
@@ -4337,7 +4337,7 @@ show ip route</pre>
       <div class="px-6 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/90">
         <div class="flex items-center gap-3">
           <div class="p-2 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 text-base">
-            ğŸ“œ
+            &#x1F4DC;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4351,7 +4351,7 @@ show ip route</pre>
             </p>
           </div>
         </div>
-        <button onclick="closeModal('modal-audit-trail')" class="text-slate-400 hover:text-white text-lg px-2">âœ•</button>
+        <button onclick="closeModal('modal-audit-trail')" class="text-slate-400 hover:text-white text-lg px-2">[X]</button>
       </div>
 
       <!-- Controls & Filter Toolbar -->
@@ -4389,20 +4389,20 @@ show ip route</pre>
             class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5"
             title="Expand or collapse full details for all visible entries"
           >
-            <span id="btn-toggle-all-audit-label">ğŸ“– Expand All</span>
+            <span id="btn-toggle-all-audit-label">&#x1F4D6; Expand All</span>
           </button>
           <button
             onclick="loadAuditLogsData()"
             class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1.5"
           >
-            <span>ğŸ”„ Refresh</span>
+            <span>&#x1F504; Refresh</span>
           </button>
           <a
             href="/api/audit/export-csv"
             download="audit_trail.csv"
             class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-mono font-bold rounded-lg transition flex items-center gap-1.5 shadow"
           >
-            <span>ğŸ“¥ Export CSV</span>
+            <span>&#x1F4E5; Export CSV</span>
           </a>
         </div>
       </div>
@@ -4452,7 +4452,7 @@ show ip route</pre>
       <div class="px-5 py-3.5 border-b border-slate-800 bg-slate-950/90 flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">
-            ğŸ—ºï¸
+            &#x1F5FA;&#xFE0F;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4495,12 +4495,12 @@ show ip route</pre>
 
           <!-- Export JSON -->
           <button onclick="exportTopologyJson('YORK')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1">
-            <span>ğŸ’¾ Export JSON</span>
+            <span>&#x1F4BE; Export JSON</span>
           </button>
 
           <!-- Close -->
           <button onclick="closeModal('modal-visual-nodegraph')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition" title="Close">
-            âœ•
+            [X]
           </button>
         </div>
       </div>
@@ -4516,13 +4516,13 @@ show ip route</pre>
         <div id="modal-node-inspector" class="w-80 sm:w-96 border-l border-slate-800 bg-slate-900/95 flex flex-col justify-between hidden transition-all shadow-2xl z-20">
           <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
             <div class="flex items-center gap-2">
-              <span id="inspector-node-icon" class="text-base">ğŸ—„ï¸</span>
+              <span id="inspector-node-icon" class="text-base">&#x1F5C4;&#xFE0F;</span>
               <div>
                 <h3 id="inspector-node-title" class="text-xs font-bold text-white font-mono truncate max-w-[200px]">Node Inspector</h3>
                 <p id="inspector-node-subtitle" class="text-[10px] font-mono text-slate-400">Select node on canvas</p>
               </div>
             </div>
-            <button onclick="closeNodeInspector()" class="text-slate-400 hover:text-white text-xs p-1">âœ•</button>
+            <button onclick="closeNodeInspector()" class="text-slate-400 hover:text-white text-xs p-1">[X]</button>
           </div>
 
           <div id="inspector-node-body" class="p-4 flex-1 overflow-y-auto space-y-3.5 font-mono text-xs custom-scrollbar">
@@ -4556,7 +4556,7 @@ show ip route</pre>
       <div class="px-5 py-3.5 border-b border-slate-800 bg-slate-950/90 flex items-center justify-between gap-3 shrink-0">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">
-            ğŸ”„
+            &#x1F504;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4570,7 +4570,7 @@ show ip route</pre>
         </div>
 
         <button onclick="closeModal('modal-switch-replacement')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition">
-          âœ•
+          [X]
         </button>
       </div>
 
@@ -4602,7 +4602,7 @@ show ip route</pre>
         <div class="flex-1 flex flex-col bg-slate-900 overflow-y-auto custom-scrollbar p-5 space-y-5">
           
           <div id="rma-workspace-empty" class="py-16 text-center text-slate-500 font-mono text-xs">
-            <div class="text-3xl mb-2">ğŸ”„</div>
+            <div class="text-3xl mb-2">&#x1F504;</div>
             <div class="text-white font-bold text-sm">No Switch Selected</div>
             <p class="text-slate-400 mt-1">Select a switch from the left panel to configure RMA staging and generate sanitized configuration files.</p>
           </div>
@@ -4625,10 +4625,10 @@ show ip route</pre>
 
               <div class="flex items-center gap-2">
                 <button onclick="downloadSanitizedRmaConfig()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold font-mono rounded-lg transition shadow flex items-center gap-1.5">
-                  <span>ğŸ’¾ Download Config</span>
+                  <span>&#x1F4BE; Download Config</span>
                 </button>
                 <button onclick="copySanitizedRmaConfig()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold font-mono rounded-lg border border-slate-700 transition flex items-center gap-1.5">
-                  <span>ğŸ“‹ Copy Code</span>
+                  <span>&#x1F4CB; Copy Code</span>
                 </button>
               </div>
             </div>
@@ -4636,7 +4636,7 @@ show ip route</pre>
             <!-- RMA Customizer Options -->
             <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-4">
               <h4 class="text-xs font-bold text-slate-300 uppercase font-mono tracking-wider flex items-center gap-1.5">
-                <span>âš™ï¸</span>
+                <span>&#x2699;&#xFE0F;</span>
                 <span>RMA Replacement Sanitizer Parameters</span>
               </h4>
 
@@ -4660,10 +4660,10 @@ show ip route</pre>
             <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden flex flex-col shadow-inner">
               <div class="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
                 <span class="text-slate-300 font-bold flex items-center gap-1.5">
-                  <span>ğŸ“„</span>
+                  <span>&#x1F4C4;</span>
                   <span id="rma-config-filename">sanitized_config.xsf</span>
                 </span>
-                <span class="text-emerald-400 text-[11px]">âœ” Ready for TFTP / Console Injection</span>
+                <span class="text-emerald-400 text-[11px]">[OK] Ready for TFTP / Console Injection</span>
               </div>
               <pre id="rma-config-preview" class="p-4 text-xs font-mono text-emerald-300 bg-slate-950 overflow-x-auto max-h-72 custom-scrollbar whitespace-pre leading-relaxed"></pre>
             </div>
@@ -4671,7 +4671,7 @@ show ip route</pre>
             <!-- Console Instructions Cheat Sheet Box -->
             <div class="bg-indigo-950/30 border border-indigo-800/60 rounded-xl p-4 space-y-2 text-xs font-mono">
               <div class="flex items-center gap-2 text-indigo-300 font-bold">
-                <span>ğŸ“–</span>
+                <span>&#x1F4D6;</span>
                 <span>On-Site Console Restoration Procedure</span>
               </div>
               <p class="text-slate-300 text-[11px]">
@@ -4699,7 +4699,7 @@ show ip route</pre>
       <div class="px-5 py-3.5 border-b border-slate-800 bg-slate-950/90 flex flex-wrap items-center justify-between gap-3 shrink-0">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-sm">
-            ğŸ“
+            &#x1F4D0;
           </div>
           <div>
             <div class="flex items-center gap-2">
@@ -4727,7 +4727,7 @@ show ip route</pre>
           </select>
 
           <button onclick="closeModal('modal-site-diagrams')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition">
-            âœ•
+            [X]
           </button>
         </div>
       </div>
@@ -4746,7 +4746,7 @@ show ip route</pre>
       <div class="px-5 py-3.5 border-b border-slate-800 bg-slate-950/90 flex items-center justify-between gap-3 shrink-0">
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg bg-amber-600/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm">
-            ğŸ§
+            &#x1F427;
           </div>
           <div>
             <h2 class="text-sm font-bold text-white tracking-tight">Ubuntu Linux VM Migration &amp; Production Setup Kit</h2>
@@ -4755,14 +4755,14 @@ show ip route</pre>
         </div>
 
         <button onclick="closeModal('modal-ubuntu-migration')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition">
-          âœ•
+          [X]
         </button>
       </div>
 
       <div class="flex-1 overflow-y-auto p-6 space-y-5 font-mono text-xs custom-scrollbar">
         <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
           <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
-            <span>ğŸš€</span>
+            <span>&#x1F680;</span>
             <span>1-Line Automated Ubuntu Server Deployment</span>
           </h3>
           <p class="text-slate-300">Run this command on your target Ubuntu Server VM to install TFTP, configure systemd, and launch the portal service:</p>
@@ -4788,7 +4788,7 @@ RestartSec=5
 
 [Install]
 WantedBy=multi-user.target</pre>
-          <button onclick="copyToClipboard(`[Unit]\nDescription=Extreme Switch Backup & Management Portal Server\nAfter=network.target\n\n[Service]\nType=simple\nUser=root\nWorkingDirectory=/opt/switch-backup\nExecStart=/usr/bin/python3 /opt/switch-backup/portal_server_ubuntu.py\nRestart=always\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target`, 'Copied systemd unit file!')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-xs">ğŸ“‹ Copy Unit File</button>
+          <button onclick="copyToClipboard(`[Unit]\nDescription=Extreme Switch Backup & Management Portal Server\nAfter=network.target\n\n[Service]\nType=simple\nUser=root\nWorkingDirectory=/opt/switch-backup\nExecStart=/usr/bin/python3 /opt/switch-backup/portal_server_ubuntu.py\nRestart=always\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target`, 'Copied systemd unit file!')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-xs">&#x1F4CB; Copy Unit File</button>
         </div>
       </div>
 
@@ -4797,7 +4797,7 @@ WantedBy=multi-user.target</pre>
 
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold font-mono transition-opacity duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
-    <span>âœ”</span> <span id="toast-msg">Copied to clipboard!</span>
+    <span>[OK]</span> <span id="toast-msg">Copied to clipboard!</span>
   </div>
 
   <script>
@@ -4936,7 +4936,7 @@ WantedBy=multi-user.target</pre>
                 : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
             }"
           >
-            <span>ğŸ“¡</span>
+            <span>&#x1F4E1;</span>
             <span>${p.title}</span>
             <span class="text-[10px] font-mono px-1.5 py-0.2 rounded ${isSel ? 'bg-emerald-700 text-emerald-100' : 'bg-slate-800 text-slate-400'}">
               ${p.aps.length} APs
@@ -4968,7 +4968,7 @@ WantedBy=multi-user.target</pre>
             </div>
             ${ap.switchPort ? `
               <div class="mt-1 text-[10px] text-purple-300 flex items-center gap-1 truncate">
-                <span>ğŸ”Œ</span>
+                <span>&#x1F50C;</span>
                 <span class="truncate">${ap.switchPort}</span>
               </div>
             ` : ''}
@@ -5000,7 +5000,7 @@ WantedBy=multi-user.target</pre>
           <div class="p-4 sm:p-5 border-b border-slate-800 bg-slate-900/90 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div class="flex items-start sm:items-center gap-3">
               <div class="p-2.5 rounded-xl bg-gradient-to-br from-emerald-500/20 to-teal-500/10 border border-emerald-500/30 text-emerald-400 text-lg">
-                ğŸ“¶
+                &#x1F4F6;
               </div>
               <div>
                 <div class="flex items-center gap-2 flex-wrap">
@@ -5029,7 +5029,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono border border-slate-700 transition"
                 title="Download original file"
               >
-                <span>ğŸ’¾</span>
+                <span>&#x1F4BE;</span>
                 <span>Download ${plan.fileSource}</span>
               </a>
               <button
@@ -5037,7 +5037,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono border border-slate-700 transition cursor-pointer"
                 title="Export full AP allocation and signal strength audit to CSV"
               >
-                <span>ğŸ“Š</span>
+                <span>&#x1F4CA;</span>
                 <span>Export AP Audit CSV</span>
               </button>
               <button
@@ -5045,7 +5045,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono border border-slate-700 transition cursor-pointer"
                 title="Download vector SVG of current floor plan"
               >
-                <span>ğŸ“</span>
+                <span>&#x1F4D0;</span>
                 <span>Download SVG</span>
               </button>
             </div>
@@ -5078,7 +5078,7 @@ WantedBy=multi-user.target</pre>
                 onclick="document.getElementById('heatmap-file-input').click()"
                 class="flex items-center gap-1 px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 rounded-lg border border-slate-800 font-mono text-[11px] transition cursor-pointer"
               >
-                <span>ğŸ“¤</span>
+                <span>&#x1F4E4;</span>
                 <span>${hasCustom ? 'Replace PNG' : 'Upload PNG'}</span>
               </button>
 
@@ -5152,7 +5152,7 @@ WantedBy=multi-user.target</pre>
             <div class="lg:col-span-2 bg-slate-950 rounded-xl border border-slate-800 p-4 space-y-3">
               <div class="flex items-center justify-between border-b border-slate-800/80 pb-2.5">
                 <div class="flex items-center gap-2">
-                  <span class="text-emerald-400 font-bold">ğŸ“¡</span>
+                  <span class="text-emerald-400 font-bold">&#x1F4E1;</span>
                   <h4 class="text-xs font-bold text-white uppercase tracking-wider font-mono">
                     Deployed Access Points for ${plan.title} (${plan.aps.length})
                   </h4>
@@ -5166,7 +5166,7 @@ WantedBy=multi-user.target</pre>
 
             <div class="bg-slate-950 rounded-xl border border-slate-800 p-4 space-y-3">
               <div class="flex items-center gap-2 border-b border-slate-800/80 pb-2.5">
-                <span class="text-indigo-400">ğŸ“ˆ</span>
+                <span class="text-indigo-400">&#x1F4C8;</span>
                 <h4 class="text-xs font-bold text-white uppercase tracking-wider font-mono">
                   Room Zone RF Breakdown
                 </h4>
@@ -5176,7 +5176,7 @@ WantedBy=multi-user.target</pre>
               </div>
               <div class="p-3 bg-emerald-950/30 border border-emerald-500/30 rounded-lg text-xs space-y-1">
                 <div class="flex items-center gap-1.5 text-emerald-300 font-bold">
-                  <span>âœ…</span>
+                  <span>[OK]</span>
                   <span>David Lloyd RF Standard Met</span>
                 </div>
                 <p class="text-[11px] text-slate-300">
@@ -5624,7 +5624,7 @@ WantedBy=multi-user.target</pre>
                     title="Click to copy IP"
                   >
                     <span>${sw.ip}</span>
-                    <span class="text-[10px] text-slate-500">ğŸ“‹</span>
+                    <span class="text-[10px] text-slate-500">&#x1F4CB;</span>
                   </button>
                 </div>
               </div>
@@ -5632,7 +5632,7 @@ WantedBy=multi-user.target</pre>
               <div class="flex flex-col items-end gap-1 shrink-0">
                 ${reachabilityBadge}
                 <span class="text-[10px] font-mono ${sw.hasBackup ? 'text-emerald-400' : 'text-slate-500'}">
-                  ${sw.hasBackup ? 'âœ” Backed Up' : 'No Backup'}
+                  ${sw.hasBackup ? '[OK] Backed Up' : 'No Backup'}
                 </span>
                 <div class="text-[10px] text-slate-500 font-mono">
                   ${(sw.latestBackupTime || 'Recent').split(' ')[0]}
@@ -5648,7 +5648,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-xs font-bold bg-indigo-950/90 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/60 hover:border-indigo-500 transition shadow-sm truncate group"
                 title="Monitor live CPU utilization %, Temperature, and Memory %"
               >
-                <span>ğŸ“Š Monitor</span>
+                <span>&#x1F4CA; Monitor</span>
               </button>
 
               <button 
@@ -5656,7 +5656,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 hover:border-emerald-600/60 transition shadow-sm truncate"
                 title="Query live port information (show ports) via Telnet"
               >
-                <span>âš¡ Ports</span>
+                <span>&#x26A1; Ports</span>
               </button>
 
               <button 
@@ -5664,7 +5664,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-purple-300 border border-slate-800 hover:border-purple-600/60 transition shadow-sm truncate"
                 title="Query all live LLDP neighbors detailed via Telnet"
               >
-                <span>ğŸ“¡ LLDP</span>
+                <span>&#x1F4E1; LLDP</span>
               </button>
 
               <button 
@@ -5672,7 +5672,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-amber-300 border border-slate-800 hover:border-amber-600/60 transition shadow-sm truncate"
                 title="Query live MAC table (FDB) with port selector and MAC search"
               >
-                <span>ğŸ·ï¸ FDB</span>
+                <span>&#x1F3F7;&#xFE0F; FDB</span>
               </button>
 
               <button 
@@ -5680,7 +5680,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center justify-center gap-1 px-1 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-slate-800 hover:border-cyan-600/60 transition shadow-sm truncate"
                 title="Ping and test live reachability"
               >
-                <span>ğŸŒ Ping</span>
+                <span>&#x1F310; Ping</span>
               </button>
             </div>
 
@@ -5690,7 +5690,7 @@ WantedBy=multi-user.target</pre>
                 class="flex-1 min-w-[90px] flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-slate-700 transition"
                 title="Copy latest configuration backup to clipboard"
               >
-                <span>ğŸ“‹ Copy</span>
+                <span>&#x1F4CB; Copy</span>
               </button>
 
               <button 
@@ -5698,7 +5698,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/60 transition shadow-sm"
                 title="Open Switch Replacement Hub pre-filled for this switch"
               >
-                <span>ğŸ”„ Replace</span>
+                <span>&#x1F504; Replace</span>
               </button>
 
               <button 
@@ -5706,7 +5706,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-slate-800 transition shadow-sm"
                 title="View in Interactive Visual Node Graph"
               >
-                <span>ğŸ—ºï¸ Graph</span>
+                <span>&#x1F5FA;&#xFE0F; Graph</span>
               </button>
 
               <button 
@@ -5714,7 +5714,7 @@ WantedBy=multi-user.target</pre>
                 class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-slate-700 transition"
                 title="Access previous backup archives"
               >
-                <span>ğŸ•’ Backups</span>
+                <span>&#x1F552; Backups</span>
               </button>
 
               <button 
@@ -5722,7 +5722,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-amber-950/80 hover:bg-amber-900 text-amber-300 border border-amber-700/60 transition shadow-sm"
                 title="Bounce port with live MAC confirmation on this switch"
               >
-                <span>ğŸ”„ Bounce</span>
+                <span>&#x1F504; Bounce</span>
               </button>
 
               <button 
@@ -5730,7 +5730,7 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center justify-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white transition shadow"
                 title="Run BackupSave.py for this switch"
               >
-                <span>âš¡ Backup</span>
+                <span>&#x26A1; Backup</span>
               </button>
             </div>
           </div>
@@ -5801,7 +5801,7 @@ WantedBy=multi-user.target</pre>
               <div>
                 <div class="flex items-center gap-2 flex-wrap">
                   <div class="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-xs">
-                    ğŸ¢
+                    &#x1F3E2;
                   </div>
                   <h2 class="text-lg font-bold text-white tracking-wide">${selectedSite} Site Network Hub</h2>
                   <span class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
@@ -5825,21 +5825,21 @@ WantedBy=multi-user.target</pre>
                 class="flex items-center gap-1.5 px-3 py-2 bg-indigo-950 hover:bg-indigo-900 text-indigo-300 text-xs font-bold rounded-xl border border-indigo-700/60 transition shadow-sm cursor-pointer"
                 title="Open Switch Replacement Hub for this site"
               >
-                <span>ğŸ”„ Switch Replacement</span>
+                <span>&#x1F504; Switch Replacement</span>
               </button>
               <button
                 onclick="triggerBackup('BackupSave.py', '${siteSwitches[0] ? siteSwitches[0].ip : 'ALL'}')"
                 class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition cursor-pointer"
                 title="Run BackupSave.py on all switches in ${selectedSite}"
               >
-                <span>âš¡ Backup ${selectedSite} Switches</span>
+                <span>&#x26A1; Backup ${selectedSite} Switches</span>
               </button>
               <button
                 onclick="selectSite(null)"
                 class="flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold rounded-xl border border-slate-700 transition cursor-pointer"
                 title="Return to fleet overview"
               >
-                <span>â† Back to Fleet</span>
+                <span>&#x2190; Back to Fleet</span>
               </button>
             </div>
           </div>
@@ -5855,7 +5855,7 @@ WantedBy=multi-user.target</pre>
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
                 }"
               >
-                <span>ğŸ—ºï¸ Visual Node Graph</span>
+                <span>&#x1F5FA;&#xFE0F; Visual Node Graph</span>
                 <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 font-mono">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                   Live LLDP
@@ -5870,7 +5870,7 @@ WantedBy=multi-user.target</pre>
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
                 }"
               >
-                <span>ğŸ“ Visio Blueprint</span>
+                <span>&#x1F4D0; Visio Blueprint</span>
                 <span class="text-[10px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">
                   Verified
                 </span>
@@ -5884,7 +5884,7 @@ WantedBy=multi-user.target</pre>
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
                 }"
               >
-                <span>ğŸ“¶ Wireless RF Heatmaps</span>
+                <span>&#x1F4F6; Wireless RF Heatmaps</span>
               </button>
 
               <button
@@ -5895,7 +5895,7 @@ WantedBy=multi-user.target</pre>
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
                 }"
               >
-                <span>ğŸ—„ï¸ Switch Fleet (${siteSwitches.length})</span>
+                <span>&#x1F5C4;&#xFE0F; Switch Fleet (${siteSwitches.length})</span>
               </button>
 
               <button
@@ -5906,7 +5906,7 @@ WantedBy=multi-user.target</pre>
                     : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
                 }"
               >
-                <span>ğŸ”„ Switch Replacement</span>
+                <span>&#x1F504; Switch Replacement</span>
               </button>
             </div>
 
@@ -5924,7 +5924,7 @@ WantedBy=multi-user.target</pre>
             <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl space-y-4 p-4">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
                 <div class="flex items-center gap-2.5">
-                  <span class="text-indigo-400 font-mono text-lg">ğŸ—ºï¸</span>
+                  <span class="text-indigo-400 font-mono text-lg">&#x1F5FA;&#xFE0F;</span>
                   <div>
                     <h3 class="text-sm font-bold text-white font-mono flex items-center gap-2">
                       ${selectedSite} Live LLDP Interactive Node Graph
@@ -5940,7 +5940,7 @@ WantedBy=multi-user.target</pre>
 
                 <div class="flex items-center gap-2 flex-wrap">
                   <button onclick="exportTopologyJson('${selectedSite}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1">
-                    <span>ğŸ’¾ Export Topology JSON</span>
+                    <span>&#x1F4BE; Export Topology JSON</span>
                   </button>
                 </div>
               </div>
@@ -5957,7 +5957,7 @@ WantedBy=multi-user.target</pre>
             <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
               <div class="p-3.5 bg-slate-900/90 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div class="flex items-center gap-2.5">
-                  <span class="text-indigo-400 font-mono text-sm">ğŸ“</span>
+                  <span class="text-indigo-400 font-mono text-sm">&#x1F4D0;</span>
                   <div>
                     <div class="flex items-center gap-2">
                       <h3 class="text-xs font-bold text-white uppercase font-mono tracking-wider">
@@ -5998,15 +5998,15 @@ WantedBy=multi-user.target</pre>
                       <div class="w-full flex flex-col items-center space-y-3">
                         <div class="w-full bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
                           <div class="flex items-center gap-2">
-                            <span class="text-emerald-400 font-bold">âœ”</span>
+                            <span class="text-emerald-400 font-bold">[OK]</span>
                             <span>Visio Verified Diagram: <strong class="text-white">${pngPath.split("/").pop()}</strong></span>
                           </div>
                           <div class="flex items-center gap-3">
                             <a href="${pngPath}" target="_blank" class="text-indigo-400 hover:underline flex items-center gap-1 text-[11px]">
-                              <span>Full Resolution â†—</span>
+                              <span>Full Resolution &#x2197;</span>
                             </a>
                             <a href="${pngPath}" download="${selectedSite}_Topology_Diagram.png" class="text-purple-400 hover:underline flex items-center gap-1 text-[11px]">
-                              <span>Download PNG ğŸ’¾</span>
+                              <span>Download PNG &#x1F4BE;</span>
                             </a>
                           </div>
                         </div>
@@ -6028,7 +6028,7 @@ WantedBy=multi-user.target</pre>
                   } else {
                     return `
                       <div class="p-12 text-center text-slate-400 font-mono">
-                        <div class="text-3xl mb-2">ğŸ¢</div>
+                        <div class="text-3xl mb-2">&#x1F3E2;</div>
                         <div class="text-sm font-bold text-white">${selectedSite} Network Schematic</div>
                         <div class="text-xs text-slate-500 mt-1">Showing ${siteSwitches.length} connected switches for site ${selectedSite}.</div>
                       </div>
@@ -6042,19 +6042,19 @@ WantedBy=multi-user.target</pre>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 bg-slate-950 border-t border-slate-800 text-xs font-mono">
                   <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
                     <div class="text-purple-400 font-bold">DLC-York-Spa-SW1</div>
-                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 9 â” Port 1</div>
+                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 9 &#x2794; Port 1</div>
                   </div>
                   <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
                     <div class="text-purple-400 font-bold">DLC-York-Gym</div>
-                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 37 â” Port 1</div>
+                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 37 &#x2794; Port 1</div>
                   </div>
                   <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
                     <div class="text-purple-400 font-bold">DLL-York</div>
-                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 42 â” Port 17</div>
+                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 42 &#x2794; Port 17</div>
                   </div>
                   <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
                     <div class="text-purple-400 font-bold">DLC-York-MainComms-2</div>
-                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 41 â” Port 48</div>
+                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 41 &#x2794; Port 48</div>
                   </div>
                 </div>
               ` : ''}
@@ -6066,7 +6066,7 @@ WantedBy=multi-user.target</pre>
             <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl space-y-4">
               <div class="flex items-center justify-between pb-3 border-b border-slate-800">
                 <div class="flex items-center gap-2">
-                  <span class="text-lg">ğŸ“¶</span>
+                  <span class="text-lg">&#x1F4F6;</span>
                   <h3 class="text-sm font-bold text-white font-mono">${selectedSite} Wireless RF Floorplans &amp; AP Density</h3>
                 </div>
                 <span class="text-xs font-mono text-amber-400">Extreme AP5050 Wi-Fi 6E Deployments</span>
@@ -6080,7 +6080,7 @@ WantedBy=multi-user.target</pre>
             <div class="space-y-3 pt-2">
               <div class="flex items-center justify-between">
                 <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider font-mono flex items-center gap-2">
-                  <span>ğŸ¢</span>
+                  <span>&#x1F3E2;</span>
                   <span>Switches Assigned to ${selectedSite} (${siteSwitches.length})</span>
                 </h3>
                 <div class="text-xs text-slate-400 font-mono">
@@ -6106,7 +6106,7 @@ WantedBy=multi-user.target</pre>
               <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
                 <div>
                   <h3 class="text-base font-bold text-white font-mono flex items-center gap-2">
-                    <span>ğŸ”„</span>
+                    <span>&#x1F504;</span>
                     <span>${selectedSite} Switch Replacement &amp; Staging Hub</span>
                   </h3>
                   <p class="text-xs text-slate-400 mt-1 font-mono">
@@ -6156,14 +6156,14 @@ WantedBy=multi-user.target</pre>
                         onclick="openSwitchReplacementModal('${sw.ip}')"
                         class="flex-1 py-2 px-3 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center justify-center gap-1.5 shadow cursor-pointer"
                       >
-                        <span>ğŸ”„ Launch Replacement</span>
+                        <span>&#x1F504; Launch Replacement</span>
                       </button>
                       <button
                         onclick="runBackup('${sw.ip}')"
                         class="py-2 px-3 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 transition cursor-pointer"
                         title="Backup switch now"
                       >
-                        <span>âš¡ Backup</span>
+                        <span>&#x26A1; Backup</span>
                       </button>
                     </div>
                   </div>
@@ -6195,10 +6195,10 @@ WantedBy=multi-user.target</pre>
           core: { ip: '10.32.221.253', name: 'DLC-York-Core', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
           fws: [{ name: 'York-MXP', ip: '10.32.221.1', role: 'Primary' }, { name: 'York-MXS', ip: '10.32.221.2', role: 'Standby' }],
           edges: [
-            { ip: '10.32.221.252', name: 'DLC-York-Spa-SW1', model: 'EXOS X440', ports: 52, linkPort: 'P9 â” P49', speed: '10G' },
-            { ip: '10.32.221.250', name: 'DLC-York-Gym', model: 'EXOS X440', ports: 28, linkPort: 'P37 â” P25', speed: '1G' },
-            { ip: '10.32.221.249', name: 'DLL-York', model: 'VSP 4450 (VOSS)', ports: 52, linkPort: 'P42 â” P49', speed: '10G' },
-            { ip: '10.32.221.248', name: 'DLC-York-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P41 â” P49', speed: '10G' }
+            { ip: '10.32.221.252', name: 'DLC-York-Spa-SW1', model: 'EXOS X440', ports: 52, linkPort: 'P9 &#x2794; P49', speed: '10G' },
+            { ip: '10.32.221.250', name: 'DLC-York-Gym', model: 'EXOS X440', ports: 28, linkPort: 'P37 &#x2794; P25', speed: '1G' },
+            { ip: '10.32.221.249', name: 'DLL-York', model: 'VSP 4450 (VOSS)', ports: 52, linkPort: 'P42 &#x2794; P49', speed: '10G' },
+            { ip: '10.32.221.248', name: 'DLC-York-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P41 &#x2794; P49', speed: '10G' }
           ],
           aps: ['Spa Pool', 'Gym Floor', 'Tennis Hub', 'Reception']
         },
@@ -6207,9 +6207,9 @@ WantedBy=multi-user.target</pre>
           core: { ip: '10.32.54.253', name: 'DLC-Leeds-Core', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
           fws: [{ name: 'Leeds-MXP', ip: '10.32.54.1', role: 'Primary' }, { name: 'Leeds-MXS', ip: '10.32.54.2', role: 'Standby' }],
           edges: [
-            { ip: '10.32.54.250', name: 'DLC-Leeds-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 â” P49', speed: '10G' },
-            { ip: '10.32.54.249', name: 'DLL-Leeds-SubRack', model: 'EXOS X440', ports: 52, linkPort: 'P10 â” P49', speed: '10G' },
-            { ip: '10.32.54.248', name: 'DLC-Leeds-Lynxight', model: 'EXOS X435', ports: 28, linkPort: 'P11 â” P25', speed: '1G' }
+            { ip: '10.32.54.250', name: 'DLC-Leeds-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 &#x2794; P49', speed: '10G' },
+            { ip: '10.32.54.249', name: 'DLL-Leeds-SubRack', model: 'EXOS X440', ports: 52, linkPort: 'P10 &#x2794; P49', speed: '10G' },
+            { ip: '10.32.54.248', name: 'DLC-Leeds-Lynxight', model: 'EXOS X435', ports: 28, linkPort: 'P11 &#x2794; P25', speed: '1G' }
           ],
           aps: ['Reception Lounge', 'Cardio Floor', 'Spin Studio', 'Pool Deck']
         },
@@ -6218,9 +6218,9 @@ WantedBy=multi-user.target</pre>
           core: { ip: '10.32.219.253', name: 'DLC-Farnham-Core', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
           fws: [{ name: 'Farnham-MXP', ip: '10.32.219.1', role: 'Primary' }, { name: 'Farnham-MXS', ip: '10.32.219.2', role: 'Standby' }],
           edges: [
-            { ip: '10.32.219.252', name: 'DLC-Farnham-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 â” P49', speed: '10G' },
-            { ip: '10.32.219.250', name: 'DLC-Farnham-Subrack', model: 'EXOS X440', ports: 52, linkPort: 'P10 â” P49', speed: '10G' },
-            { ip: '10.32.219.249', name: 'DLC-Farnham-Lynxight', model: 'EXOS X435', ports: 28, linkPort: 'P11 â” P25', speed: '1G' }
+            { ip: '10.32.219.252', name: 'DLC-Farnham-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 &#x2794; P49', speed: '10G' },
+            { ip: '10.32.219.250', name: 'DLC-Farnham-Subrack', model: 'EXOS X440', ports: 52, linkPort: 'P10 &#x2794; P49', speed: '10G' },
+            { ip: '10.32.219.249', name: 'DLC-Farnham-Lynxight', model: 'EXOS X435', ports: 28, linkPort: 'P11 &#x2794; P25', speed: '1G' }
           ],
           aps: ['Gymnasium', 'Hydro Spa', 'Tennis Dome']
         },
@@ -6229,8 +6229,8 @@ WantedBy=multi-user.target</pre>
           core: { ip: '10.32.224.253', name: 'DLL-Aberdeen-Comms', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
           fws: [{ name: 'Aberdeen-MXP', ip: '10.32.224.1', role: 'Primary' }, { name: 'Aberdeen-MXS', ip: '10.32.224.2', role: 'Standby' }],
           edges: [
-            { ip: '10.32.224.252', name: 'DLC-Aberdeen-Gym', model: 'EXOS X440', ports: 52, linkPort: 'P9 â” P49', speed: '10G' },
-            { ip: '10.32.224.251', name: 'DLC-Aberdeen-Lynxight', model: 'EXOS X435', ports: 28, linkPort: 'P10 â” P25', speed: '1G' }
+            { ip: '10.32.224.252', name: 'DLC-Aberdeen-Gym', model: 'EXOS X440', ports: 52, linkPort: 'P9 &#x2794; P49', speed: '10G' },
+            { ip: '10.32.224.251', name: 'DLC-Aberdeen-Lynxight', model: 'EXOS X435', ports: 28, linkPort: 'P10 &#x2794; P25', speed: '1G' }
           ],
           aps: ['Fitness Arena', 'Member Lounge', 'Indoor Pool']
         },
@@ -6239,8 +6239,8 @@ WantedBy=multi-user.target</pre>
           core: { ip: '10.32.208.253', name: 'DLL-Bristol-LA-MainComms', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
           fws: [{ name: 'Bristol-MXP', ip: '10.32.208.1', role: 'Primary' }, { name: 'Bristol-MXS', ip: '10.32.208.2', role: 'Standby' }],
           edges: [
-            { ip: '10.32.208.252', name: 'DLL-Bristol-LA-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 â” P49', speed: '10G' },
-            { ip: '10.32.208.251', name: 'DLC-Bristol-Gym', model: 'EXOS X440', ports: 52, linkPort: 'P10 â” P49', speed: '10G' }
+            { ip: '10.32.208.252', name: 'DLL-Bristol-LA-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 &#x2794; P49', speed: '10G' },
+            { ip: '10.32.208.251', name: 'DLC-Bristol-Gym', model: 'EXOS X440', ports: 52, linkPort: 'P10 &#x2794; P49', speed: '10G' }
           ],
           aps: ['Fitness Studio', 'Member Cafe', 'Tennis Center']
         },
@@ -6249,8 +6249,8 @@ WantedBy=multi-user.target</pre>
           core: { ip: '10.32.214.253', name: 'DL-Lichfield', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
           fws: [{ name: 'Lichfield-MXP', ip: '10.32.214.1', role: 'Primary' }, { name: 'Lichfield-MXS', ip: '10.32.214.2', role: 'Standby' }],
           edges: [
-            { ip: '10.32.214.252', name: 'DLC-Lichfield-Subrack', model: 'EXOS X440', ports: 52, linkPort: 'P9 â” P49', speed: '10G' },
-            { ip: '10.32.214.251', name: 'DLC-Lichfield-Spa', model: 'EXOS X440', ports: 52, linkPort: 'P10 â” P49', speed: '10G' }
+            { ip: '10.32.214.252', name: 'DLC-Lichfield-Subrack', model: 'EXOS X440', ports: 52, linkPort: 'P9 &#x2794; P49', speed: '10G' },
+            { ip: '10.32.214.251', name: 'DLC-Lichfield-Spa', model: 'EXOS X440', ports: 52, linkPort: 'P10 &#x2794; P49', speed: '10G' }
           ],
           aps: ['Gymnasium', 'Spa Treatment']
         },
@@ -6259,8 +6259,8 @@ WantedBy=multi-user.target</pre>
           core: { ip: '10.36.226.12', name: 'MANCHESTER-CORE-VSP', model: 'VOSS VSP 8400', ports: '52x 10G SPB Fabric' },
           fws: [{ name: 'Manchester-MXP', ip: '10.36.226.1', role: 'Primary' }, { name: 'Manchester-MXS', ip: '10.36.226.2', role: 'Standby' }],
           edges: [
-            { ip: '10.36.226.13', name: 'MANCHESTER-EDGE-01', model: 'EXOS X440', ports: 52, linkPort: 'P49 â” P49', speed: '10G SPB' },
-            { ip: '10.36.226.14', name: 'MANCHESTER-EDGE-02', model: 'EXOS X440', ports: 52, linkPort: 'P50 â” P49', speed: '10G SPB' }
+            { ip: '10.36.226.13', name: 'MANCHESTER-EDGE-01', model: 'EXOS X440', ports: 52, linkPort: 'P49 &#x2794; P49', speed: '10G SPB' },
+            { ip: '10.36.226.14', name: 'MANCHESTER-EDGE-02', model: 'EXOS X440', ports: 52, linkPort: 'P50 &#x2794; P49', speed: '10G SPB' }
           ],
           aps: ['Atrium Ground', 'Studio Floor 1']
         }
@@ -6279,8 +6279,8 @@ WantedBy=multi-user.target</pre>
             core: { ip: '10.32.100.253', name: 'DLC-' + cleanName + '-Core', model: 'EXOS X460-G2', ports: '48x 10G/1G' },
             fws: [{ name: cleanName + '-MXP', ip: '10.32.100.1', role: 'Primary' }, { name: cleanName + '-MXS', ip: '10.32.100.2', role: 'Standby' }],
             edges: [
-              { ip: '10.32.100.252', name: 'DLC-' + cleanName + '-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 â” P49', speed: '10G' },
-              { ip: '10.32.100.250', name: 'DLC-' + cleanName + '-Subrack', model: 'EXOS X440', ports: 28, linkPort: 'P10 â” P25', speed: '10G' }
+              { ip: '10.32.100.252', name: 'DLC-' + cleanName + '-MainComms-2', model: 'EXOS X440', ports: 52, linkPort: 'P9 &#x2794; P49', speed: '10G' },
+              { ip: '10.32.100.250', name: 'DLC-' + cleanName + '-Subrack', model: 'EXOS X440', ports: 28, linkPort: 'P10 &#x2794; P25', speed: '10G' }
             ],
             aps: [cleanName + ' Gym', cleanName + ' Lounge', cleanName + ' Pool']
           };
@@ -6319,7 +6319,7 @@ WantedBy=multi-user.target</pre>
       const edgeNodesSvg = edgePositions.map(e => `
         <g onclick="showSwitchMonitorLive('${e.ip}', '${e.name}', '${e.model.includes('VOSS') ? 'cfg' : 'xsf'}')" class="cursor-pointer group">
           <rect x="${e.x - 80}" y="380" width="160" height="70" rx="8" fill="url(#grad-edge-${norm})" stroke="${e.model.includes('VOSS') ? '#06b6d4' : '#6366f1'}" stroke-width="1.5" class="group-hover:stroke-white transition"/>
-          <text x="${e.x}" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">${e.name.length > 20 ? e.name.slice(0, 18) + 'â€¦' : e.name}</text>
+          <text x="${e.x}" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">${e.name.length > 20 ? e.name.slice(0, 18) + '...' : e.name}</text>
           <text x="${e.x}" y="422" fill="#94a3b8" font-size="9" text-anchor="middle">${e.ip} &bull; ${e.model}</text>
           <text x="${e.x}" y="438" fill="${e.model.includes('VOSS') ? '#22d3ee' : '#34d399'}" font-size="8" text-anchor="middle">${e.ports} Ports &bull; PoE+ Enabled</text>
         </g>
@@ -6337,7 +6337,7 @@ WantedBy=multi-user.target</pre>
         <div class="w-full flex flex-col items-center space-y-4">
           <div class="w-full flex items-center justify-between text-xs font-mono text-slate-400 px-2">
             <div class="flex items-center gap-2">
-              <span class="text-emerald-400 font-bold">â—</span>
+              <span class="text-emerald-400 font-bold">&#x25CF;</span>
               <span>Active LLDP Nodes Discovered: <strong>${totalDevs} Devices</strong> (1 Core, ${prof.edges.length} Edge Stacks, ${prof.fws.length} Firewalls)</span>
             </div>
             <span class="text-indigo-400 font-bold">Click any device for live telemetry & diagnostics</span>
@@ -6409,7 +6409,7 @@ WantedBy=multi-user.target</pre>
                 </circle>
                 <text x="415" y="206" fill="#fff" font-size="13" font-weight="bold">${prof.core.name}</text>
                 <text x="415" y="224" fill="#a5b4fc" font-size="10">IP: ${prof.core.ip} &bull; ${prof.core.model}</text>
-                <text x="415" y="240" fill="#34d399" font-size="9">CPU: 8% &bull; Temp: 33Â°C &bull; ${prof.core.ports}</text>
+                <text x="415" y="240" fill="#34d399" font-size="9">CPU: 8% &bull; Temp: 33&deg;C &bull; ${prof.core.ports}</text>
                 <rect x="540" y="190" width="65" height="18" rx="4" fill="#312e81" stroke="#818cf8"/>
                 <text x="572" y="202" fill="#e0e7ff" font-size="9" text-anchor="middle" font-weight="bold">CORE STACK</text>
               </g>
@@ -6537,7 +6537,7 @@ WantedBy=multi-user.target</pre>
             </div>
             <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 mt-1">
               <span>${sw.ip}</span>
-              <span class="${sw.hasBackup ? 'text-emerald-400' : 'text-slate-500'}">${sw.hasBackup ? 'âœ” Backup' : 'No Backup'}</span>
+              <span class="${sw.hasBackup ? 'text-emerald-400' : 'text-slate-500'}">${sw.hasBackup ? '[OK] Backup' : 'No Backup'}</span>
             </div>
           </div>
         `;
@@ -6566,7 +6566,7 @@ WantedBy=multi-user.target</pre>
           </div>
           <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 mt-1">
             <span>${sw.ip}</span>
-            <span class="${sw.hasBackup ? 'text-emerald-400' : 'text-slate-500'}">${sw.hasBackup ? 'âœ” Backup' : 'No Backup'}</span>
+            <span class="${sw.hasBackup ? 'text-emerald-400' : 'text-slate-500'}">${sw.hasBackup ? '[OK] Backup' : 'No Backup'}</span>
           </div>
         </div>
       `).join('');
@@ -6662,8 +6662,8 @@ WantedBy=multi-user.target</pre>
         viewport.innerHTML = `
           <div class="w-full flex flex-col items-center space-y-4">
             <div class="flex items-center gap-3">
-              <a href="${pngPath}" target="_blank" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-mono font-bold transition">Open Full Resolution â†—</a>
-              <a href="${pngPath}" download="${siteCode}_Topology.png" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono font-bold transition">Download PNG ğŸ’¾</a>
+              <a href="${pngPath}" target="_blank" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-mono font-bold transition">Open Full Resolution &#x2197;</a>
+              <a href="${pngPath}" download="${siteCode}_Topology.png" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono font-bold transition">Download PNG &#x1F4BE;</a>
             </div>
             <img src="${pngPath}" alt="${siteCode} Diagram" class="rounded-xl shadow-2xl max-w-full h-auto border border-slate-800" />
           </div>
@@ -6671,7 +6671,7 @@ WantedBy=multi-user.target</pre>
       } else {
         viewport.innerHTML = `
           <div class="p-12 text-center text-slate-400 font-mono">
-            <div class="text-3xl mb-2">ğŸ“</div>
+            <div class="text-3xl mb-2">&#x1F4D0;</div>
             <div class="text-white font-bold text-sm">${siteCode} Schematic</div>
             <p class="text-xs text-slate-500 mt-1">Visio vector diagram loaded for site ${siteCode}.</p>
           </div>
@@ -6776,7 +6776,7 @@ WantedBy=multi-user.target</pre>
                   title="Open ${site} Site Page & Diagram"
                 >
                   <span>${site}</span>
-                  <span class="text-[10px] text-indigo-400/80">â†—</span>
+                  <span class="text-[10px] text-indigo-400/80">&#x2197;</span>
                 </a>
               </div>
 
@@ -6867,10 +6867,10 @@ WantedBy=multi-user.target</pre>
           if (nextEl) nextEl.innerText = sch.nextScheduledLabel || 'Tonight @ 02:00 UTC';
           if (nextCd) nextCd.innerText = sch.nextScheduledCountdown || 'in ~5h 30m';
           if (freqEl) {
-            freqEl.innerText = `${sch.scheduleFrequency || 'Daily Nightly Backup (02:00)'} â€¢ ${sch.scheduleEngine || 'switch-backup.timer'}`;
+            freqEl.innerText = `${sch.scheduleFrequency || 'Daily Nightly Backup (02:00)'} &bull; ${sch.scheduleEngine || 'switch-backup.timer'}`;
           }
           if (lastSum) {
-            lastSum.innerText = `âœ” ${allSwitches.length || 6}/${allSwitches.length || 6} Switches Saved â€¢ TFTP + SSH`;
+            lastSum.innerText = `[OK] ${allSwitches.length || 6}/${allSwitches.length || 6} Switches Saved &bull; TFTP + SSH`;
           }
           if (lastBdg) {
             if (data.status === 'RUNNING') {
@@ -6887,11 +6887,11 @@ WantedBy=multi-user.target</pre>
         const spinner = document.getElementById('status-spinner');
         if (data.status === 'RUNNING') {
           badge.className = 'px-3.5 py-1.5 text-xs font-bold rounded-full bg-amber-950 text-amber-300 border border-amber-500 font-mono shadow animate-pulse';
-          badge.innerText = 'âš¡ RUNNING';
+          badge.innerText = '&#x26A1; RUNNING';
           spinner.classList.remove('hidden');
         } else if (data.status === 'COMPLETED') {
           badge.className = 'px-3.5 py-1.5 text-xs font-bold rounded-full bg-emerald-950 text-emerald-300 border border-emerald-500 font-mono shadow';
-          badge.innerText = 'âœ” COMPLETED';
+          badge.innerText = '[OK] COMPLETED';
           spinner.classList.add('hidden');
         } else {
           badge.className = 'px-3.5 py-1.5 text-xs font-bold rounded-full bg-slate-900 text-slate-300 border border-slate-700 font-mono shadow';
@@ -6929,7 +6929,7 @@ WantedBy=multi-user.target</pre>
         const container = document.getElementById('switches-grid');
         container.innerHTML = `
           <div class="col-span-full py-12 text-center bg-slate-950 rounded-xl border border-rose-900/50">
-            <div class="text-2xl mb-2">âš ï¸</div>
+            <div class="text-2xl mb-2">[WARN]&#xFE0F;</div>
             <div class="text-sm font-semibold text-rose-300">Unable to load switches from Switches.txt</div>
             <div class="text-xs text-slate-400 mt-1">Make sure Switches.txt is present with switch IP addresses, then refresh.</div>
           </div>
@@ -6963,7 +6963,7 @@ WantedBy=multi-user.target</pre>
       if (allSwitches.length === 0) {
         container.innerHTML = `
           <div class="col-span-full py-12 text-center bg-slate-950 rounded-xl border border-slate-800">
-            <div class="text-2xl mb-2">ğŸ“‹</div>
+            <div class="text-2xl mb-2">&#x1F4CB;</div>
             <div class="text-sm font-semibold text-slate-300">No switch IPs found in Switches.txt</div>
             <div class="text-xs text-slate-500 mt-1">Add your switch IP addresses (one per line) to Switches.txt and refresh.</div>
           </div>
@@ -6995,7 +6995,7 @@ WantedBy=multi-user.target</pre>
       if (filtered.length === 0) {
         container.innerHTML = `
           <div class="col-span-full py-12 text-center bg-slate-950 rounded-xl border border-slate-800">
-            <div class="text-2xl mb-2">ğŸ”</div>
+            <div class="text-2xl mb-2">&#x1F50D;</div>
             <div class="text-sm font-semibold text-slate-300">No switches matching your search or reachability filter</div>
             <div class="text-xs text-slate-500 mt-1">Try switching to the "All" tab or clearing the search query</div>
           </div>
@@ -7019,7 +7019,7 @@ WantedBy=multi-user.target</pre>
         if (data && data.backupContent) {
           copyToClipboard(data.backupContent, `Copied backup for ${hostname} (${ip})!`);
         } else {
-          showToast(`No backup file found on disk for ${ip}. Click "âš¡ Backup" first!`);
+          showToast(`No backup file found on disk for ${ip}. Click "&#x26A1; Backup" first!`);
         }
       } catch (err) {
         showToast('Error reading backup file: ' + err.message);
@@ -7261,7 +7261,7 @@ WantedBy=multi-user.target</pre>
         }
       }
       if (cpuLoadsEl) {
-        cpuLoadsEl.innerText = `5s: ${cpu}% â€¢ 1m: ${(cpu * 0.95).toFixed(1)}% â€¢ 5m: ${(cpu * 0.92).toFixed(1)}%`;
+        cpuLoadsEl.innerText = `5s: ${cpu}% &bull; 1m: ${(cpu * 0.95).toFixed(1)}% &bull; 5m: ${(cpu * 0.92).toFixed(1)}%`;
       }
 
       // Render CPU sparkline
@@ -7293,8 +7293,8 @@ WantedBy=multi-user.target</pre>
       const tempBadgeEl = document.getElementById('monitor-temp-badge');
       const tempBarEl = document.getElementById('monitor-temp-bar');
 
-      if (tempCEl) tempCEl.innerText = `${tempC}Â°C`;
-      if (tempFEl) tempFEl.innerText = `(${tempF}Â°F)`;
+      if (tempCEl) tempCEl.innerText = `${tempC}&deg;C`;
+      if (tempFEl) tempFEl.innerText = `(${tempF}&deg;F)`;
       if (tempBarEl) {
         const tempPct = Math.min(100, Math.max(5, (tempC / 80) * 100));
         tempBarEl.style.width = `${tempPct}%`;
@@ -7397,7 +7397,7 @@ WantedBy=multi-user.target</pre>
           <tr class="hover:bg-slate-900/60 transition">
             <td class="py-2.5 px-4 text-slate-400 font-mono">${p.pid}</td>
             <td class="py-2.5 px-4 text-white font-bold font-mono flex items-center gap-1.5">
-              <span>âš™ï¸</span> <span>${p.name}</span>
+              <span>&#x2699;&#xFE0F;</span> <span>${p.name}</span>
             </td>
             <td class="py-2.5 px-4">
               <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold ${p.state === 'Running' ? 'bg-emerald-950 text-emerald-300 border border-emerald-800/60' : 'bg-slate-800 text-slate-300 border border-slate-700'}">
@@ -7484,11 +7484,11 @@ WantedBy=multi-user.target</pre>
         if (revisions.length === 0 && !primaryContent) {
           document.getElementById('modal-revisions-list').innerHTML = `
             <div class="p-3 bg-slate-900 border border-slate-800 rounded-lg text-slate-400 text-center space-y-1">
-              <div class="text-amber-400">âš ï¸ No Backups Found</div>
+              <div class="text-amber-400">[WARN]&#xFE0F; No Backups Found</div>
               <div class="text-[11px]">No backup files (.xsf / .cfg) currently on disk for ${ip}.</div>
             </div>
           `;
-          document.getElementById('modal-backup-content').innerText = `# No configuration file found on disk for ${hostname} (${ip}).\n# Click the "âš¡ Backup" button on the main dashboard to generate one right now!`;
+          document.getElementById('modal-backup-content').innerText = `# No configuration file found on disk for ${hostname} (${ip}).\n# Click the "&#x26A1; Backup" button on the main dashboard to generate one right now!`;
           document.getElementById('modal-backup-active-filename').innerText = 'None';
           return;
         }
@@ -7528,13 +7528,13 @@ WantedBy=multi-user.target</pre>
           >
             <div class="flex items-center justify-between gap-1.5">
               <div class="font-bold text-xs truncate flex items-center gap-1.5 ${isSelected ? 'text-indigo-200' : 'text-slate-200'}">
-                <span>ğŸ“„</span>
+                <span>&#x1F4C4;</span>
                 <span class="truncate">${escapeHtml(rev.filename)}</span>
               </div>
               ${isLatest ? '<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-800 shrink-0">LATEST</span>' : ''}
             </div>
             <div class="flex items-center justify-between text-[10px] text-slate-400 font-mono">
-              <span>ğŸ•’ ${rev.timestamp || '--'}</span>
+              <span>&#x1F552; ${rev.timestamp || '--'}</span>
               <span class="px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">${rev.fileSizeKb || 0} KB</span>
             </div>
           </button>
@@ -7589,7 +7589,7 @@ WantedBy=multi-user.target</pre>
       navigator.clipboard.writeText(text).then(() => {
         const rev = currentBackupModalRevisions[activeSelectedRevisionIndex];
         const fname = rev ? rev.filename : 'configuration';
-        showToast(`âœ” Copied ${fname} to clipboard!`, 'success');
+        showToast(`[OK] Copied ${fname} to clipboard!`, 'success');
       }).catch(err => {
         showToast('Failed to copy: ' + err, 'error');
       });
@@ -7610,7 +7610,7 @@ WantedBy=multi-user.target</pre>
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      showToast(`ğŸ“¥ Downloading ${fname}`, 'success');
+      showToast(`&#x1F4E5; Downloading ${fname}`, 'success');
     }
 
     // Field Tech Recovery Cheat Sheet Controller
@@ -7641,7 +7641,7 @@ WantedBy=multi-user.target</pre>
       const preEl = document.getElementById(`cs-code-${stepId}`);
       if (!preEl) return;
       navigator.clipboard.writeText(preEl.innerText).then(() => {
-        showToast('âœ” Commands copied to clipboard!', 'success');
+        showToast('[OK] Commands copied to clipboard!', 'success');
       }).catch(err => {
         showToast('Failed to copy: ' + err, 'error');
       });
@@ -7885,7 +7885,7 @@ WantedBy=multi-user.target</pre>
             </td>
             <td class="py-3 px-3">
               <div class="font-bold text-slate-100 flex items-center gap-1.5">
-                <span>${isCoreOrSwitch ? 'ğŸ”€' : (isAp ? 'ğŸ“¡' : 'ğŸ’»')}</span>
+                <span>${isCoreOrSwitch ? '&#x1F500;' : (isAp ? '&#x1F4E1;' : '&#x1F4BB;')}</span>
                 <span>${n.systemName}</span>
               </div>
               <div class="text-[11px] text-slate-400 truncate max-w-[220px]">${n.systemDesc}</div>
@@ -7903,7 +7903,7 @@ WantedBy=multi-user.target</pre>
             </td>
             <td class="py-3 px-3">
               <div class="text-slate-300 text-xs font-mono">${n.vlan}</div>
-              ${n.poe ? `<div class="text-[10px] text-amber-400 font-mono">âš¡ ${n.poe}</div>` : ''}
+              ${n.poe ? `<div class="text-[10px] text-amber-400 font-mono">&#x26A1; ${n.poe}</div>` : ''}
             </td>
             <td class="py-3 px-3 text-right text-slate-400 group-hover:text-indigo-400 transition text-xs">
               <span>View Full &darr;</span>
@@ -7938,7 +7938,7 @@ WantedBy=multi-user.target</pre>
                 </div>
                 <div class="pt-2 border-t border-slate-800/80 flex justify-between items-center text-[11px]">
                   <span class="text-slate-500">Full Raw Block captured verbatim via CLI</span>
-                  <button onclick="copyLldpNeighborByIndex(${idx})" class="text-indigo-400 hover:underline">ğŸ“‹ Copy Neighbor Block</button>
+                  <button onclick="copyLldpNeighborByIndex(${idx})" class="text-indigo-400 hover:underline">&#x1F4CB; Copy Neighbor Block</button>
                 </div>
               </div>
             </td>
@@ -7956,7 +7956,7 @@ WantedBy=multi-user.target</pre>
         uplinksContainer.innerHTML = uplinkNeighbors.map(u => `
           <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2 font-mono text-xs">
             <div class="flex items-center justify-between">
-              <span class="font-bold text-white flex items-center gap-1.5">ğŸ”€ ${u.systemName}</span>
+              <span class="font-bold text-white flex items-center gap-1.5">&#x1F500; ${u.systemName}</span>
               <span class="bg-indigo-950 text-indigo-300 border border-indigo-800 px-2 py-0.5 rounded text-[11px] font-bold">Port ${u.localPort} &rarr; ${u.portId}</span>
             </div>
             <p class="text-slate-400 text-[11px]">${u.portDesc}</p>
@@ -8006,7 +8006,7 @@ WantedBy=multi-user.target</pre>
 
     async function showLldpNeighborsLive(ip, hostname) {
       document.getElementById('modal-lldp-ip').innerText = `${hostname} (${ip})`;
-      document.getElementById('modal-lldp-subtitle').innerText = `Command: show lldp neighbors detailed â€¢ Switch ${hostname} (${ip})`;
+      document.getElementById('modal-lldp-subtitle').innerText = `Command: show lldp neighbors detailed &bull; Switch ${hostname} (${ip})`;
       document.getElementById('modal-lldp-raw-content').innerText = `Connecting via Telnet to ${ip}:23...\nExecuting 'show lldp neighbors detailed'...\nPlease wait...`;
       document.getElementById('modal-lldp-channel-status').innerText = `Live Telnet Channel: Connecting to ${ip}:23...`;
       document.getElementById('modal-lldp-query-time').innerText = `Query Time: ${new Date().toLocaleTimeString()}`;
@@ -8025,7 +8025,7 @@ WantedBy=multi-user.target</pre>
         const data = await res.json();
         const rawCli = data.rawCli || 'No LLDP output returned.';
         document.getElementById('modal-lldp-raw-content').innerText = rawCli;
-        document.getElementById('modal-lldp-channel-status').innerText = `Live Telnet Channel: ${ip}:23 â€¢ Response: Active â€¢ Full Detailed Output`;
+        document.getElementById('modal-lldp-channel-status').innerText = `Live Telnet Channel: ${ip}:23 &bull; Response: Active &bull; Full Detailed Output`;
         document.getElementById('modal-lldp-query-time').innerText = `Query Time: ${data.timestamp || new Date().toLocaleTimeString()}`;
 
         let parsedNeighbors = (data && Array.isArray(data.neighbors) && data.neighbors.length > 0)
@@ -8147,7 +8147,7 @@ WantedBy=multi-user.target</pre>
             <td class="py-2.5 px-3">
               <div class="flex items-center gap-1.5">
                 <span class="font-bold text-white tracking-wide">${e.mac}</span>
-                <button onclick="copyToClipboard('${e.mac}', 'Copied MAC ${e.mac}');" class="text-slate-500 hover:text-emerald-400 text-[11px]" title="Copy MAC">ğŸ“‹</button>
+                <button onclick="copyToClipboard('${e.mac}', 'Copied MAC ${e.mac}');" class="text-slate-500 hover:text-emerald-400 text-[11px]" title="Copy MAC">&#x1F4CB;</button>
               </div>
             </td>
             <td class="py-2.5 px-3">
@@ -8272,7 +8272,7 @@ WantedBy=multi-user.target</pre>
         const data = await res.json();
         const rawCli = data.rawCli || 'No FDB output returned.';
         document.getElementById('modal-fdb-raw-content').innerText = rawCli;
-        document.getElementById('modal-fdb-channel-status').innerText = `Live Telnet Channel: ${ip}:23 â€¢ Response: Active â€¢ Command: ${data.command || 'show fdb'}`;
+        document.getElementById('modal-fdb-channel-status').innerText = `Live Telnet Channel: ${ip}:23 &bull; Response: Active &bull; Command: ${data.command || 'show fdb'}`;
         document.getElementById('modal-fdb-query-time').innerText = `Query Time: ${data.timestamp || new Date().toLocaleTimeString()}`;
 
         const parsed = parseFdbCliJs(rawCli);
@@ -8291,7 +8291,7 @@ WantedBy=multi-user.target</pre>
 
     async function showFdbTableLive(ip, hostname) {
       document.getElementById('modal-fdb-title').innerText = `${hostname} (${ip})`;
-      document.getElementById('modal-fdb-subtitle').innerText = `CLI: show fdb â€¢ ExtremeXOS MAC Table & Port Lookup`;
+      document.getElementById('modal-fdb-subtitle').innerText = `CLI: show fdb &bull; ExtremeXOS MAC Table & Port Lookup`;
       document.getElementById('fdb-port-filter').value = 'ALL';
       document.getElementById('fdb-mac-input').value = '';
       
@@ -8309,7 +8309,7 @@ WantedBy=multi-user.target</pre>
     function showSwitchPingLive(ip, hostname) {
       currentPingSwitch = { ip, hostname };
       document.getElementById('modal-ping-title').innerText = `${hostname} (${ip})`;
-      document.getElementById('modal-ping-subtitle').innerText = `Target IP: ${ip} â€¢ ICMP Network Latency & Reachability Test`;
+      document.getElementById('modal-ping-subtitle').innerText = `Target IP: ${ip} &bull; ICMP Network Latency & Reachability Test`;
       document.getElementById('ping-target-ip').value = ip;
       document.getElementById('ping-metrics-card').classList.add('hidden');
       document.getElementById('ping-raw-output').innerText = 'Executing ICMP Ping probe...';
@@ -8331,7 +8331,7 @@ WantedBy=multi-user.target</pre>
       }
 
       btn.disabled = true;
-      btn.innerHTML = `<span class="animate-spin mr-1">âš™ï¸</span> Pinging...`;
+      btn.innerHTML = `<span class="animate-spin mr-1">&#x2699;&#xFE0F;</span> Pinging...`;
 
       try {
         const res = await fetch('/api/ping', {
@@ -8378,7 +8378,7 @@ WantedBy=multi-user.target</pre>
         document.getElementById('ping-raw-output').innerText = 'Ping Error: ' + err.message;
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<span>âš¡ Send Ping</span>`;
+        btn.innerHTML = `<span>&#x26A1; Send Ping</span>`;
       }
     }
 
@@ -8470,7 +8470,7 @@ WantedBy=multi-user.target</pre>
       if (isCustomBouncePort) {
         selectBox.classList.add('hidden');
         customBox.classList.remove('hidden');
-        toggleBtn.innerText = 'â† Select from Standard List';
+        toggleBtn.innerText = '&#x2190; Select from Standard List';
         document.getElementById('bounce-port-custom-input').value = currentBouncePort;
         document.getElementById('bounce-port-custom-input').focus();
       } else {
@@ -8543,7 +8543,7 @@ WantedBy=multi-user.target</pre>
           // No MACs learned on this port
           content.innerHTML = `
             <div class="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-start gap-3">
-              <span class="text-slate-400 text-lg">â„¹ï¸</span>
+              <span class="text-slate-400 text-lg">&#x2139;&#xFE0F;</span>
               <div class="space-y-1 text-xs font-mono">
                 <div class="text-slate-200 font-bold">No Active MAC Learned on Port ${port}</div>
                 <div class="text-slate-400">The link may be down, or the connected device is idle. Bouncing will reset physical layer transceiver state.</div>
@@ -8555,7 +8555,7 @@ WantedBy=multi-user.target</pre>
           const m = matched[0];
           content.innerHTML = `
             <div class="p-4 rounded-xl bg-emerald-950/40 border border-emerald-700/60 flex items-start gap-3.5">
-              <span class="text-emerald-400 text-xl font-bold">âœ”</span>
+              <span class="text-emerald-400 text-xl font-bold">[OK]</span>
               <div class="flex-1 space-y-2 font-mono text-xs">
                 <div class="flex items-center justify-between">
                   <span class="text-emerald-300 font-bold uppercase tracking-wider text-[11px]">Single Client Confirmed (Access Port)</span>
@@ -8596,7 +8596,7 @@ WantedBy=multi-user.target</pre>
           content.innerHTML = `
             <div class="p-4 rounded-xl bg-amber-950/40 border border-amber-600/60 space-y-3 font-mono text-xs">
               <div class="flex items-center gap-2.5 text-amber-300 font-bold">
-                <span class="text-lg">âš ï¸</span>
+                <span class="text-lg">[WARN]&#xFE0F;</span>
                 <span>Caution: Multiple MACs Learned on Port ${port} (${matched.length} Devices)</span>
               </div>
               <p class="text-slate-300 text-xs">
@@ -8658,14 +8658,14 @@ WantedBy=multi-user.target</pre>
         resultCli.innerText = data.rawCli || data.message || 'Port bounced successfully.';
         showToast(`Port ${currentBouncePort} bounced successfully on ${currentBounceSwitch.hostname}!`);
         
-        btn.innerHTML = `<span>âœ” Port ${currentBouncePort} Bounced</span>`;
+        btn.innerHTML = `<span>[OK] Port ${currentBouncePort} Bounced</span>`;
         btn.className = "flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold bg-emerald-600 text-white shadow transition-all cursor-default";
       } catch (err) {
         resultCard.classList.remove('hidden');
         resultCli.innerText = `Error bouncing port: ${err.message}`;
         showToast(`Error: ${err.message}`);
         btn.disabled = false;
-        btn.innerHTML = `<span>âš¡ Retry Bounce Port ${currentBouncePort}</span>`;
+        btn.innerHTML = `<span>&#x26A1; Retry Bounce Port ${currentBouncePort}</span>`;
       }
     }
 
@@ -8675,7 +8675,7 @@ WantedBy=multi-user.target</pre>
       isCustomBouncePort = false;
 
       document.getElementById('modal-bounce-switch-name').innerText = `${hostname} (${ip})`;
-      document.getElementById('modal-bounce-switch-sub').innerText = `Switch IP: ${ip} â€¢ Protocol: Telnet (Port 23) â€¢ CLI: disable port / enable port`;
+      document.getElementById('modal-bounce-switch-sub').innerText = `Switch IP: ${ip} &bull; Protocol: Telnet (Port 23) &bull; CLI: disable port / enable port`;
       
       // Reset UI states
       document.getElementById('bounce-port-select-container').classList.remove('hidden');
@@ -8686,7 +8686,7 @@ WantedBy=multi-user.target</pre>
       const btn = document.getElementById('btn-execute-bounce');
       btn.disabled = false;
       btn.className = "flex items-center gap-2 px-5 py-2.5 rounded-lg text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg transition-all";
-      btn.innerHTML = `<span>âš¡ Confirm &amp; Bounce Port <span id="btn-bounce-port-num">${defaultPort}</span></span>`;
+      btn.innerHTML = `<span>&#x26A1; Confirm &amp; Bounce Port <span id="btn-bounce-port-num">${defaultPort}</span></span>`;
 
       populateBouncePortSelect(defaultPort);
       updateBouncePortPreviews();
@@ -8726,7 +8726,7 @@ WantedBy=multi-user.target</pre>
         if (pwdInput) pwdInput.value = '';
         setTimeout(() => {
           closeModal('modal-rollout-auth');
-          showToast('âŒ Incorrect password. Access denied.');
+          showToast('[X] Incorrect password. Access denied.');
         }, 1200);
       }
     }
@@ -8742,7 +8742,7 @@ WantedBy=multi-user.target</pre>
       
       const btn = document.getElementById('btn-run-fleet-rollout');
       btn.disabled = false;
-      btn.innerHTML = `<span>ğŸš€ Execute Rollout on Selected Switches</span>`;
+      btn.innerHTML = `<span>&#x1F680; Execute Rollout on Selected Switches</span>`;
       btn.className = "flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-500 text-white shadow-lg shadow-amber-600/30 transition-all";
 
       openModal('modal-rollout-workspace');
@@ -8796,62 +8796,40 @@ WantedBy=multi-user.target</pre>
       document.getElementById('rollout-selected-count').innerText = `${selected} / ${rolloutTargetSwitches.length} Selected`;
     }
 
-    function updateRolloutCommandCount() {
-      const textarea = document.getElementById('rollout-commands-input');
-      const countEl = document.getElementById('rollout-cmd-count');
-      if (!textarea || !countEl) return;
-      const lines = textarea.value.split('\n').filter(l => l.trim().length > 0 && !l.trim().startsWith('#'));
-      countEl.innerText = `${lines.length} executable command${lines.length === 1 ? '' : 's'}`;
-    }
-
-    function applyRolloutTemplate(type) {
-      const textarea = document.getElementById('rollout-commands-input');
-      if (!textarea) return;
-
-      const templates = {
-        vlan: `# Add Corporate Voice VLAN and QoS Profile
-create vlan Voice tag 100
-configure vlan Voice ipaddress 10.100.1.1/24
-configure vlan Voice qosprofile qp6
-enable dot1p exam vlan Voice`,
-        ntp: `# Configure Redundant Enterprise NTP Timeservers
-configure sntp-client primary 10.0.0.10
-configure sntp-client secondary 10.0.0.11
-enable sntp-client
-configure timezone name EST -300 autodst`,
-        syslog: `# Enterprise Syslog Monitoring Configuration
-configure syslog add 10.0.0.25:514 local7 info
-enable syslog
-show syslog-configuration`,
-        save: `# Commit Running Configuration to Non-Volatile Flash
-save configuration`
-      };
-
-      const snippet = templates[type] || '';
-      if (snippet) {
-        textarea.value = (textarxœÄ=ínIrÿım®a’gEùk}ôJV’½ÌÉ’N”öxjÄiŠ³ÎÌÎ‡$FKà ¿’à‚Üå€,¸\^!@p?‚<Œ_ ÷©êî™éîéá‡,ÛŞµ%ÎtWWWU×WW7©İ¾°½”¶“È4šäIèUbGT{ş€Ô¿ó¿óë¤KêuüûnÒäù"ş¤¡c'ô(ğ¼ M¶ƒÉÄöí õ“F³hƒËãÀ“Fı˜NBzÛq¨C’€y'B7	¢zŞmv‡ÿË~ØñÔ’Qê7ğ	½¢Ã4vÏ½ €ìµè8ü8É'D6ˆÓ	õ“ö9Mv=Š¿~=í9zÄû[…Ørı0M
-8¤ì-@ÊVé¤ö©G‡	uú—n2S„"†=¶#@({Ş¹^B£F|I66I|ÙÎ:jØØiôíºÌ¼°mmëÈáZ·¡á;`O—$QJŸß¸#Ò¸›‘£ 8°Ç£0÷Ğ£vL	@¦±‚ø”lïõrFÏÿÚuIH"š¤‘_p_S§aÛ£şy2&¤Sï¦"’0¢}¢b‡¡7-xœË ÅYq–øó¸ ¯­(õ­‘Gib	*ÀáuÛqcûÌBoB¯\ß§Ñ7Ç¯÷àİéWqhûdèÙq¼Q³}w+ÈŠC×'“ÈZ¯m¾ÿéßÿïÏ¿ùj›m\®N`8œá½ë
-úÍàA»}*ÎFÚ·'(e5ÀÿŠ¸	ÄÖ³öÜ­‡$¼²’pj=l?‘N}XÏÖ•Ç†u“Qà'ÖYà9äìÜ²'g4²¾ìtøëË1À#Ã4ŠƒÈº´]àMhİdj=ëÔrqK¢©Ä[Nóˆ­ ›õQ@¾Q_³Cw­XÊşÈ=·<P	õ–Ô›	MÆôğ \oIoÆÔvhwÉ5©oÖ0IëxÒ:4Fñp‡6jµïã TáLîz8Ó.ùëşÁ~;àŸ»£iC•ä¢ÕR&Êâï–Ô„Ú:[ôêÓ4¦‘Lê’0ˆÛÛN£p?Ç°ŞKÏÚY{ÔR¶3qıº
-o”zŞ~%¼F`Öüøãœá˜VÜ§Ée½#[8®´²QÙ«ã—¶E¸>‡;àó‘ÀÍšwŠ_s‘ÊÄŒ–ËÈTy+›¬ü—eŒG JÖ…K/QwâÚÙƒ)¶ÁÄ5êc/ë”…ŸÔKâ2ÀˆN0uÌÕÆ)ˆc4¸LÃÃrBH„;İåÊÙ}	º)ÕN nÁ€Û5
-yÿëÿ$ıt8¤1H· óÏÌ?˜;¿´]ĞŒyßû˜wíğFÇ.Šk†%|ˆ{bŸ^’P“&`¿Á4`ã>[¥æìtâ¸úñ0rC`·çj´ccGöå¶çö9qqüºpNpı‡…Y¶ëñÒ¬ÀÈöbú\y[6›ïÿğ;’ßà…ò?U;ßº"âD¶çXOUUm'¸´¼óšDÖÂí;-ƒY@2%ö0
-âxKu÷´p	èe0âEe'à”Ëämd~Êtiƒ°Äö96Ÿ;şòÇŸ~M(š+1ÏOÄnU‘cĞQ7ôDáNÍèR¯­Ë²HNé„ù%º*¤ç_ FLg—ùäØÎä…!õ³î¼¥ä…¯b¼3æZ€ƒ¬)—ÔÕË;üò@VÖA½ÍìySqT?[öCî.°/-ï,.R©SŠ‹f$'v®¶õB¢½Àv
-ç&Óg;«œ&ŒE¯Çöõ	ş°r
-¨á–‰œµsĞ¿Aœµ€ìY˜àw½¥àpä-Ö¥€ÃÂ“`É]³©ùñ|@ğ‘©Ô‰H.‡bˆz›YLæaHæ‰/>6I‡Ü¿OîæÏÁôDIü+7±ş¢Ş”¦ÇPlÆé½k6|®ß8©Õ§,¾Y÷§Îp×g îÑ¿M#êœš97_ÓË9÷$æ$DqiPs09”cˆ]™/Š“¥ñ›Î[…œøĞL¾ˆyÍ  --sÄòÍ´ŸIëFbƒ^$º”#ûùJ„.’%î´|î•.P[yy+°7A'–ï½k¤i=ã™bOMšA#&şØŠQˆŒ3fDˆ:vlcı*ë®BXìË½…ËMOœP¿ÆBÀúT"­ˆê}f¦ß¼Í½˜:i€‡ÁV7	FùÈe‰Ãe;aı±­XÅª€ÜmšL\?¥š ñ×¥¥¯È“À³¦ñ8ë¡HIöLCÕ_3±‘!İàçÆZã;çz½õhö]»ò—æš6)LCRŒCˆ÷oÖßÊH2r´Çv`´y’Œe,ğ×Ï•—ÉPLzF(ø]«1_/yî ´ˆ€ï×WÅm‰µ,%0·…Ôa&|³”§à›{MÄjšaÕ<'L³UzN·nW3ÅZ™½4¤-—Èmá$,İuûèÉ­¾}¹-æ©ò´ÕMÎêŸ-W”óGKX¨Yèãò”cl]1]Æ,‰;
-Ùæ‹Å!÷´ëÔ¹«öÅ‡™h+¾nyM‹@m½[\È×¯<¨g¾ïÌh—ÿÛÕAß!ßÆ(´ qÃ0ğ_ÿ—°Ôü}{>‡ˆ9>Œ‚z@¨Gbıô‰ía†úåºÈVšŒæB€Ş}Àû†9xë‰†®œ/‹	şÄsÍ)p}7á°tIßˆàøëÅë>	Âr6å¯ !³£xº85&µ“)xI1M#b¢dÚ¨GBÏÂZ­û@)üé2¯Ê–£€Ù}€’€9-û Ò 8ËDâ:§å 3—º¯Èºª«ÊDy¶¼C;Š©è!¯¶×Ày€ÍOzª·XIu¾dùp–œ»ş2yFÃŠ»éåÄcõb”itÛã)Ë&—lYs˜ÛRb”ÙI=³ó¹ûj_‹5Öm-:õóCX¶Ö!`^{yØZ]ƒ|—
-Tà7Rfk´{9%t½é6€²Êu †Í–áÇXËñ›G)Z³¶ã)~Eï¦O£wHÉßÕK˜È‰¹ÛÇDZ€Sxe­·Ÿ`†¯Sdøx²îÍz'¼zkÎ·şü‰Èèeu:àQD‚óù›g¼Ò]yL×wÜó R|.(^à€¥-R0jYÒ÷,M4@1A¿g˜€©†ıÊ´qs(ş4æ	ß”9,›ÛÕzíbõJ\Á8º>´¸ï|Ua#ÆaC};¦ZÛ$áÑ‚%Ñâú}ME?=›¸‰li‰ğ‘¶Ãˆ¢§ºCGvê•2™*êa™Ç:–&+ë¥«êhBà¬-ë¥Cc~îRšŸÃaíK9F™%‰Š÷’¢7•Z K%Üõó¢
-˜lÆh;’½P?+±¨€ ¨²H óyWEÓvÚoşKq·ıs,ıñ¥ĞÖ¸[óùËŒI­‚7‹1]‰/‚w¨ åp3ÿœ2ïj‘—œ7U¢NÕ)MNyKŸf1ègô´•Dï¯¨7ê"€Mu©xšqhv÷t¾jÎ–AiÛY„³lÿ©çÃrbİBTq¾M¶±¤‹½ã[} XAâèÑ`¢ì]•İ*ş¿Œ›0?Õb[?ŸŠÌu¾é¯ëÏKğ–ˆq½QOhÑı\UÁ¶zûî¹Oz¾óû˜ûÍ¢ó¹qş|»ÆT‹[aK1U‘9J¡––©­ÖC¤‰*tQy"rÚW})ŠT}³"á‰Á8Up¹˜×¯æ-ÒÅI]Ş!»í8{UW&Ï²g¶_­1Ø¿p“)XY„ô8‚U;™	Îõ˜Î²±	,‡xÛ©¼¹c¨>`ğ8Ü,Hiã›ÁÅB×+æÉ¦é¶²aw@­fÆÂ¼nÍõÜ=®‚y" Ada[UXwe­ãM%ÑæW‰z¨q6jOkY
-Ål¢¦B¾§<ˆ‹±êÚzÜéÔ6÷`˜keX€¥c2Š‚	4 ö2ãÏÜ ÄÙ„"]§­ê\TFñê;J"ÁLC»÷æ­p‰JIô*Îƒ¼r b÷^Å)ßÆ?âÄ”/!ÈååyŞŒ”ÙlÅàv!
-b!<ñî™¤A·À1¨ŞŠMhãÄµ•S;FPœ]¼qE‘¾ôy¹÷B01wíÎƒhªCú“@2^/d,¥ …^ÒhÛY™¡²œ£…{9r/ŠßH[{{u-öâ82÷D“4Q’‚•cX•¢/@¶/Lã_BÇ»?àò¤‡u*ª€YÍ’>	×z©CãÆMhPê,û±+wvhë-¾Q_›ÕMºò-¥^˜u^ªù7Aœ,E%)<Bó%è¿Íø.G B­às–«k{NO( vz[¯öÁyëmÏƒÃf”Iz©#NN¦.{ØÛ58Ş·°òu}>j‡GÇƒƒÃİ£­ãŞÁ~EüôŞ9†f_œìoïšåïØ®b&„ùÚ>ØÙ{uÂ1¼ŞÚßzµûzwÿxÅ™U‚1¢wt°·wpr<à½Ìm^îíîf-¢ƒ¹åÉáÎÖñî ·ÿ-xpô7füõÖö/NWœŸèTÁ0şÖÈYÑã£Ş«W»G˜ÂZŠëÍyÓØ:9şfÅI°.ÆQ÷^õö+_!åçÆğFœ á±lp‹¶U¨ûû÷¥rï¢ĞN39%kœYÕİE5F¯À—p(÷s{¾ã©¡[y<vÄàg°¬Yvİs§ 	ÎÏ=Ê—»l”†ë\i©\Ãè¼æZ*ÙSC‡b…9k[¸Y;ŒYÙ’Ükí*çİâ	…ŠÒ<A ÏËh7–˜{ìşßJ¨5+9XØfS=4gË¥¢Æj”¤‡‰6ƒq›è¾¸ÍJíaN3Bïpïƒ}ª$÷í÷·œ`ÖnxØ‘ƒt¼t}'¸l»qŸÂğ”¥B®”ÊUCÇöeK˜h²ÖmÌt5MÕWSJlşòÇßş#DÃ¡îúWÂÏ¼%<"›AWjmfÍ6–‡® Ö`UrººmŸ*<ìFİTe[*ÃÃÅë‹kì‚vg{ìzNQšk€Å‰ÈbzˆSÈ:rßxğŠÆs•£-CÂ*Ş˜"£`»\ˆ!ì…XE¬©,'yËi…»" ÌJ2Øs8ÃN²Å@íÊªDtr…¸gŸÑ¹1;Ï›akËö²„‡½´ô‰±\÷ëÆğN¢õ2úõÁ‡ifIü”Ä‚ŠÚ‚¢÷o zg‡°(á%«f€§¿'¼{V"-cwÎ<WLéÌôåÉÉ¥'˜TØ¸#R¤X–¥H3aõ)­TyØºŒ [X,	º†P·Øœ‚€ŞÃí$•‚ÏĞ6"ãN\ÿd{{·ß—¼¸$,s]“Ò1S,øZT
-óê<C	‹¤Ñ_hu²æ’›oÈ• µÍ­×½ılCÂ »,\r¸ücy|şüK}øşîÑ·½í]²³ÛÿEiV¸œv’õ“ tïÚ+|uÆ*î ÏÊÇüpáysÂi¯:×*vWãpjûÛÙ§òÙãËG²F
-dÊ“¢+¯2Š6Íp~2`õiòù<ùÇòDùóòLÂ±]0ÇBwo^Üş¡óÓ(‹—OX|.ÏX¼(MùõÉŞq¬Vš´1	°únVÂ¦N‚£bÀ^×¸\Ëgæ&`¾&}¨am17üæ¨Õtªjãf9İZ‰Ëßç±OelØã9¨¼Üêííîô«Ø’áş­ğJ<5s«ÛGí:"¾B®è^vèÙCÚX«­·Hışi<û›?¯óç_<úùóºLÍŒm?=ƒ NÚ^ÌTmašU!-u”‰Mø7¥sã ]û2#£u¦YI|û¼2:I¡õ¸Ô;îEyØNgíçù¤wh=®m56~ÜQÏ‚O?0¦W>lş}'îhj#B©OÂ3¸	ş£S ·ÆQ`Ypu—£?óywĞ`àÍ¿üñwÿL^¢ìoq%›ÉÙ}rL1<ÀmÈ‡¼‚Dˆ´ÓyïæR‹Í¯F”¸V¼%$ğ!H¾Û¨™Òõ{×êšÕ›µJP’~àºv]uoò{ 4W†|X¨Õu¬úÍ•t•„×^¸|7ÏÌ¾jL7ñèFÂæ©Plh%d®ê]EèB&x@>Í„ag‘ïœAUR¬7. ÊÆ…–n¾’½s#YŸUp–3»«æ1¤VQë2²CrQûuÉ"'£q£ÖŠ¨g_á,ÂÎı)ªàŞµ¬¾QeCLf;c¤íåÉ‹0
-.\ï%™İtöç‘ëüÇB-Ê#t‹Å•“„K+ÿ!È‘”è²öL•N½l¡rİn–U@˜‡9ºnv‚ğ«8‰ˆNËía{ôöåmNOİ1íOcXuôı˜ÍJB-ƒÜ^y´b,Fd,]Ûº-¶=ÏöWAdÈ:‰MÕõ‡_¶;ğßúm¡$T=VÍEª°4«b—XØpƒfÜ*^³ÆíI$?1û©bçFöH$DSà¸,(ŠX\š.ÓÂ•Ö…ZayŒû.÷®]çjÖÔVói„™á×Ğ€µy$k'?`ºiÁú\lQÍÆ¿J0ª™-ee^úûßÿËŒ½ÿı×gUÖ€”“ü¦¨Š¶†Ø½$¡>e4Ç>7'óX%eî]ç™*İÜ2)î]gäì6)º”ÊIcªï¨ LÑ7šD“[®Ú&iÈ]gÍ,ĞbuC³›SË\)ã­$`ºë_åÜ*³Õ[mI”ú¨fÉÄ¾².­‰SŸ‘3/¾«eî_É¹5šq$–b–’¹kZa‰8Ñ&KÁc%Y"uŠ®He¶t±8ò9©Ë’øŒpüÅÒÓ¼õ5(eIJËP·bÀB%š..*B›âZíÖQşûµ=|—†¤?S'ÿåµíÛçlc‚8V¤[YŒ…Ã”u|Q¬Ì«; %Óz©ş€µá—#A«,@}VäÏ¯±Í
-ÕG )¥şpÚÍ eoØ'¼%ğ$ÂËÎÃn§“¿»gÇÆ]ò¨“½È.çä£«c±»|¼‹ ¨ú_(È/Ü¬s!˜v8åÇ7gzñDL“Œ†¿LÁ¬ƒ;ôÒxı5Ğ^ß,ôYŞ£¸1ãğdËqÈ:™¸>^Š‡ñ'!ñğ–D‚¶Qİ¡ƒa† ãşÒŠ]ı´C~FÖ;Vÿ8Æ;kÄ‹ìøM nL£Ùl‡¶ÃP4¶€àz-ædbîşšá¾€„_ùÈkvÇãY÷ŞõdRœ')-,A‘ò6µÒd¨í8f ”}5W9‡{ßyÃ73Foü4_œ}úş§?Æu‚lï«	¡¢hğ«~Å3ÒxÀXÌ¢FÖ¦yjŞŸ6]ê'`ëEõ«T|Ÿ1¶bêeßù•&üN_-mZögßca-è@÷Üo\ÏZ†f-"Ã43«GPAêdÁ%uLPDS“<.Ó½,gµ]‘ÇºçºÊĞïl ú{q	ù2xWŠkıQ-. Z#qhCZr9+šWòkË7|o‹fäî†vä+[Á‹ÿ,.*ƒ‘msV¸•PË#²;çƒR,
-ÂzÔÑÀ ¯š‚gú„åàÍş~*ƒå¼k
-Î§™jÚÌ¤¼lfL] Q1ˆ2ÄÌ*
-#‡ö¾a [oF|a¿•"°…zµ|)¦¦¤ôÊ'D …š9õœ#Ê‡Û…Š*;.Ø-CàMwÀDü7
-ÿtğxŒ¿ƒ_ş¾m‚h×:28Ì¿£ëG´°hæŞõH¹@‰U‡œ±fJÅ3b›ØYÕ¸ú¶u9Ûyåeş2ó»=:JJÙcüƒÆ d]sÀŸt4Ï;¿ÒV|ÆÌ)úĞ“ı(šÍ/ÃıÓ(ÂóR¿Št½–w¯¬’âo¨Â×œ/ïæ2´RcÍ}üü¦.Ó×./Ê¾«–(ÆşÖö„ÏÅ:*š½ĞÛ¤«kpĞÂ+øx<¥ß	”ßÇ£Ÿì“ĞÖWq)O.šåmà[¿)æy	ÙĞÔ·¶{ßÎGÜ&æ+íh/Bøpë¤¿»cZBª/¥~ŒQ§íúüJ‚ùNÃa0a»/Ğ¯tíÿVœe¤=õñ o¯¹4wbÁü Síù•VÃ'å€”sìrq¼Uñ?şïÏ¿Á{/‚	»Ñ;ì1±#šnoJB;©ÓÆ˜=Åà0rÏÏi“À÷¦m—0œj*#K³ Ê¬/Š0ÆÅXòõLó¾}%Œ‚ïÙ]ñâ ü®*øåoßŒ[dòKò2=Qèƒfv!m~Å
-Ãı+‰ô»Qø»G©/ã†£• Š,¿“ù 6‘,.‡pÌi‘k‚¦Ş±1Z=Â“ú`èXúÌßú U‘;„ÏSjGÒ°ø=Mä¯àï¹dıC:sƒnìßÅŞrë%bì™"¿%Ÿkˆ„#‹m~E¯„[?¾Ú Oàçƒ¦;iyy—üŒ<Âğµìşqğ
-‘lÁÿ•¹ñ[eOä‹{×îO¿*öÎ0§ëÎÆüœ4àÑ4İI¹¬àÇlÑé’„Ãwìhƒ“
-z³´±Å×#ÛªˆšE‰oQ®e¤wîE~LŠ?ştT¿m"ÿÌ‚ÿH§Óê<nuµÖ¶ÖŸ¶v`éÃÿH{áµLÊ	Ÿ=}<‡ô|‘Q¥Áj°ïJùœ\85q¡£qNÜ»:güãMƒŠóuâıäÇ;†÷UL;Õ˜VĞzmÈÑ—™GÆ£eYT&?§ò7@¾İ˜I,†ƒêF»Á¥j´uÂl	–?X¯RxŒNdß=ƒ+ğ!úÎ(ŸJ dUéKU{RÙĞˆĞÌŸ.Q-Fôª‰Ê=ÊÇêåûŸşT”<ğë(ÛŸ—¾İRuâëÍ˜ês®”£¼x¬1ÕÃ5óÃÉ]Ì§¬Ä+d	™LœªÎV™®U¯È]¯x­y)mÍ‚9õêÈ9—œßÖ5ç‡ç§ò×ó™SÒ+DéYà\1/®—béRª™g#Ù½QL{~ÒX>oÍ¡·ÀÊ5ÕÔh‘|¦ƒ6Ïœe$1¹Z6º ¦F%öT|İ‰’­cƒJ…2g‡|y–´/©¹r+uR°Mn íSæå6ú–eF#¥¶u™ÓIn´h³X±r´ğ!ûHŸë>EÁØO{I¿aóLÑ™bg½P—ì~óûù-ı \²w.…'íÊ~Fî>Ka-uc]½Z?¢Ë"ĞFqm?Ó'ş;p_|".,]áî@1Zv;0U¾'@Sºªhîı%¾è²ÿ%®ûÏsüBÀ-ö²\s›N¬È?…6×ïæå†¯R0ğ
-/ÊD¿fCzİ"³ °`ëtóÎWk(ÜøsœL¼ÍZ­vç3IäxÌ¾bÈùæøø°Ï.…lÄ(¸DÜÉßé_»W=¿EÆI¶Å»¢O³ËPrl:	üAÂúàº>ÛÈ-¶ç—ƒˆ¦1Øñã™ìõ‡Ğk !,½¤1ªmÜìO­©@a77î^%huñm[YaŠøÆ…ÆßÒ(°v(B5ìÒ¸Y‚ñOÿB£ 	†×Åó>„ìO>;%×±àSĞ>xâlV‚óÛ¿';nneª¹Şéínãµ,zË›;èÙn.x_ˆ›*Q¡³œ¬Hùåk)|+¼3ì0§ cıAŞjÀ[5
-Uˆ²€KÇ CZ­EÍ– ³øşŠ¢w6×÷øò+z–±ƒÛ@b~wmÕ§Œƒ8é*T•a2ÚN"ïÁ6ÓOI¶k¦\lğ`¶DÌƒ^i˜_Ğ)s]ÙŠŠÒ0éjcÔ¾óûã4Á[‚Á]¸ô³TÛÙ0Ğ.ûÁ¾ &T‡2ªqúp¥@q6w@?X–8R&5ŞŸ-;ÿ  ÿÿ 3Il²
+    function updateRolloutCommandCouxœÜ=mWÛ8³ßùjÚÓ$Oã(ívÃB/´›»xHØ=÷v{‚‰â­c{mÈÃæ¿ßI¶%YÎ¥í9·»m[fFó¦±ì'µ:¹ß ìÏ0ğã„$ô.±#j“=âÃé„úIóš&GÅ¯ïf]§VÏ¦‰5&ÛwbËõÃiR­ï*†ÁÔ‡~+š8kÃpG¤ö$CæŸÈ¯N"šL#_Ìs}ÃPiæíMi3=7©Uÿô«õæÈõÕ ¡}â5“ÈÔêMú×É˜ì“yşœ<É®Ç %‰ÿp“q­ú´Z—¦Æhº¾O£>c^>»gÃ`sBïèpšØW%‚Dj²··G¶È[R­’6©ÆÕù%‡?ß`£©?LÜÀ'vz³sN¤>„ĞZ2é·àšBñœÊÚ8	$uŠ!7í·ÉåSrà8¤DaAò{àáßãƒã‘=rÀº1„! vÍûšlµZ0ÎÈ½FÊM7´'¢qMšĞª¹ÕÜÚÜŞ17ş;ˆC>ù;|½A}Æ'H¶BàŒ=‘Ú^6²9øIÈ¦ĞÉ@Sgê;¶Ÿ#'ŒÜ˜’“şé»Óè†F±„A¬¡ç½	´ØÑ±Åÿ¶Z%íb
+×¹åVŠ¯ÔLêœÀĞÿ	|J|{BÉQ¯O¬—­±§IàÄ‰4x{Á5›‘„}]%ßM‚Èõ¯³éÚ(o2–¼%=EmûUûÕÖñ‚¡íıD\d¨²¶ñ8¸ß­¡VFË¾¡‚Ì“‰›ó©ïĞ I@Nßú= QC6¾÷ìx¼}‰
+XÀkRûnÒ„©!¯ŸpÕ|F=R­Ê/šÖ%iVU ©iJ…«X¾æë/èĞ8¸´«øSŒ±›0ÀI¬ë_T,µzŞÉÙìÔWºô‘ÔAòˆ5L¨ƒŒÌ×ğ\V#v<ó‡¹2áZ)öØ½¡ßTùó»’J.%X[â‰` õè0¡NïÖM†c¦mÄ°};„Òë©NoQ©Ç·Í´£†®ŠÏ
+óÂ¶(jUäğ­›€Ğğ°§M’hJ3‘dj5%‡,g¶G#`î™GmXšW)±Á’ÁÏ„àïw3FÏÿšUIHTS8—ÇÔi(ÛV9¼›ŠHÂˆôEHˆ
+³K9“`¤8+®à¶M}käQšX‚Ê9p¸İtÜÕƒ¢ÅßbVù×şÇc´Ê¿Ä!èù!èx¯bû ‘jÅ¡ë“IdmUöŸ?½Û~ıóÏ»ğùş¨õ~÷—Mì°Op N‚q®ÏîK(9Íæ¥Œó5ô©ÀLîˆŠ(¶†œÉ×vhm“ğÎzMÂ™µİ|Â–†:ÖÇ–ˆu“Qà'ÖUà9äêÚ²'W4²~MÏnßN£8ˆ¬[ôhÚC7™YoZ•Lğ0+9—9õ#¶–lÖgDùZuÓİÍ|Q£zµ<PÕ†Ô›	MÆKõì´×¯6¤;cj;`
+ÛäTA'0I«Ú¶
+QPÜ!SÖ›Å(Å¹Üõ*pfmòß½Óp¸Ğ¹£YM•dBÖP®&Šh†Ú:]şêÕ)Øp4£mşJb{iîpV~áZ3múÊv&®_Uá¦wR
+¯V˜v@«T>Ó'4¹¢/à`Á¸.ĞÊFµ¯<\y.Øáúî€ÏG7¯oä_3‘JÅÌ—ÉÈTy+¯ìË*f$ %ëÆ¥·¨EqíÃ›`ìjÕ±&Ï—µËRˆ€ÏÔKâ"ÀˆN0zÌõÆÓ	zv W $Â]q5í€æİ”j&?³eÀí¥…<¿áØ%½épno;…óßÌYXHôoƒÿädİGìgÖ»•µC—6k…N&Ä?“Ûøô–bØQ‡i£óG±q-×Z#—Õ©rëÇÃÈtm5"²±#û¶ã¹=Neæ®	AèQ˜k³j3Í0Œl/¦»Êİ¢mØÿtúÛg’ÂïøÂ\ª½]¥u"Ûs¬×ªRÇ¶ÜZŞuE¢kî
+^¨A„H 2™{%­`³\æN#†½F£¨è\r’<ÔC.M–Ø¾¦óËúî×ñ,ñÖû×oZ»{¡õ“ıNáFù15µ³K¯UŒ¾öæ&±,‹däN@¤ß£Cºş`Àt˜³íLîyR?íÎ[Jîù:¶<å°8ÈŠsEÕ½z$ d¥äÑÍ
+²]/ÄXlñ¹÷ Fiø‡L*u
+Ó|‰8ãÄÀì5á2Ğ¶š‹µØNîËÁdÚàû`g•Ó„±ècàØ^­:Á+£€‡éiœè?  [Bö•“oòÿŸpœÔ“n4®ÎódS’€ƒëéeœ{s¢¸Ô
+8–oÚ#Ô2×'KãO­Ï
+9ñ¢™|s¢ Ú[çœ]Èå›7h>“Ö½Å½It)Göó•İ$)JÜ‡ùÑ+] ¶öòVÌ`w‚>-,ßg÷HÓ&:ÊsÅ^š4ƒFLü8ˆQˆjŒ3f„:vlßbı–¤aa±o—.7=£BınëQ‰´Bb Ü÷™­şô9s=`ê¤n[İ$e#%—í„õÇ¶b«òD´©3pı)Õˆß.,}EÍpÓŠ”aÏ5Tİğ#3{)ÒÍ	ş®mÖştî·/ç6K¿Ô7µI	`’bBÜÿ´õYF’‘Cğ¤9¶c £Í“¤,cqÜŞUn.%C>é9¡à|­CÄl½d©„Â" ş
+\_·Ö²”Ùì©ÃøfS-€næ5yºi†Uóœ0ÿVê9=º]MkiZÓÏ\!é…“°t×í;f½zö&½˜ÏÊóYq=“øaI¤ŒSZ&CÈRoªyëÊ(ˆé*aAğylK9_6yX …§Îµ/^L…\ñz‹«[ÄmGèçââ@¾¦xeA>ó‚çF+¹j8È7sÊbÀ9¸D¾AiâáQáÎ»£]ÂRøÏíIˆ"óƒõøPÌz	¨ÛÃLöË„‘ƒi2Â¡¢÷ }üö+ó÷"Öí^1›3&šàúnÂa#è‚úó»åj 	ÂbÖ…0!ó$¿º<q&µ“8M1MÎ"ˆi¢dV«[BÏÁ‚­ú@)üt™“eËAÁ|R@q@®Æœ–=kœeóZ•Ór€yMİud]Õ¥e¢<[ã¡ÅTôÛ“à<Àæ]Õy,¥:_·|8Ë®]•,¤aÙ=t„bZ²|EÊ4zìñ”e£– ¨dÍp`^LQfŸõÊv®î¿	|Q<,ÖX7½èã/heØZ‡€YïÕ!`kuò9@˜*Po¤ÌÖh%ör(J$ûĞMe•ë@[,ÿ±¶`%oÍöØÎ¨øŠÎNF7XxqHã/Õ&rîñ1‘ÖàŞY[ÍW˜ğkå	?»û´Õ
+ï>›s°?¿	¾ôÖT\Fäü#»ó¦Õ’·IÚkéú{äCŠßÅÅ°°•
+F-M_M“PLĞù&`oÁa_¹•6nÅßÇ<á¢"‡eóø‚ Z£],_‰kG×Çø÷§ïJl¤Ñ8¬c¨ÇTËaœ$<ZìÄ\\¿£©èM¯&n"[d"ü¤Í0¢è®Ò‘=õ
+	„Tu±dË“•öÒUu4!pÖƒ–öÒ¡1gw%ÍÏá°ö…
+£Ì
+‹DÅ{IÁœJ-€¥î­ú{Y¥L:c´
+ÉŞª¿•ĞT@TY&Ù¼ËbĞ¼Ù{ß~ùşå®âsû×bænû"M mrßæÇ…˜)§9m*
+o_PKÊgö{Ê\¬e®rÖT‰?UÏ<6yæ}šù ?ĞİV’¿Po ÕE(;Õı¤üjÊ¡ù“ËÅú9]…iØ²=©®«ÈuòÅñuÊù&é`ı»Ç·ÿ°qŒUX)ÚTö³Š+o @ËM˜_j.ˆŸOE6;«PÂöİ¼C„oTZœ¿L_ˆ=à{í“®/ş&…Ó8}aÄ¿ØÂYÕ"C “ÏGÕId&B—¨¡¥pË•ÑW©£…TœˆœVä_Š'U/Á¬MxÊCpOU"\8Døë|ËÁ7qWWwÍ;â^×©ÉÒï© €Àß¸ÉL­BÚ`©ãg‚3¤yá&¶llË!îØÃ1•w}e	Çsù)ìˆ3¸Xçãzù<ù¢Á„İA:ì!èÖÔb˜×­¡¹ÔÇU°H2¨†,l«Ê ë®¬u¼ é¤$Úÿ%q`@5Î^åu%Í­³èM›@ğ÷š‡s1Öi[;­Veÿ&€©W†˜û!ğ0&£(˜ğK`/ó ˜/”8ûğO¤ë´u½"€‹Ê(~@áGA$˜ıC`hü>}Ö®Pb Iƒ^^Ày•”lë«8eûûçœ˜’Õâµ™¼ô‘ç5ÉR™m§QG¢ rÀóğIt3lƒ’0.ß6N\[)1µ£áxi,ÅÙÅ—”õÛIˆ/Ã³p;ï:ˆf:¤¿1$ãõVÆR
+Wxİá-:vÌª•å-Ü”Ì{›Ï!Wµ(ŒãÈ|MÒD­
+–”a¹Š¾ Ù†1ÿŸüËC’Ö)¯fÅLú$\èM×ş®CƒBgÙ™]»³CXoñƒúÚ\¨Ò•ï0uÃ´óJÍâd%*I1š/Aÿã»‹
+µ‚×Yrx®®í=EX  8ì|8ç­ÛY‡Í(•ôBGœœL]vÿ¬{òaĞ?·°ôvu1jg§çıÁéÙÑùA¿{zÒ[?½w†…¡Ù»Ó‹“Î‘Q~o€íJf"AX<¡ÎéÉûî‡ÑàãÁÉÁ‡£G'ı5gV
+ÆˆŞùéññéEÀ{™Û¼?>:J[DsË‹³ÃƒşÑ {ò;xzş?Kfüî óÛÅÙšóJÆï9+#Ú?ï~øpt>Ğ)¬å ¸Ş\4ƒ‹ş¯kN‚u1z|ú¡{Rz)¿0_20âl —eƒ›ïa°¬\İ?.y¹v‚˜É)XãÔÊ¨î.ª1z¾„C¹ŸÛõwH%ZØrÈã±s?í€õÎ²ë9Ip}íQÖè<¸=b£Ô\çNKêFçÅHĞRI1˜:ëÏYÛÜÍÒØaìÈê™ä^‹hW:ïÏ*”Ôì	x^Jƒ¸¶ÂÜc÷?|S¡tÔ´–ä`i›}õ1;ãˆXGÕÖ# $ å8Lì°V4ˆ[G÷Å­Sjƒp–ú{¬T%¹oß¸×¸ù³vÃ«À¤ã­ë;ÁmÓ{†§,r§”´:6o#XÂ¬r“µnbº«V««¾šRqÃËH:ïv!$]ğùĞÉîxê2á“µéJıÍ¼ŞdÄšC(Ğ5€¥</¯XãOÍ_»V5â*õğB~;Å";„ğİéŒ]ÏÉ«w°øÃ$r¬˜ÁÁGBÄÌµ*ÊñQ-6Ï‚”¶2Ë¸dŒrîr™†(B±ÄÒ<å#gˆøR?Na>gØ©1·ØÈ±][³hç8¤úñØ¾¢CxFÃÖ–í¥ù{iÙb±>ØáDëUÔ'ª‡¯SÔ’0+ø)yµ·DÈßá+”?Ï³CXĞ‚Õ:ˆ[¯w	ïÀnˆÌŸ±Ñ•§Uxüú«’oä¬Ó+Ì6œÜCÉs,ı’çŸ°@Á”o*}n»ˆ ››Lú†4ºØº‚HßÃªîd*E¥ |D Ç½»ŞE§sÔëIî]
+G›…>Ká9U¬x'
+ …E%¡ÊEÒòoµÊZsÕÇÃê;äb‘ÊşÁáÇîIºÁ!aĞ^.\ş³8>¿ş“>|ïèü÷nçˆõ~+ìĞ
+_ÔNR¢~”İ{¹ÏXÅ=÷yñÁ@\xŞ‚8Û+ÒµÊŞµç8œÙ~Îvö«8Cv¹ÀrÄ‘l’™âÄ¤°Ë+¯M3\œ%Xšü‘Èlügq¢üzq¦€áØ.™ã1½·( ÿÚù†Ó(Û—MXü.ÎXÜ(LùãÅq¿KVkMÚ˜X«rS'ÁQ1`¯k\®åS3°X“nkX[Ì58êyÁªÚ¸YM·–âÄûBìWvy*ïºÇG‡ı*öj¸§+üOMéêö‘ÆC;¤¼Ğ—Ë{ƒÓzöÖ6+›×p_şÉ.Øßìz•_úòçİªeMmoz‘´ï˜ªÚÜ4«BZè(›ğoRJgÆ(ºùSJFëJ³’x÷5x7
+dt’Bk§Ğ;îMqØVkóç–ülxh½®m56Şi©OO?0¦W|<ı¯iœ¸£™u¥>	¯@â&øNÌvGqdÁÕ]\üÌOÈƒÆ(+ ózŒW­Ã]òÀ×´©°='}ŠÑnRvı8äE&B®Íè.º·dì‰şrly!lÉ]BbÆá—½Š)YQ}v¯®¢yµ^)%)	®p·T';>@ógøÏí\·naup¦©Ë\!<3Ãå{}f–cš¸‰G÷*EÏ„V`C+tYï2B+‚‘é³T"±™Ï¹T&ÀãR*½a\Ò ›agkÚ»6ÒöM	[`a³s`Cj…µn#;$Wµ¿X·,†‚Ğ÷r­ˆzöÁÁò#ì™AE)<»—9*oˆÎlÇaÜ´½,¡FÁëàÉ&ó‡Îş:r‚ÿX¨AÄ“vşsG‡1I¸ÈòA¤@—Í7ªˆê•¥‹w¿¨Œ¤Ğô>LãµÓg‰“(€8µØş%¶G¿_Ş	õÔMÕŞ,†¥PÅ(€Ù/%Ô*ÈãéIk Æ¢EÆÒÍƒÇÂ¡ÃO…ì­ƒ?#Rì»nmÿÄÏ‘|,”„¾ÇÂ´…Hå6‡c•o$«±îá¬‚[Éãe–ÌØĞ®Dò³Ç*6wdßDòL4-Ëâ•¢Åùkaà2U\j·Áe¨äæÇ¸5óìŞuîæume1ïFØ~„˜œ—²vò¦›–¬ÏåfÕì”	ÆN®*‘ÙR~†çÎ¶_½ëì¦Ù2øñz·:/³Ü– Äd§N•´5°ŞÀøIömh¤9û™aY¤ÊJ)óì>Ë^éVá‘Iñì>*çIÑ•üRNS1H	aòæ òôXÒ$¤Ü†UöIMî:¯§Á+2š?Œ˜Z6Ko-ÓÃ2_W™­¾ôØ’K¢©
+—Lì;ëÖš8Õ9¹ò‚á—Jê|]£AGb)agÑ5Y¸¦–ˆád)ØQ¢“Ò©è””fP—‹#Ÿ“J°4»ÏÇo¬<ÍG_ƒRæ¤°u{,T"ìé¼|´.çĞÎÎµÂïìá—iHzÃ1u¦àÉ|´}ûšmû@LÇ*zK+‡±Ê˜²ï#Še|U¤dV-+°6üˆ%’Îvø)¹iUû M©?œµShéöO¼H†p³µİnµ²›`Áñ)‡À?´gq›¼l¥7Ò?ùèêXìƒSÏ1˜FT½Ç'ä§xV9L3œñ§>çz¥EL“”†ÿ‚ïƒ;ó¦ñÖG ½¾•è³\H~¢bÊ+à	œ¾E&®çëaxÆIÈÛfÇ~«ûw0ÂÁtÜ½CZ±S¨_·È¿ğHõ–V,9Æ“oÄù)ìøk M­^o†¶Ã¶¨m7€àzáædbîş‘á¾€„É|ÇãyûÙıd’?’7ZZ¯#å-ljM“¡¶™PöÚ\å±:ÜçÈÈ›`¸•˜òô,¢xŒ¨ù\îKv–ÊÁÖ.a¬'Èûv¾¤4Ê?DX4'µŒÏ,ˆdmê—æ-lÓù€¶^†¿Nø“j+ P(‰ÂOÖòÓ¦µzõ–â‚"t¯ıÚı¼ahÖ 2LCù³úĞŠ"-B§,9ïI‹hjÊUº…-¥ö²ÓöX÷Laú_­@ßƒÏ:_üØr­?êÆ• `Ck$óÖ]ÆŠzÎ•ìhô=ß›¢y²§=)–.c„Å?óó§Š`dCÁ<n*Ô
+ŠôøÂÅ ³‚°^¶40À«ºà™şÈÂjğæ¿_Ê`9ïê‚‡‹i¦Ú73é/ë)S—@T¬¢15ÂÒ¡Ñ¯ d&œ_q¥ll©r-¯©))½¸GÁ	h zzÎ9åC‰ï\E½ì–"ğ)Ã»
+`"şŞĞh6ØãwpÎ¿ÀÕÏÍQÙ SG¦Ê‡ÅÇ}]âˆÖÕ<»)'0±²‘+öLšRŠÁïŒØ® vV5®~nUN~Şy©ÓÌœo’BFÿÁ<¡1
+ÙÒ¼ğW-ÍıÎNÇ¿1‘ŠÎôdy³Å…»ßay~xQ&øeÂ×rñUƒURœUøê‹åİ\©Vh¬ù?ŞÔ¥úzOÂå­AÙ·•Ç+ò±·=áx±ŠfÏõ6ië\´ô8!>Téç	egùèÏ‚‰Ihë+?Ğ'Íâşğ£Ÿ2³[@A64ÕƒN¿û»á‰ŠÇÄ|­­îeŸ\ôMKHõå¢©cèi»>?É`1‡§á0˜°ÍèW8²ƒ¿ygiŸúøèo¯¹4ObÁü Síüù–VÜ'%‚”'Ù9å•ıOœŸ|NgÄc3‚	;;î1±#špoFB{S§‰ü#ÅÈ½¾¦QLß›5y’Âğ,¡òò#ô²¯*ÓæáŒ‹±ä#½é%Œ‚¿Øôâù^Y$Ìï~7Èä3Öì¥ú"×õôŒÛ6|ÅÄ“)–éç«ğC{Ï§¾ˆ’kV£(’ÿNöVl(ÂZ\#àœÓ ÷M¾ccb´{„ÏøO€±cé7¿ëƒtEî~Ï¨IÀFà;¡ÈÁßrM!û#†tFàØ¿½åÖ+ÜsE¾	?GßìÔ_Ñ­K~Ù#¯àóÅÓ1·Î¢$„KşE^â™úZ*ÿ8xI:‹VƒàÿJƒL‚øAµ—ÀNòôÙ½;Ççf{ç˜àuçcş„5àQ7n¹ªàÇlsÑi“S¿Â/iÛã¤‚Ş,‡lñõÈö-¢z^œ×séy“ß’â;ßêMäYğiµ­FëMck»±õº±İ‚¥ÿ%í…÷ş-)ÿü}ózgéù"£JƒÕ:aïaù‘\¸4q¡£qN<»:güÏ?ÛŠ¦AEƒÉ;qòÏ?-Ãı2¦]jLËi½¹	ä…(ÌÌ£ãÑª,*’ŸSùÆ ßÌ$–	C‰Au£ıR6Ú–a¾Ë_l•)<F'râ^Áø}g‚ï% ²*õ©Ê=ªœlèDhæ/W¨$#z1Eé†åºa™f}ór¾…¥;–ÂëÒ7`ÊPÂ‚4¦¨zœ5ÅïîkNQõaœÅÏÒÉÆ˜Ídáp$ÍÎ¤2Uö,–é¸ö’DöšÇ¥rØ,²SÏ \pxúãŸ~xîp&¿Ğœ©^#xOãé²@zå(¾b2Ğ<IÉŒbÚõ“Úêél½F¯®fLóÄt¼äœzjÚ<s–¨Ä4åzIê˜¤Ø3ñB%‰Ç6•ŠfÎù.iÏRó6äVêş¥`›Ü@ÛÃÌ~ÊmôíÌ”FJm[3£“ÜhÙşf¾våàák¶—~ÔéŒ‚±ß÷ğÃš¢=Å®{®8Ù‘éÏ³ÓÿAÍ¤÷\
+NÚ« ¹{,³µÒ› ªê‘ıÙmÖò×0İpáoÆ'âÔ5N"£¥SåıÊ˜Ò™GO4¨óe/Xõ5Y^ƒ/xÀŞhËÕ·é1ùS¨tıÌQÿ`xOƒaxö&ú" 5kÒíÙNƒÀ‚-Öı_6QÂñsœL¼ıJ¥²±Á,éÙ›Œœ_ûı³;g² åqè$¿ôÿèŞuı'IØ÷ò>õ6CÉ±é$ğ	ëƒ‹»¦’pÏnÆt¾ˆ]ÜŞpè}³š ÂúKj£ÊŞÃşTê
+”ü0È£»$ı.Şì•–¯ˆ×9Ôş—FuHñivPÈ.ë&@/· ĞY$Á0ğÚøä‚AEí—`¶ä’¼
+ÊX››€ít¶wÉ¡çD ~î»çG<óEoşu¤ İÛÎäğ©8•ì5KßŠ¬`¶¾"ÁÆÜwÃƒpz×d­¼U-W(¸œ"U«T	QoŠ‹×dä½Ó¹²7jşA¯RÎpÃHl %ĞŞÜd-ã NÚ
+me gLÀ:Iä½è0¥•a³¢¡ÊÅx AfTÄDèİ†	ùÎ˜gËVX4“¶6FåO¿7&x1ø·~zHk3F :bì51¡:”Q…ˆk:Š³Ù ¥5`ã`@ööHe0˜@Ğ2Tx¶X6ş  ÿÿ =¨f
