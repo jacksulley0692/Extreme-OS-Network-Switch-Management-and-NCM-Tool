@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 ===============================================================================
 portal_server.py - Zero-Dependency Extreme Switch Web Management & Telemetry Portal
