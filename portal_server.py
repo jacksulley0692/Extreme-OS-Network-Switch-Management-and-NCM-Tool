@@ -127,7 +127,12 @@ def parse_users_txt():
     candidate_users_files = [
         os.path.join(DIRECTORY, "users.txt"),
         os.path.join(DIRECTORY, "Users.txt"),
-        "/opt/switch-backup/users.txt"
+        os.path.join(os.getcwd(), "users.txt"),
+        os.path.join(os.getcwd(), "Users.txt"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "users.txt"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "Users.txt"),
+        "/opt/switch-backup/users.txt",
+        "/opt/switch-backup/Extreme-OS-Network-Switch-Management-and-NCM-Tool/users.txt"
     ]
     users_file = None
     for uf in candidate_users_files:
@@ -137,6 +142,9 @@ def parse_users_txt():
 
     users_map = {
         "netadmin": {"password": "NetworkTeam2026!", "role": "network_admin", "fullName": "IT Network Team"},
+        "netadmins": {"password": "NetworkTeam2026!", "role": "network_admin", "fullName": "Network Admin Team"},
+        "admin": {"password": "NetworkTeam2026!", "role": "network_admin", "fullName": "Administrator"},
+        "servicedesk": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Service Desk Team"},
         "bill.gates": {"password": "ServiceDesk2026!", "role": "service_desk", "fullName": "Bill Gates (Service Desk)"}
     }
 
