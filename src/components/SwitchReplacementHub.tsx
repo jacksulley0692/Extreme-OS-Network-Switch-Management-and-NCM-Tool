@@ -47,6 +47,7 @@ import { EstateBackupScheduleCard } from "./EstateBackupScheduleCard";
 import { BackupScheduleModal } from "./BackupScheduleModal";
 import { SwitchMonitorModal } from "./SwitchMonitorModal";
 import { SwitchPingModal } from "./SwitchPingModal";
+import { UnmanagedDiscoveryModal } from "./UnmanagedDiscoveryModal";
 import { findDiagramForSiteOrSwitch } from "../data/siteDiagramsData";
 import { YORK_DIAGRAM_SVG } from "../data/yorkDiagramSvg";
 import { SitePageView } from "./SitePageView";
@@ -97,6 +98,9 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
   // Backup Options Modal state
   const [backupModalOpen, setBackupModalOpen] = useState<boolean>(false);
   const [backupModalTarget, setBackupModalTarget] = useState<SwitchItem | null>(null);
+
+  // Unmanaged / Netgear Discovery Modal state
+  const [unmanagedModalOpen, setUnmanagedModalOpen] = useState<boolean>(false);
 
   // Selected switches for batch backup
   const [selectedSwitchIds, setSelectedSwitchIds] = useState<string[]>([]);
@@ -470,6 +474,19 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
                 </button>
               )}
+
+              <button
+                id="btn-hub-unmanaged-discovery"
+                onClick={() => setUnmanagedModalOpen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40 shadow-xs transition-all shrink-0 cursor-pointer"
+                title="Discover Rogue & Unmanaged Edge Switches (Netgear, TP-Link, D-Link)"
+              >
+                <Radio className="w-3.5 h-3.5 text-amber-400" />
+                <span>Rogue Switch Discovery</span>
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-amber-500/30 text-amber-200 font-mono">
+                  5
+                </span>
+              </button>
 
               <button
                 id="btn-hub-download-portal-py"
@@ -1461,6 +1478,17 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
         onSaveSchedule={handleSaveSchedule}
         onTriggerBackupNow={() => onTriggerBackup("BackupSave.py", "ALL")}
         currentUserRole={currentUserRole}
+      />
+
+      {/* Rogue & Unmanaged Switch Discovery Modal */}
+      <UnmanagedDiscoveryModal
+        isOpen={unmanagedModalOpen}
+        onClose={() => setUnmanagedModalOpen(false)}
+        switches={switches}
+        onSelectParentSwitch={(sw) => {
+          setSelectedSwitch(sw);
+          setActiveSite(null);
+        }}
       />
     </div>
   );

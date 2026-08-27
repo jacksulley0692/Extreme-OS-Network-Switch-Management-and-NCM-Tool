@@ -570,12 +570,25 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
                     className="bg-slate-950/80 hover:bg-slate-950 border border-slate-800 hover:border-indigo-500/60 rounded-xl p-4 cursor-pointer transition-all shadow-md group space-y-3"
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0">
-                        <div className="text-xs font-bold text-white group-hover:text-indigo-300 transition truncate">
-                          {sw.hostname || sw.ip}
-                        </div>
-                        <div className="text-[11px] font-mono text-slate-400 mt-0.5">
-                          {sw.ip}
+                      <div className="min-w-0 flex items-start gap-2">
+                        <span 
+                          className={`w-2 h-2 rounded-full mt-1 shrink-0 ${
+                            (sw.isReachable ?? isSuccess) ? "bg-emerald-400 shadow-xs shadow-emerald-400/50" : "bg-rose-500 shadow-xs shadow-rose-500/50"
+                          }`} 
+                          title={(sw.isReachable ?? isSuccess) ? "Reachable" : "Unreachable"}
+                        />
+                        <div>
+                          <div className="text-xs font-bold text-white group-hover:text-indigo-300 transition truncate">
+                            {sw.hostname || sw.ip}
+                          </div>
+                          <div className="text-[11px] font-mono text-slate-400 mt-0.5 flex items-center gap-1.5">
+                            <span>{sw.ip}</span>
+                            {!(sw.isReachable ?? isSuccess) && (
+                              <span className="text-[9px] px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 font-semibold font-sans">
+                                Unreachable
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                       <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold shrink-0 ${

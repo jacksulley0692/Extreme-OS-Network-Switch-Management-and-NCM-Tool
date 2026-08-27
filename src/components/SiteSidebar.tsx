@@ -290,6 +290,7 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
                 <div className="px-2.5 pb-2 pt-1 border-t border-slate-800/60 space-y-1 bg-slate-950/60">
                   {group.switches.map((sw) => {
                     const isSwActive = selectedSwitchId === sw.id;
+                    const isReachable = sw.isReachable ?? (sw.lastBackupStatus === "Success");
 
                     return (
                       <div
@@ -297,16 +298,33 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
                         onClick={() => onSelectSwitch(sw)}
                         className={`px-2 py-1 rounded-lg flex items-center justify-between text-[11px] font-mono cursor-pointer transition ${
                           isSwActive
-                            ? "bg-slate-800 text-emerald-300 font-bold border border-emerald-500/30"
-                            : "hover:bg-slate-800/90 text-slate-300 hover:text-emerald-300"
+                            ? isReachable 
+                              ? "bg-slate-800 text-emerald-300 font-bold border border-emerald-500/30"
+                              : "bg-slate-800 text-rose-300 font-bold border border-rose-500/30"
+                            : isReachable
+                              ? "hover:bg-slate-800/90 text-slate-300 hover:text-emerald-300"
+                              : "hover:bg-slate-800/90 text-slate-400 hover:text-rose-300"
                         }`}
-                        title={`Select switch ${sw.hostname || sw.ip}`}
+                        title={`Select switch ${sw.hostname || sw.ip} (${isReachable ? 'Reachable' : 'Unreachable / Offline'})`}
                       >
                         <div className="flex items-center gap-1.5 truncate mr-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
-                          <span className="truncate">{sw.hostname || sw.ip}</span>
+                          <span 
+                            className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                              isReachable ? "bg-emerald-400/80 shadow-xs shadow-emerald-400/50" : "bg-rose-500 shadow-xs shadow-rose-500/50"
+                            }`} 
+                          />
+                          <span className={`truncate ${!isReachable ? "text-slate-400" : ""}`}>
+                            {sw.hostname || sw.ip}
+                          </span>
                         </div>
-                        <span className="text-[10px] text-slate-500 font-mono shrink-0">{sw.ip}</span>
+                        <div className="flex items-center gap-1 shrink-0">
+                          {!isReachable && (
+                            <span className="text-[9px] px-1 py-0.2 rounded bg-rose-500/20 text-rose-400 border border-rose-500/30 font-semibold">
+                              Unreachable
+                            </span>
+                          )}
+                          <span className="text-[10px] text-slate-500 font-mono">{sw.ip}</span>
+                        </div>
                       </div>
                     );
                   })}
