@@ -87,7 +87,7 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
   const healthPercent = siteSwitches.length > 0 ? Math.round((backedUpCount / siteSwitches.length) * 100) : 100;
 
   // Site Page View Mode: Visual Node Graph is primary default!
-  const [siteViewMode, setSiteViewMode] = useState<"graph" | "blueprint" | "heatmaps" | "switches">("graph");
+  const [siteViewMode, setSiteViewMode] = useState<"graph" | "blueprint" | "heatmaps" | "switches" | "replacement">("graph");
 
   const [diagramOpen, setDiagramOpen] = useState<boolean>(true);
   const [zoomLevel, setZoomLevel] = useState<number>(100);
@@ -273,6 +273,19 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
           >
             <Server className="w-4 h-4 text-cyan-400" />
             <span>🗄️ Switch Fleet ({siteSwitches.length})</span>
+          </button>
+
+          <button
+            id="btn-site-tab-replacement"
+            onClick={() => setSiteViewMode("replacement")}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              siteViewMode === "replacement"
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-2 ring-indigo-400"
+                : "text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800"
+            }`}
+          >
+            <RotateCcw className="w-4 h-4 text-emerald-400" />
+            <span>🔄 Switch Replacement</span>
           </button>
         </div>
 
@@ -603,6 +616,83 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
               <div className="text-slate-500">Topology diagram and architectural blueprints are loaded above for engineering reference.</div>
             </div>
           )}
+        </div>
+      )}
+
+      {/* VIEW 5: Site Switch Replacement Workspace */}
+      {siteViewMode === "replacement" && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6 animate-in fade-in duration-200">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🔄</span>
+                <h3 className="text-base font-bold text-white tracking-wide">
+                  {displayName} Switch Replacement &amp; Staging Hub
+                </h3>
+              </div>
+              <p className="text-xs text-slate-400 mt-1 font-mono">
+                Select any switch in {displayName} ({siteCode}) to launch the RMA IP Customizer, generate sanitized .xsf/.cfg configs, or run live console restoration.
+              </p>
+            </div>
+            <span className="px-3 py-1 rounded-full text-xs font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-800 self-start sm:self-auto">
+              {siteSwitches.length} Switches in {siteCode}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {siteSwitches.map((sw) => (
+              <div
+                key={sw.id}
+                className="bg-slate-950 border border-slate-800 hover:border-indigo-500/60 rounded-xl p-4 flex flex-col justify-between space-y-4 shadow transition"
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-800">
+                        {sw.os}
+                      </span>
+                      <h4 className="font-mono font-bold text-white text-sm mt-1 truncate">
+                        {sw.hostname || sw.ip}
+                      </h4>
+                      <p className="text-xs font-mono text-emerald-400 mt-0.5">{sw.ip}</p>
+                    </div>
+                    <span className="text-xs text-slate-500 font-mono">
+                      {sw.format?.toUpperCase() || "XSF"}
+                    </span>
+                  </div>
+
+                  <div className="mt-3 pt-3 border-t border-slate-900 grid grid-cols-2 gap-2 text-xs font-mono text-slate-400">
+                    <div>
+                      <span className="text-slate-500 text-[10px] block">Model</span>
+                      <span className="text-slate-200 truncate block">{sw.model || "Extreme Switch"}</span>
+                    </div>
+                    <div>
+                      <span className="text-slate-500 text-[10px] block">Backup</span>
+                      <span className={sw.lastBackupStatus === "Success" ? "text-emerald-400 font-bold" : "text-slate-400"}>
+                        {sw.lastBackupStatus || "Available"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-2 border-t border-slate-900">
+                  <button
+                    onClick={() => onSelectSwitch(sw)}
+                    className="flex-1 py-2 px-3 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center justify-center gap-1.5 shadow cursor-pointer"
+                  >
+                    <span>🔄 Launch Replacement</span>
+                  </button>
+                  <button
+                    onClick={() => onTriggerBackup && onTriggerBackup("BackupSave.py", sw.ip)}
+                    className="py-2 px-3 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 transition cursor-pointer"
+                    title="Backup switch now"
+                  >
+                    <span>⚡ Backup</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

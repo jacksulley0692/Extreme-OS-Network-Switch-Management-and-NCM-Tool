@@ -2525,7 +2525,7 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           Zero-Dependency Python Controller &bull; Telnet (Port 23) Live Telemetry &bull; Port 3000
         </p>
       </div>
-      <div class="flex items-center gap-3 flex-wrap">
+      <div class="flex items-center gap-2 flex-wrap">
         <!-- User Session Indicator -->
         <div id="portal-user-badge" class="hidden flex items-center gap-2 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-xs font-mono">
           <span class="text-indigo-400">👤</span>
@@ -2534,23 +2534,40 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
           <button onclick="handlePortalLogout()" class="text-slate-400 hover:text-rose-400 ml-1" title="Sign Out">🚪 Sign Out</button>
         </div>
 
-        <span id="badge-status" class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-slate-900 text-slate-300 border border-slate-700 font-mono shadow">
+        <span id="badge-status" class="px-3 py-1.5 text-xs font-bold rounded-full bg-slate-900 text-slate-300 border border-slate-700 font-mono shadow">
           Status: IDLE
         </span>
-        <button onclick="openSwitchesEditor()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
-          <span>📋 Fleet Inventory (Switches.txt)</span>
+
+        <!-- Primary Top Navigation Tabs & Tool Buttons -->
+        <button onclick="openSwitchReplacementModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition flex items-center gap-1.5 cursor-pointer">
+          <span>🔄 Switch Replacement Hub</span>
         </button>
-        <button onclick="openCheatSheetModal()" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/40 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
-          <span>📖 Recovery Cheat Sheet</span>
+        <button onclick="openVisualNodeGraphModal('YORK')" class="bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 border border-indigo-600/60 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+          <span class="text-indigo-400">🗺️</span>
+          <span>Visual Node Graph</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">Live LLDP</span>
         </button>
-        <button id="btn-top-audit-trail" onclick="openAuditTrailModal()" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow transition flex items-center gap-2">
-          <span>📜 Activity Audit Trail</span>
+        <button onclick="openSiteDiagramsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+          <span>📐 Site Diagrams</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded bg-slate-950 text-slate-400 border border-slate-800">130+</span>
         </button>
-        <button id="btn-top-rollout" onclick="openRolloutAuth()" class="hidden bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-amber-600/30 transition flex items-center gap-2" style="display: none !important;">
-          <span>🛡️ Rollout Configuration Change to Multiple switches</span>
+        <button onclick="openSwitchesEditor()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+          <span>📋 Fleet Inventory</span>
         </button>
-        <button onclick="runBackup('ALL')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2 rounded-xl text-xs md:text-sm font-bold shadow-lg shadow-emerald-600/30 transition flex items-center gap-2">
-          🚀 Backup All Switches
+        <button onclick="openCheatSheetModal()" class="bg-indigo-900/60 hover:bg-indigo-800 text-indigo-200 border border-indigo-500/40 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+          <span>📖 Cheat Sheets</span>
+        </button>
+        <button id="btn-top-audit-trail" onclick="openAuditTrailModal()" class="bg-slate-800 hover:bg-slate-700 text-indigo-300 border border-indigo-500/30 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+          <span>📜 Audit Trail</span>
+        </button>
+        <button onclick="openUbuntuMigrationModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-700/40 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+          <span>🐧 Ubuntu Kit</span>
+        </button>
+        <button id="btn-top-rollout" onclick="openRolloutAuth()" class="hidden bg-amber-600 hover:bg-amber-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-amber-600/30 transition flex items-center gap-2" style="display: none !important;">
+          <span>🛡️ Rollout Configuration</span>
+        </button>
+        <button onclick="runBackup('ALL')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs font-bold shadow-lg shadow-emerald-600/30 transition flex items-center gap-1.5 cursor-pointer">
+          <span>🚀 Backup All</span>
         </button>
       </div>
     </header>
@@ -4425,6 +4442,357 @@ show ip route</pre>
     </div>
   </div>
 
+  <!-- MODAL: Standalone Visual Node Graph (Live LLDP Topology Map) -->
+  <div id="modal-visual-nodegraph" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-7xl h-[94vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Top Navigation & Controls Header -->
+      <div class="px-5 py-3.5 border-b border-slate-800 bg-slate-950/90 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">
+            🗺️
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm font-bold text-white tracking-tight">Interactive Visual Node Graph &amp; Topology Engine</h2>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 flex items-center gap-1 font-bold">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                Live LLDP
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-mono">Dynamic multi-tier estate topology &bull; Extreme EXOS / VOSS &bull; Meraki Firewalls &bull; AP5050s</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <!-- Site Selector -->
+          <div class="flex items-center gap-1.5 bg-slate-900 px-2.5 py-1 rounded-lg border border-slate-800 text-xs font-mono">
+            <span class="text-slate-400">Site:</span>
+            <select id="modal-nodegraph-site-select" onchange="changeModalNodeGraphSite(this.value)" class="bg-transparent text-white font-bold focus:outline-none cursor-pointer">
+              <option value="YORK" class="bg-slate-900 text-white">DLC - York (Full Topology)</option>
+              <option value="ALL" class="bg-slate-900 text-white">All Discovered Sites</option>
+            </select>
+          </div>
+
+          <!-- Role Filter -->
+          <div class="flex items-center gap-1 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs font-mono">
+            <button onclick="filterModalNodeGraphRole('all')" class="px-2 py-0.5 rounded text-white bg-indigo-600 font-bold text-[11px]" id="role-btn-all">All</button>
+            <button onclick="filterModalNodeGraphRole('core')" class="px-2 py-0.5 rounded text-slate-400 hover:text-white text-[11px]" id="role-btn-core">Core</button>
+            <button onclick="filterModalNodeGraphRole('edge')" class="px-2 py-0.5 rounded text-slate-400 hover:text-white text-[11px]" id="role-btn-edge">Edge</button>
+            <button onclick="filterModalNodeGraphRole('firewall')" class="px-2 py-0.5 rounded text-slate-400 hover:text-white text-[11px]" id="role-btn-firewall">Firewall</button>
+            <button onclick="filterModalNodeGraphRole('ap')" class="px-2 py-0.5 rounded text-slate-400 hover:text-white text-[11px]" id="role-btn-ap">APs</button>
+          </div>
+
+          <!-- Zoom Controls -->
+          <div class="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800 text-xs font-mono">
+            <button onclick="zoomModalNodeGraph(-15)" class="px-1 text-slate-400 hover:text-white" title="Zoom Out">-</button>
+            <span id="modal-nodegraph-zoom-pct" class="text-slate-200 text-[11px] px-1">100%</span>
+            <button onclick="zoomModalNodeGraph(15)" class="px-1 text-slate-400 hover:text-white" title="Zoom In">+</button>
+            <button onclick="resetModalNodeGraphZoom()" class="px-1 text-slate-400 hover:text-white border-l border-slate-800 pl-1" title="Reset">100%</button>
+          </div>
+
+          <!-- Export JSON -->
+          <button onclick="exportTopologyJson('YORK')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1">
+            <span>💾 Export JSON</span>
+          </button>
+
+          <!-- Close -->
+          <button onclick="closeModal('modal-visual-nodegraph')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition" title="Close">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Canvas & Node Inspector Area -->
+      <div class="flex-1 relative overflow-hidden bg-slate-950 flex">
+        <!-- SVG Canvas Area -->
+        <div id="modal-nodegraph-container" class="flex-1 h-full overflow-auto flex items-center justify-center p-4 custom-scrollbar">
+          <!-- Dynamic SVG inserted here -->
+        </div>
+
+        <!-- Node Inspector Slide-Over Panel -->
+        <div id="modal-node-inspector" class="w-80 sm:w-96 border-l border-slate-800 bg-slate-900/95 flex flex-col justify-between hidden transition-all shadow-2xl z-20">
+          <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/80">
+            <div class="flex items-center gap-2">
+              <span id="inspector-node-icon" class="text-base">🗄️</span>
+              <div>
+                <h3 id="inspector-node-title" class="text-xs font-bold text-white font-mono truncate max-w-[200px]">Node Inspector</h3>
+                <p id="inspector-node-subtitle" class="text-[10px] font-mono text-slate-400">Select node on canvas</p>
+              </div>
+            </div>
+            <button onclick="closeNodeInspector()" class="text-slate-400 hover:text-white text-xs p-1">✕</button>
+          </div>
+
+          <div id="inspector-node-body" class="p-4 flex-1 overflow-y-auto space-y-3.5 font-mono text-xs custom-scrollbar">
+            <!-- Populated via JavaScript -->
+          </div>
+
+          <div id="inspector-node-actions" class="p-3.5 border-t border-slate-800 bg-slate-950/90 grid grid-cols-2 gap-1.5">
+            <!-- Populated via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-5 py-2.5 border-t border-slate-800 bg-slate-950/90 flex items-center justify-between text-xs font-mono text-slate-400 shrink-0">
+        <div class="flex items-center gap-3">
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> 10G SFP+ Fiber</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> 1G SFP Fiber</span>
+          <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> PoE+ Link</span>
+        </div>
+        <span class="text-slate-500">Click any switch/firewall/AP on the graph to inspect live ports, neighbors &amp; diagnostics</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: Standalone Switch Replacement & RMA Hub -->
+  <div id="modal-switch-replacement" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-6xl h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Header -->
+      <div class="px-5 py-3.5 border-b border-slate-800 bg-slate-950/90 flex items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">
+            🔄
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm font-bold text-white tracking-tight">Switch Replacement &amp; Staging Hub (RMA Workspace)</h2>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800 font-bold">
+                EXOS &bull; VOSS
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-mono">1-Click Sanitizer &bull; IP Customizer &bull; TFTP &amp; Console Recovery Generator</p>
+          </div>
+        </div>
+
+        <button onclick="closeModal('modal-switch-replacement')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition">
+          ✕
+        </button>
+      </div>
+
+      <!-- Main Two-Column Hub Layout -->
+      <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- Left: Switch Fleet Selector -->
+        <div class="w-full md:w-80 border-r border-slate-800 bg-slate-950/60 flex flex-col shrink-0">
+          <div class="p-3 border-b border-slate-800 space-y-2">
+            <input 
+              type="text" 
+              id="rma-search-input" 
+              oninput="filterRmaSwitchList(this.value)" 
+              placeholder="Search hostname, IP, site..." 
+              class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 font-mono focus:outline-none focus:border-indigo-500"
+            />
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400">
+              <span>Select Switch to Stage</span>
+              <span id="rma-switch-count" class="text-indigo-400 font-bold">--</span>
+            </div>
+          </div>
+
+          <div id="rma-switch-list" class="flex-1 overflow-y-auto p-2 space-y-1.5 custom-scrollbar">
+            <!-- Populated via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Right: Staging Workspace & Live Config Sanitizer -->
+        <div class="flex-1 flex flex-col bg-slate-900 overflow-y-auto custom-scrollbar p-5 space-y-5">
+          
+          <div id="rma-workspace-empty" class="py-16 text-center text-slate-500 font-mono text-xs">
+            <div class="text-3xl mb-2">🔄</div>
+            <div class="text-white font-bold text-sm">No Switch Selected</div>
+            <p class="text-slate-400 mt-1">Select a switch from the left panel to configure RMA staging and generate sanitized configuration files.</p>
+          </div>
+
+          <div id="rma-workspace-content" class="space-y-5 hidden">
+            
+            <!-- Switch Header Card -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span id="rma-switch-os-badge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-950 text-purple-300 border border-purple-800">EXOS</span>
+                  <h3 id="rma-switch-hostname" class="text-base font-bold text-white font-mono">DLC-York-Core</h3>
+                </div>
+                <div class="flex items-center gap-3 mt-1 text-xs font-mono text-slate-400">
+                  <span>Current IP: <strong id="rma-switch-current-ip" class="text-emerald-400">10.32.221.253</strong></span>
+                  <span>&bull;</span>
+                  <span>Model: <strong id="rma-switch-model" class="text-slate-300">Summit X460-G2</strong></span>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button onclick="downloadSanitizedRmaConfig()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold font-mono rounded-lg transition shadow flex items-center gap-1.5">
+                  <span>💾 Download Config</span>
+                </button>
+                <button onclick="copySanitizedRmaConfig()" class="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold font-mono rounded-lg border border-slate-700 transition flex items-center gap-1.5">
+                  <span>📋 Copy Code</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- RMA Customizer Options -->
+            <div class="bg-slate-950/80 border border-slate-800 rounded-xl p-4 space-y-4">
+              <h4 class="text-xs font-bold text-slate-300 uppercase font-mono tracking-wider flex items-center gap-1.5">
+                <span>⚙️</span>
+                <span>RMA Replacement Sanitizer Parameters</span>
+              </h4>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs font-mono">
+                <div>
+                  <label class="text-slate-400 block mb-1">Target Switch IP Address:</label>
+                  <input type="text" id="rma-custom-ip" oninput="updateSanitizedConfigPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="10.32.221.253" />
+                </div>
+                <div>
+                  <label class="text-slate-400 block mb-1">Management VLAN ID / Name:</label>
+                  <input type="text" id="rma-custom-vlan" oninput="updateSanitizedConfigPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="Default / VLAN 100" />
+                </div>
+                <div>
+                  <label class="text-slate-400 block mb-1">Default Gateway IP:</label>
+                  <input type="text" id="rma-custom-gw" oninput="updateSanitizedConfigPreview()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-slate-200 focus:outline-none focus:border-indigo-500" placeholder="10.32.221.1" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Sanitized Config Output Window -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden flex flex-col shadow-inner">
+              <div class="px-4 py-2.5 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between text-xs font-mono">
+                <span class="text-slate-300 font-bold flex items-center gap-1.5">
+                  <span>📄</span>
+                  <span id="rma-config-filename">sanitized_config.xsf</span>
+                </span>
+                <span class="text-emerald-400 text-[11px]">✔ Ready for TFTP / Console Injection</span>
+              </div>
+              <pre id="rma-config-preview" class="p-4 text-xs font-mono text-emerald-300 bg-slate-950 overflow-x-auto max-h-72 custom-scrollbar whitespace-pre leading-relaxed"></pre>
+            </div>
+
+            <!-- Console Instructions Cheat Sheet Box -->
+            <div class="bg-indigo-950/30 border border-indigo-800/60 rounded-xl p-4 space-y-2 text-xs font-mono">
+              <div class="flex items-center gap-2 text-indigo-300 font-bold">
+                <span>📖</span>
+                <span>On-Site Console Restoration Procedure</span>
+              </div>
+              <p class="text-slate-300 text-[11px]">
+                1. Connect console cable (9600 baud, 8-N-1).<br/>
+                2. Set temporary management IP to reach local staging laptop / TFTP server:<br/>
+                <code class="text-amber-300 font-bold block mt-1 bg-slate-950 p-2 rounded border border-slate-800" id="rma-console-command-snippet">configure vlan default ipaddress 10.32.221.253 255.255.255.0</code>
+                3. Download and load backup configuration file:<br/>
+                <code class="text-amber-300 font-bold block mt-1 bg-slate-950 p-2 rounded border border-slate-800" id="rma-tftp-command-snippet">tftp get 10.32.221.50 sanitized_config.xsf ; load configuration sanitized_config.xsf</code>
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: Standalone 130+ Site Diagrams Browser -->
+  <div id="modal-site-diagrams" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-6xl h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <div class="px-5 py-3.5 border-b border-slate-800 bg-slate-950/90 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-purple-400 font-bold text-sm">
+            📐
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-sm font-bold text-white tracking-tight">Estate Network Blueprints &amp; Visio Diagrams</h2>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-bold">
+                130+ Clubs
+              </span>
+            </div>
+            <p class="text-[11px] text-slate-400 font-mono">High-resolution Visio engineering diagrams &amp; wireless RF floorplans</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 flex-wrap">
+          <select id="modal-diagram-site-select" onchange="loadSiteDiagramInModal(this.value)" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-white font-mono focus:outline-none focus:border-purple-500 cursor-pointer">
+            <option value="YORK">DLC - York (Visio Verified)</option>
+            <option value="FARNHAM">DLC - Farnham (Visio Verified)</option>
+            <option value="LEEDS">DLC - Leeds (Visio Verified)</option>
+            <option value="CHIGWELL">DLC - Chigwell (Visio Verified)</option>
+            <option value="DARTFORD">DLC - Dartford (Visio Verified)</option>
+            <option value="MILTON_KEYNES">DLC - Milton Keynes (Visio Verified)</option>
+            <option value="POOLE">DLC - Poole (Visio Verified)</option>
+            <option value="RAYNES_PARK">DLC - Raynes Park (Visio Verified)</option>
+            <option value="SOUTHAMPTON">DLC - Southampton (Visio Verified)</option>
+            <option value="KIDDERMINSTER">DLC - Kidderminster (Visio Verified)</option>
+          </select>
+
+          <button onclick="closeModal('modal-site-diagrams')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-auto bg-slate-950 p-6 flex flex-col items-center justify-center custom-scrollbar" id="modal-diagram-viewport">
+        <!-- Loaded via JS -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: Standalone Ubuntu VM Migration Kit -->
+  <div id="modal-ubuntu-migration" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-5xl h-[88vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <div class="px-5 py-3.5 border-b border-slate-800 bg-slate-950/90 flex items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-amber-600/20 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm">
+            🐧
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-white tracking-tight">Ubuntu Linux VM Migration &amp; Production Setup Kit</h2>
+            <p class="text-[11px] text-slate-400 font-mono">Zero-dependency automated systemd daemon &bull; TFTP &bull; Nginx</p>
+          </div>
+        </div>
+
+        <button onclick="closeModal('modal-ubuntu-migration')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition">
+          ✕
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-6 space-y-5 font-mono text-xs custom-scrollbar">
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+          <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+            <span>🚀</span>
+            <span>1-Line Automated Ubuntu Server Deployment</span>
+          </h3>
+          <p class="text-slate-300">Run this command on your target Ubuntu Server VM to install TFTP, configure systemd, and launch the portal service:</p>
+          <div class="bg-slate-900 p-3 rounded-lg border border-slate-800 text-emerald-400 flex items-center justify-between">
+            <code>curl -fsSL http://your-repo/deploy_ubuntu.sh | sudo bash</code>
+            <button onclick="copyToClipboard('curl -fsSL http://your-repo/deploy_ubuntu.sh | sudo bash', 'Copied command!')" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[10px]">Copy</button>
+          </div>
+        </div>
+
+        <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-3">
+          <h4 class="text-xs font-bold text-white uppercase tracking-wider">systemd Service Configuration (/etc/systemd/system/switch-portal.service)</h4>
+          <pre class="bg-slate-900 p-3 rounded-lg border border-slate-800 text-slate-300 overflow-x-auto text-[11px] leading-relaxed">[Unit]
+Description=Extreme Switch Backup &amp; Management Portal Server
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/switch-backup
+ExecStart=/usr/bin/python3 /opt/switch-backup/portal_server_ubuntu.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target</pre>
+          <button onclick="copyToClipboard(`[Unit]\nDescription=Extreme Switch Backup & Management Portal Server\nAfter=network.target\n\n[Service]\nType=simple\nUser=root\nWorkingDirectory=/opt/switch-backup\nExecStart=/usr/bin/python3 /opt/switch-backup/portal_server_ubuntu.py\nRestart=always\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target`, 'Copied systemd unit file!')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-xs">📋 Copy Unit File</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold font-mono transition-opacity duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
     <span>✔</span> <span id="toast-msg">Copied to clipboard!</span>
@@ -5314,13 +5682,29 @@ show ip route</pre>
               </button>
             </div>
 
-            <div class="flex items-center gap-1.5">
+            <div class="flex items-center gap-1.5 flex-wrap">
               <button 
                 onclick="copySwitchBackup('${sw.ip}', '${sw.hostname}')"
-                class="flex-1 flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-slate-700 transition"
+                class="flex-1 min-w-[90px] flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 hover:border-slate-700 transition"
                 title="Copy latest configuration backup to clipboard"
               >
-                <span>📋 Copy Backup</span>
+                <span>📋 Copy</span>
+              </button>
+
+              <button 
+                onclick="openSwitchReplacementModal('${sw.ip}')"
+                class="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-bold bg-indigo-950 hover:bg-indigo-900 text-indigo-300 border border-indigo-700/60 transition shadow-sm"
+                title="Open Switch Replacement Hub pre-filled for this switch"
+              >
+                <span>🔄 Replace</span>
+              </button>
+
+              <button 
+                onclick="openVisualNodeGraphModal(extractSiteCode('${sw.hostname || sw.ip}'), '${sw.ip}')"
+                class="flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-indigo-300 border border-slate-800 transition shadow-sm"
+                title="View in Interactive Visual Node Graph"
+              >
+                <span>🗺️ Graph</span>
               </button>
 
               <button 
@@ -5350,6 +5734,17 @@ show ip route</pre>
           </div>
         </div>
       `;
+    }
+
+    let currentSiteTab = 'graph';
+    let modalNodeGraphSite = 'YORK';
+    let modalNodeGraphRole = 'all';
+    let modalNodeGraphZoom = 100;
+    let rmaActiveSwitch = null;
+
+    function setSitePageViewTab(tabName) {
+      currentSiteTab = tabName;
+      renderSitePage();
     }
 
     function renderSitePage() {
@@ -5422,7 +5817,14 @@ show ip route</pre>
               </div>
             </div>
 
-            <div class="flex items-center gap-2.5">
+            <div class="flex items-center gap-2.5 flex-wrap">
+              <button
+                onclick="openSwitchReplacementModal('${siteSwitches[0] ? siteSwitches[0].ip : ''}')"
+                class="flex items-center gap-1.5 px-3 py-2 bg-indigo-950 hover:bg-indigo-900 text-indigo-300 text-xs font-bold rounded-xl border border-indigo-700/60 transition shadow-sm cursor-pointer"
+                title="Open Switch Replacement Hub for this site"
+              >
+                <span>🔄 Switch Replacement</span>
+              </button>
               <button
                 onclick="triggerBackup('BackupSave.py', '${siteSwitches[0] ? siteSwitches[0].ip : 'ALL'}')"
                 class="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-indigo-600/30 transition cursor-pointer"
@@ -5440,146 +5842,804 @@ show ip route</pre>
             </div>
           </div>
 
-          <!-- Interactive Topology Diagram Section for York & Site Blueprints -->
-          <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
-            <div class="p-3.5 bg-slate-900/90 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div class="flex items-center gap-2.5">
-                <span class="text-indigo-400 font-mono text-sm">🗺️</span>
-                <div>
-                  <div class="flex items-center gap-2">
-                    <h3 class="text-xs font-bold text-white uppercase font-mono tracking-wider">
-                      ${selectedSite} Physical & Logical Topology Diagram
-                    </h3>
-                    ${isYork ? `
-                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-bold">
-                        Visio Verified: DLC 3.vsdx (DLC - York)
-                      </span>
-                    ` : `
-                      <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">
-                        Network Blueprint
-                      </span>
-                    `}
-                  </div>
-                  <p class="text-[11px] text-slate-400 mt-0.5">
-                    Core VSP/EXOS switch uplinks, firewall interconnects, and IDF distribution layouts.
-                  </p>
-                </div>
-              </div>
+          <!-- Site Page Navigation Pills Bar -->
+          <div class="bg-slate-900 border border-slate-800 rounded-xl p-1.5 flex items-center justify-between gap-2 overflow-x-auto shadow-md">
+            <div class="flex items-center gap-2 min-w-max">
+              <button
+                onclick="setSitePageViewTab('graph')"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  currentSiteTab === 'graph'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-2 ring-indigo-400'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
+                }"
+              >
+                <span>🗺️ Visual Node Graph</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 font-mono">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Live LLDP
+                </span>
+              </button>
 
-              <div class="flex items-center gap-2">
-                <div class="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800 text-xs font-mono">
-                  <button onclick="changeDiagramZoom(-20)" class="px-1.5 text-slate-400 hover:text-white" title="Zoom Out">-</button>
-                  <span id="diagram-zoom-level" class="text-slate-200 text-[11px] px-1">${siteDiagramZoom}%</span>
-                  <button onclick="changeDiagramZoom(20)" class="px-1.5 text-slate-400 hover:text-white" title="Zoom In">+</button>
-                  <button onclick="resetDiagramZoom()" class="px-1.5 text-slate-400 hover:text-white border-l border-slate-800 pl-1.5" title="Reset Zoom">100%</button>
-                </div>
-              </div>
+              <button
+                onclick="setSitePageViewTab('blueprint')"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  currentSiteTab === 'blueprint'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-2 ring-indigo-400'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
+                }"
+              >
+                <span>📐 Visio Blueprint</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-mono">
+                  Verified
+                </span>
+              </button>
+
+              <button
+                onclick="setSitePageViewTab('heatmaps')"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  currentSiteTab === 'heatmaps'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-2 ring-indigo-400'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
+                }"
+              >
+                <span>📶 Wireless RF Heatmaps</span>
+              </button>
+
+              <button
+                onclick="setSitePageViewTab('switches')"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  currentSiteTab === 'switches'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-2 ring-indigo-400'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
+                }"
+              >
+                <span>🗄️ Switch Fleet (${siteSwitches.length})</span>
+              </button>
+
+              <button
+                onclick="setSitePageViewTab('replacement')"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  currentSiteTab === 'replacement'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 ring-2 ring-indigo-400'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
+                }"
+              >
+                <span>🔄 Switch Replacement</span>
+              </button>
             </div>
 
-            <!-- Diagram Canvas -->
-            <div id="site-diagram-canvas" class="p-4 bg-slate-950 rounded-b-xl overflow-x-auto flex justify-center items-center" style="min-height: 460px;">
-              ${(function() {
-                const pngPath = getDiagramPngPathForSite(selectedSite);
-                if (pngPath) {
-                  return `
-                    <div class="w-full flex flex-col items-center space-y-3">
-                      <div class="w-full bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
-                        <div class="flex items-center gap-2">
-                          <span class="text-emerald-400 font-bold">✔</span>
-                          <span>Visio Verified Diagram: <strong class="text-white">${pngPath.split("/").pop()}</strong></span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                          <a href="${pngPath}" target="_blank" class="text-indigo-400 hover:underline flex items-center gap-1 text-[11px]">
-                            <span>Full Resolution ↗</span>
-                          </a>
-                          <a href="${pngPath}" download="${selectedSite}_Topology_Diagram.png" class="text-purple-400 hover:underline flex items-center gap-1 text-[11px]">
-                            <span>Download PNG 💾</span>
-                          </a>
-                        </div>
-                      </div>
-                      <div class="bg-slate-900/40 rounded-xl p-4 shadow-inner border border-slate-800/80 overflow-x-auto w-full flex justify-center items-center">
-                        <img 
-                          src="${pngPath}" 
-                          alt="${selectedSite} Topology Diagram" 
-                          style="transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out; max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);" 
-                        />
-                      </div>
-                    </div>
-                  `;
-                } else if (isYork) {
-                  return `
-                    <div class="bg-white/95 rounded-xl p-4 shadow-inner border border-slate-800" style="width: 100%; max-width: 1100px; transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out;">
-                      ${YORK_DIAGRAM_SVG_STR}
-                    </div>
-                  `;
-                } else {
-                  return `
-                    <div class="p-12 text-center text-slate-400 font-mono">
-                      <div class="text-3xl mb-2">🏢</div>
-                      <div class="text-sm font-bold text-white">${selectedSite} Network Schematic</div>
-                      <div class="text-xs text-slate-500 mt-1">Showing ${siteSwitches.length} connected switches for site ${selectedSite}.</div>
-                    </div>
-                  `;
-                }
-              })()}
+            <div class="hidden lg:flex items-center gap-2 text-xs font-mono text-slate-400 pr-2">
+              <span>Site: <strong class="text-white">${selectedSite}</strong></span>
+              <span>&bull;</span>
+              <span>Core: <strong class="text-indigo-300">EXOS X460-G2</strong></span>
             </div>
-
-            ${isYork ? `
-              <!-- Uplink Legend -->
-              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 bg-slate-950 border-t border-slate-800 text-xs font-mono">
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-                  <div class="text-purple-400 font-bold">DLC-York-Spa-SW1</div>
-                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 9 ➔ Port 1</div>
-                </div>
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-                  <div class="text-purple-400 font-bold">DLC-York-Gym</div>
-                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 37 ➔ Port 1</div>
-                </div>
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-                  <div class="text-purple-400 font-bold">DLL-York</div>
-                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 42 ➔ Port 17</div>
-                </div>
-                <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
-                  <div class="text-purple-400 font-bold">DLC-York-MainComms-2</div>
-                  <div class="text-slate-400 text-[11px] mt-0.5">Core Port 41 ➔ Port 48</div>
-                </div>
-              </div>
-            ` : ''}
           </div>
 
-          ${isYork ? `
-            <!-- Wireless Site Heat Maps Section (Ground Floor, First Floor, Site Plan) -->
-            <div id="york-heatmaps-container" class="pt-2"></div>
+          <!-- TAB CONTENT SECTIONS -->
+
+          <!-- TAB 1: Visual Node Graph (Live LLDP Topology Map) -->
+          ${currentSiteTab === 'graph' ? `
+            <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl space-y-4 p-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-indigo-400 font-mono text-lg">🗺️</span>
+                  <div>
+                    <h3 class="text-sm font-bold text-white font-mono flex items-center gap-2">
+                      ${selectedSite} Live LLDP Interactive Node Graph
+                      <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono font-bold">
+                        10G SFP+ / 1G SFP / PoE+
+                      </span>
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5 font-mono">
+                      Click any node to view real-time Telnet telemetry, port details, and replacement controls.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap">
+                  <button onclick="exportTopologyJson('${selectedSite}')" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold rounded-lg border border-slate-700 transition flex items-center gap-1">
+                    <span>💾 Export Topology JSON</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Node Graph Canvas Container -->
+              <div id="site-nodegraph-canvas-container" class="w-full overflow-x-auto bg-slate-950 rounded-xl p-4 border border-slate-800 min-h-[500px] flex justify-center items-center">
+                <!-- Dynamically rendered SVG topology -->
+              </div>
+            </div>
           ` : ''}
 
-          <!-- Site Switch Inventory Cards (Exclusively for this site) -->
-          <div class="space-y-3 pt-2">
-            <div class="flex items-center justify-between">
-              <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider font-mono flex items-center gap-2">
-                <span>🏢</span>
-                <span>Switches Assigned to ${selectedSite} (${siteSwitches.length})</span>
-              </h3>
-              <div class="text-xs text-slate-400 font-mono">
-                Showing ${siteSwitches.length} site-specific switch card${siteSwitches.length > 1 ? 's' : ''}
+          <!-- TAB 2: Visio Blueprint -->
+          ${currentSiteTab === 'blueprint' ? `
+            <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+              <div class="p-3.5 bg-slate-900/90 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-indigo-400 font-mono text-sm">📐</span>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <h3 class="text-xs font-bold text-white uppercase font-mono tracking-wider">
+                        ${selectedSite} Physical &amp; Logical Topology Blueprint
+                      </h3>
+                      ${isYork ? `
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800 font-bold">
+                          Visio Verified: DLC 3.vsdx (DLC - York)
+                        </span>
+                      ` : `
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">
+                          Network Blueprint
+                        </span>
+                      `}
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-0.5">
+                      Core VSP/EXOS switch uplinks, firewall interconnects, and IDF distribution layouts.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <div class="flex items-center gap-1 bg-slate-950 px-2 py-1 rounded-lg border border-slate-800 text-xs font-mono">
+                    <button onclick="changeDiagramZoom(-20)" class="px-1.5 text-slate-400 hover:text-white" title="Zoom Out">-</button>
+                    <span id="diagram-zoom-level" class="text-slate-200 text-[11px] px-1">${siteDiagramZoom}%</span>
+                    <button onclick="changeDiagramZoom(20)" class="px-1.5 text-slate-400 hover:text-white" title="Zoom In">+</button>
+                    <button onclick="resetDiagramZoom()" class="px-1.5 text-slate-400 hover:text-white border-l border-slate-800 pl-1.5" title="Reset Zoom">100%</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Diagram Canvas -->
+              <div id="site-diagram-canvas" class="p-4 bg-slate-950 rounded-b-xl overflow-x-auto flex justify-center items-center" style="min-height: 460px;">
+                ${(function() {
+                  const pngPath = getDiagramPngPathForSite(selectedSite);
+                  if (pngPath) {
+                    return `
+                      <div class="w-full flex flex-col items-center space-y-3">
+                        <div class="w-full bg-slate-900/90 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono text-slate-300">
+                          <div class="flex items-center gap-2">
+                            <span class="text-emerald-400 font-bold">✔</span>
+                            <span>Visio Verified Diagram: <strong class="text-white">${pngPath.split("/").pop()}</strong></span>
+                          </div>
+                          <div class="flex items-center gap-3">
+                            <a href="${pngPath}" target="_blank" class="text-indigo-400 hover:underline flex items-center gap-1 text-[11px]">
+                              <span>Full Resolution ↗</span>
+                            </a>
+                            <a href="${pngPath}" download="${selectedSite}_Topology_Diagram.png" class="text-purple-400 hover:underline flex items-center gap-1 text-[11px]">
+                              <span>Download PNG 💾</span>
+                            </a>
+                          </div>
+                        </div>
+                        <div class="bg-slate-900/40 rounded-xl p-4 shadow-inner border border-slate-800/80 overflow-x-auto w-full flex justify-center items-center">
+                          <img 
+                            src="${pngPath}" 
+                            alt="${selectedSite} Topology Diagram" 
+                            style="transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out; max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);" 
+                          />
+                        </div>
+                      </div>
+                    `;
+                  } else if (isYork) {
+                    return `
+                      <div class="bg-white/95 rounded-xl p-4 shadow-inner border border-slate-800" style="width: 100%; max-width: 1100px; transform: scale(${siteDiagramZoom / 100}); transform-origin: top center; transition: transform 0.15s ease-out;">
+                        ${YORK_DIAGRAM_SVG_STR}
+                      </div>
+                    `;
+                  } else {
+                    return `
+                      <div class="p-12 text-center text-slate-400 font-mono">
+                        <div class="text-3xl mb-2">🏢</div>
+                        <div class="text-sm font-bold text-white">${selectedSite} Network Schematic</div>
+                        <div class="text-xs text-slate-500 mt-1">Showing ${siteSwitches.length} connected switches for site ${selectedSite}.</div>
+                      </div>
+                    `;
+                  }
+                })()}
+              </div>
+
+              ${isYork ? `
+                <!-- Uplink Legend -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 p-3 bg-slate-950 border-t border-slate-800 text-xs font-mono">
+                  <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                    <div class="text-purple-400 font-bold">DLC-York-Spa-SW1</div>
+                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 9 ➔ Port 1</div>
+                  </div>
+                  <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                    <div class="text-purple-400 font-bold">DLC-York-Gym</div>
+                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 37 ➔ Port 1</div>
+                  </div>
+                  <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                    <div class="text-purple-400 font-bold">DLL-York</div>
+                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 42 ➔ Port 17</div>
+                  </div>
+                  <div class="bg-slate-900 p-2.5 rounded-lg border border-slate-800">
+                    <div class="text-purple-400 font-bold">DLC-York-MainComms-2</div>
+                    <div class="text-slate-400 text-[11px] mt-0.5">Core Port 41 ➔ Port 48</div>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          ` : ''}
+
+          <!-- TAB 3: Wireless RF Heatmaps -->
+          ${currentSiteTab === 'heatmaps' ? `
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">📶</span>
+                  <h3 class="text-sm font-bold text-white font-mono">${selectedSite} Wireless RF Floorplans &amp; AP Density</h3>
+                </div>
+                <span class="text-xs font-mono text-amber-400">Extreme AP5050 Wi-Fi 6E Deployments</span>
+              </div>
+              <div id="york-heatmaps-container" class="pt-2"></div>
+            </div>
+          ` : ''}
+
+          <!-- TAB 4: Switch Fleet List -->
+          ${currentSiteTab === 'switches' ? `
+            <div class="space-y-3 pt-2">
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-bold text-slate-300 uppercase tracking-wider font-mono flex items-center gap-2">
+                  <span>🏢</span>
+                  <span>Switches Assigned to ${selectedSite} (${siteSwitches.length})</span>
+                </h3>
+                <div class="text-xs text-slate-400 font-mono">
+                  Showing ${siteSwitches.length} site-specific switch card${siteSwitches.length > 1 ? 's' : ''}
+                </div>
+              </div>
+
+              ${siteSwitches.length === 0 ? `
+                <div class="py-8 text-center bg-slate-950 rounded-xl border border-slate-800 text-slate-400 text-xs font-mono">
+                  No active switches found for ${selectedSite}.
+                </div>
+              ` : `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  ${siteSwitches.map(sw => createSwitchCardHtml(sw)).join('')}
+                </div>
+              `}
+            </div>
+          ` : ''}
+
+          <!-- TAB 5: Switch Replacement Hub -->
+          ${currentSiteTab === 'replacement' ? `
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-xl space-y-5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-800">
+                <div>
+                  <h3 class="text-base font-bold text-white font-mono flex items-center gap-2">
+                    <span>🔄</span>
+                    <span>${selectedSite} Switch Replacement &amp; Staging Hub</span>
+                  </h3>
+                  <p class="text-xs text-slate-400 mt-1 font-mono">
+                    Select a switch below to customize target IP/VLANs, generate sanitized .xsf/.cfg configs, or run console recovery procedures.
+                  </p>
+                </div>
+                <span class="px-3 py-1 rounded-full text-xs font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-800 self-start sm:self-auto">
+                  ${siteSwitches.length} Switches in ${selectedSite}
+                </span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                ${siteSwitches.map(sw => `
+                  <div class="bg-slate-950 border border-slate-800 hover:border-indigo-500/60 rounded-xl p-4 flex flex-col justify-between space-y-4 shadow transition">
+                    <div>
+                      <div class="flex items-start justify-between gap-2">
+                        <div>
+                          <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-indigo-950 text-indigo-300 border border-indigo-800">
+                            ${sw.format === 'cfg' ? 'VOSS' : 'EXOS'}
+                          </span>
+                          <h4 class="font-mono font-bold text-white text-sm mt-1 truncate">
+                            ${sw.hostname || sw.ip}
+                          </h4>
+                          <p class="text-xs font-mono text-emerald-400 mt-0.5">${sw.ip}</p>
+                        </div>
+                        <span class="text-xs text-slate-500 font-mono">
+                          ${(sw.format || 'XSF').toUpperCase()}
+                        </span>
+                      </div>
+
+                      <div class="mt-3 pt-3 border-t border-slate-900 grid grid-cols-2 gap-2 text-xs font-mono text-slate-400">
+                        <div>
+                          <span class="text-slate-500 text-[10px] block">Model</span>
+                          <span class="text-slate-200 truncate block">${sw.model || 'Extreme Switch'}</span>
+                        </div>
+                        <div>
+                          <span class="text-slate-500 text-[10px] block">Backup</span>
+                          <span class="${sw.hasBackup ? 'text-emerald-400 font-bold' : 'text-slate-400'}">
+                            ${sw.hasBackup ? 'Available' : 'Pending'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 pt-2 border-t border-slate-900">
+                      <button
+                        onclick="openSwitchReplacementModal('${sw.ip}')"
+                        class="flex-1 py-2 px-3 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white transition flex items-center justify-center gap-1.5 shadow cursor-pointer"
+                      >
+                        <span>🔄 Launch Replacement</span>
+                      </button>
+                      <button
+                        onclick="runBackup('${sw.ip}')"
+                        class="py-2 px-3 rounded-lg text-xs font-bold bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-slate-800 transition cursor-pointer"
+                        title="Backup switch now"
+                      >
+                        <span>⚡ Backup</span>
+                      </button>
+                    </div>
+                  </div>
+                `).join('')}
               </div>
             </div>
+          ` : ''}
 
-            ${siteSwitches.length === 0 ? `
-              <div class="py-8 text-center bg-slate-950 rounded-xl border border-slate-800 text-slate-400 text-xs font-mono">
-                No active switches found for ${selectedSite}.
-              </div>
-            ` : `
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                ${siteSwitches.map(sw => createSwitchCardHtml(sw)).join('')}
-              </div>
-            `}
-          </div>
         </div>
       `;
       
-      if (isYork) {
+      if (currentSiteTab === 'graph') {
+        renderSiteVisualNodeGraphSvg(selectedSite, 'site-nodegraph-canvas-container');
+      } else if (currentSiteTab === 'heatmaps') {
         renderYorkHeatMaps();
       }
+    }
+
+    function renderSiteVisualNodeGraphSvg(siteCode, containerId, activeRole = 'all') {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      const isYork = siteCode.toUpperCase() === 'YORK' || siteCode.toLowerCase().includes('york');
+
+      if (isYork) {
+        container.innerHTML = `
+          <div class="w-full flex flex-col items-center space-y-4">
+            <div class="w-full flex items-center justify-between text-xs font-mono text-slate-400 px-2">
+              <div class="flex items-center gap-2">
+                <span class="text-emerald-400 font-bold">●</span>
+                <span>Active LLDP Nodes Discovered: <strong>7 Devices</strong> (1 Core, 4 Edge, 2 Firewalls)</span>
+              </div>
+              <span class="text-indigo-400 font-bold">Click any device for live telemetry</span>
+            </div>
+
+            <div class="w-full bg-slate-950/80 rounded-xl p-4 border border-slate-800 overflow-x-auto flex justify-center">
+              <svg viewBox="0 0 1000 680" class="w-full max-w-[950px] h-auto font-mono select-none" style="filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));">
+                <defs>
+                  <linearGradient id="grad-core" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#4338ca"/>
+                    <stop offset="100%" stop-color="#312e81"/>
+                  </linearGradient>
+                  <linearGradient id="grad-edge" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#1e1b4b"/>
+                    <stop offset="100%" stop-color="#0f172a"/>
+                  </linearGradient>
+                  <linearGradient id="grad-fw" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#831843"/>
+                    <stop offset="100%" stop-color="#500724"/>
+                  </linearGradient>
+                  <linearGradient id="grad-ap" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#064e3b"/>
+                    <stop offset="100%" stop-color="#022c22"/>
+                  </linearGradient>
+                  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur" />
+                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                  </filter>
+                </defs>
+
+                <!-- Background Grid -->
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5" opacity="0.4"/>
+                </pattern>
+                <rect width="1000" height="680" fill="url(#grid)" />
+
+                <!-- FIBER LINKS / UPLINKS (LINES & LABELS) -->
+
+                <!-- Dual Firewall Uplinks to Core -->
+                <path d="M 440 90 L 480 180" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4,4" />
+                <path d="M 560 90 L 520 180" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="4,4" />
+                <text x="430" y="140" fill="#fda4af" font-size="10" font-weight="bold">WAN 1 (1Gbps)</text>
+                <text x="560" y="140" fill="#fda4af" font-size="10" font-weight="bold">WAN 2 (1Gbps)</text>
+
+                <!-- Core to Spa SW1 (10G Fiber) -->
+                <path d="M 430 250 L 160 380" stroke="#10b981" stroke-width="3" filter="url(#glow)"/>
+                <circle cx="295" cy="315" r="4" fill="#34d399">
+                  <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="230" y="300" width="130" height="20" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+                <text x="295" y="314" fill="#a7f3d0" font-size="9" text-anchor="middle" font-weight="bold">10G SFP+ [P9 ➔ P1]</text>
+
+                <!-- Core to Gym SW (10G Fiber) -->
+                <path d="M 470 260 L 380 380" stroke="#10b981" stroke-width="3" filter="url(#glow)"/>
+                <circle cx="425" cy="320" r="4" fill="#34d399">
+                  <animate attributeName="opacity" values="1;0.3;1" dur="2s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="365" y="315" width="130" height="20" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+                <text x="430" y="329" fill="#a7f3d0" font-size="9" text-anchor="middle" font-weight="bold">10G SFP+ [P37 ➔ P1]</text>
+
+                <!-- Core to DLL York VOSS (10G Fiber) -->
+                <path d="M 530 260 L 620 380" stroke="#06b6d4" stroke-width="3" filter="url(#glow)"/>
+                <circle cx="575" cy="320" r="4" fill="#22d3ee">
+                  <animate attributeName="opacity" values="0.3;1;0.3" dur="1.8s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="510" y="315" width="135" height="20" rx="4" fill="#0f172a" stroke="#06b6d4" stroke-width="1"/>
+                <text x="577" y="329" fill="#cffafe" font-size="9" text-anchor="middle" font-weight="bold">10G SFP+ [P42 ➔ P17]</text>
+
+                <!-- Core to MainComms-2 (10G Fiber) -->
+                <path d="M 570 250 L 840 380" stroke="#10b981" stroke-width="3" filter="url(#glow)"/>
+                <circle cx="705" cy="315" r="4" fill="#34d399">
+                  <animate attributeName="opacity" values="1;0.3;1" dur="2.2s" repeatCount="indefinite"/>
+                </circle>
+                <rect x="640" y="300" width="135" height="20" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1"/>
+                <text x="707" y="314" fill="#a7f3d0" font-size="9" text-anchor="middle" font-weight="bold">10G SFP+ [P41 ➔ P48]</text>
+
+                <!-- Edge Switches to Wi-Fi 6E APs (PoE+ Links) -->
+                <path d="M 160 450 L 120 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
+                <path d="M 380 450 L 340 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
+                <path d="M 380 450 L 440 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
+                <path d="M 840 450 L 800 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
+                <path d="M 840 450 L 880 540" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="3,3" />
+
+                <!-- INTERACTIVE DEVICE NODES -->
+
+                <!-- Firewall HA Pair -->
+                <g onclick="openSwitchReplacementModal('10.32.221.1')" class="cursor-pointer group">
+                  <rect x="360" y="30" width="130" height="60" rx="8" fill="url(#grad-fw)" stroke="#f43f5e" stroke-width="1.5" class="group-hover:stroke-white transition"/>
+                  <text x="425" y="52" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">Meraki MX250-1</text>
+                  <text x="425" y="68" fill="#fda4af" font-size="9" text-anchor="middle">10.32.221.1 &bull; Active</text>
+                  <text x="425" y="80" fill="#94a3b8" font-size="8" text-anchor="middle">Primary Gateway</text>
+                </g>
+
+                <g onclick="openSwitchReplacementModal('10.32.221.2')" class="cursor-pointer group">
+                  <rect x="510" y="30" width="130" height="60" rx="8" fill="url(#grad-fw)" stroke="#f43f5e" stroke-width="1.5" class="group-hover:stroke-white transition"/>
+                  <text x="575" y="52" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">Meraki MX250-2</text>
+                  <text x="575" y="68" fill="#fda4af" font-size="9" text-anchor="middle">10.32.221.2 &bull; Standby</text>
+                  <text x="575" y="80" fill="#94a3b8" font-size="8" text-anchor="middle">Warm Spare HA</text>
+                </g>
+
+                <!-- CORE SWITCH (DLC-York-Core) -->
+                <g onclick="showSwitchMonitorLive('10.32.221.253', 'DLC-York-Core', 'xsf')" class="cursor-pointer group">
+                  <rect x="390" y="180" width="220" height="80" rx="10" fill="url(#grad-core)" stroke="#818cf8" stroke-width="2" class="group-hover:stroke-white transition"/>
+                  <circle cx="410" cy="202" r="5" fill="#34d399">
+                    <animate attributeName="r" values="4;6;4" dur="1.5s" repeatCount="indefinite"/>
+                  </circle>
+                  <text x="425" y="206" fill="#fff" font-size="13" font-weight="bold">DLC-York-Core</text>
+                  <text x="425" y="224" fill="#a5b4fc" font-size="10">IP: 10.32.221.253 &bull; EXOS X460-G2</text>
+                  <text x="425" y="240" fill="#34d399" font-size="9">CPU: 8% &bull; Temp: 34°C &bull; 48x 10G/1G</text>
+                  <rect x="530" y="190" width="65" height="18" rx="4" fill="#312e81" stroke="#818cf8"/>
+                  <text x="562" y="202" fill="#e0e7ff" font-size="9" text-anchor="middle" font-weight="bold">CORE STACK</text>
+                </g>
+
+                <!-- EDGE 1: Spa SW1 -->
+                <g onclick="showSwitchMonitorLive('10.32.221.250', 'DLC-York-Spa-SW1', 'xsf')" class="cursor-pointer group">
+                  <rect x="80" y="380" width="160" height="70" rx="8" fill="url(#grad-edge)" stroke="#6366f1" stroke-width="1.5" class="group-hover:stroke-white transition"/>
+                  <text x="160" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">DLC-York-Spa-SW1</text>
+                  <text x="160" y="422" fill="#94a3b8" font-size="9" text-anchor="middle">10.32.221.250 &bull; EXOS X440</text>
+                  <text x="160" y="438" fill="#34d399" font-size="8" text-anchor="middle">24 Ports &bull; PoE+ Enabled</text>
+                </g>
+
+                <!-- EDGE 2: Gym SW -->
+                <g onclick="showSwitchMonitorLive('10.32.221.251', 'DLC-York-Gym', 'xsf')" class="cursor-pointer group">
+                  <rect x="300" y="380" width="160" height="70" rx="8" fill="url(#grad-edge)" stroke="#6366f1" stroke-width="1.5" class="group-hover:stroke-white transition"/>
+                  <text x="380" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">DLC-York-Gym</text>
+                  <text x="380" y="422" fill="#94a3b8" font-size="9" text-anchor="middle">10.32.221.251 &bull; EXOS X440</text>
+                  <text x="380" y="438" fill="#34d399" font-size="8" text-anchor="middle">48 Ports &bull; PoE+ Enabled</text>
+                </g>
+
+                <!-- EDGE 3: DLL-York VOSS -->
+                <g onclick="showSwitchMonitorLive('10.32.221.254', 'DLL-York', 'cfg')" class="cursor-pointer group">
+                  <rect x="540" y="380" width="160" height="70" rx="8" fill="url(#grad-edge)" stroke="#06b6d4" stroke-width="1.5" class="group-hover:stroke-white transition"/>
+                  <text x="620" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">DLL-York (VOSS)</text>
+                  <text x="620" y="422" fill="#94a3b8" font-size="9" text-anchor="middle">10.32.221.254 &bull; VSP 4450</text>
+                  <text x="620" y="438" fill="#22d3ee" font-size="8" text-anchor="middle">Fabric Engine &bull; SPB Native</text>
+                </g>
+
+                <!-- EDGE 4: MainComms-2 -->
+                <g onclick="showSwitchMonitorLive('10.32.221.252', 'DLC-York-MainComms-2', 'xsf')" class="cursor-pointer group">
+                  <rect x="760" y="380" width="160" height="70" rx="8" fill="url(#grad-edge)" stroke="#6366f1" stroke-width="1.5" class="group-hover:stroke-white transition"/>
+                  <text x="840" y="405" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">DLC-York-MainComms-2</text>
+                  <text x="840" y="422" fill="#94a3b8" font-size="9" text-anchor="middle">10.32.221.252 &bull; EXOS X440</text>
+                  <text x="840" y="438" fill="#34d399" font-size="8" text-anchor="middle">48 Ports &bull; PoE+ Enabled</text>
+                </g>
+
+                <!-- Wi-Fi 6E ACCESS POINTS (Extreme AP5050) -->
+                <g class="cursor-pointer group">
+                  <rect x="60" y="540" width="120" height="45" rx="6" fill="url(#grad-ap)" stroke="#10b981" stroke-width="1"/>
+                  <text x="120" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP5050 - Spa</text>
+                  <text x="120" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Wi-Fi 6E &bull; Port 14</text>
+                </g>
+
+                <g class="cursor-pointer group">
+                  <rect x="280" y="540" width="120" height="45" rx="6" fill="url(#grad-ap)" stroke="#10b981" stroke-width="1"/>
+                  <text x="340" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP5050 - Gym Flr</text>
+                  <text x="340" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Wi-Fi 6E &bull; Port 22</text>
+                </g>
+
+                <g class="cursor-pointer group">
+                  <rect x="410" y="540" width="120" height="45" rx="6" fill="url(#grad-ap)" stroke="#10b981" stroke-width="1"/>
+                  <text x="470" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP5050 - Studios</text>
+                  <text x="470" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Wi-Fi 6E &bull; Port 28</text>
+                </g>
+
+                <g class="cursor-pointer group">
+                  <rect x="740" y="540" width="120" height="45" rx="6" fill="url(#grad-ap)" stroke="#10b981" stroke-width="1"/>
+                  <text x="800" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP5050 - Comms</text>
+                  <text x="800" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Wi-Fi 6E &bull; Port 11</text>
+                </g>
+
+                <g class="cursor-pointer group">
+                  <rect x="870" y="540" width="120" height="45" rx="6" fill="url(#grad-ap)" stroke="#10b981" stroke-width="1"/>
+                  <text x="930" y="558" fill="#a7f3d0" font-size="10" font-weight="bold" text-anchor="middle">AP5050 - Cafe</text>
+                  <text x="930" y="572" fill="#6ee7b7" font-size="8" text-anchor="middle">Wi-Fi 6E &bull; Port 19</text>
+                </g>
+
+              </svg>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div class="py-12 text-center text-slate-400 font-mono space-y-2">
+            <div class="text-3xl">🏢</div>
+            <div class="text-sm font-bold text-white">${siteCode} Dynamic Topology Map</div>
+            <p class="text-xs text-slate-500">LLDP links automatically discovered from Telnet neighbor queries.</p>
+          </div>
+        `;
+      }
+    }
+
+    function openVisualNodeGraphModal(siteCode, highlightIp) {
+      const modal = document.getElementById('modal-visual-nodegraph');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      modalNodeGraphSite = siteCode || 'YORK';
+      const select = document.getElementById('modal-nodegraph-site-select');
+      if (select) select.value = modalNodeGraphSite;
+      renderSiteVisualNodeGraphSvg(modalNodeGraphSite, 'modal-nodegraph-container');
+    }
+
+    function changeModalNodeGraphSite(siteCode) {
+      modalNodeGraphSite = siteCode;
+      renderSiteVisualNodeGraphSvg(siteCode, 'modal-nodegraph-container');
+    }
+
+    function filterModalNodeGraphRole(role) {
+      modalNodeGraphRole = role;
+      ['all', 'core', 'edge', 'firewall', 'ap'].forEach(r => {
+        const btn = document.getElementById(`role-btn-${r}`);
+        if (btn) {
+          if (r === role) {
+            btn.className = "px-2 py-0.5 rounded text-white bg-indigo-600 font-bold text-[11px]";
+          } else {
+            btn.className = "px-2 py-0.5 rounded text-slate-400 hover:text-white text-[11px]";
+          }
+        }
+      });
+    }
+
+    function zoomModalNodeGraph(delta) {
+      modalNodeGraphZoom = Math.max(50, Math.min(200, modalNodeGraphZoom + delta));
+      const el = document.getElementById('modal-nodegraph-zoom-pct');
+      if (el) el.innerText = `${modalNodeGraphZoom}%`;
+      const container = document.getElementById('modal-nodegraph-container');
+      if (container && container.firstElementChild) {
+        container.firstElementChild.style.transform = `scale(${modalNodeGraphZoom / 100})`;
+        container.firstElementChild.style.transformOrigin = 'center center';
+      }
+    }
+
+    function resetModalNodeGraphZoom() {
+      modalNodeGraphZoom = 100;
+      const el = document.getElementById('modal-nodegraph-zoom-pct');
+      if (el) el.innerText = '100%';
+      const container = document.getElementById('modal-nodegraph-container');
+      if (container && container.firstElementChild) {
+        container.firstElementChild.style.transform = 'scale(1)';
+      }
+    }
+
+    function exportTopologyJson(siteCode) {
+      const exportData = {
+        siteCode: siteCode,
+        timestamp: new Date().toISOString(),
+        coreSwitch: {
+          hostname: "DLC-York-Core",
+          ip: "10.32.221.253",
+          os: "EXOS",
+          model: "Summit X460-G2-48p-10GE4",
+          uplinks: [
+            { remote: "DLC-York-Spa-SW1", localPort: "9", remotePort: "1", speed: "10G SFP+" },
+            { remote: "DLC-York-Gym", localPort: "37", remotePort: "1", speed: "10G SFP+" },
+            { remote: "DLL-York", localPort: "42", remotePort: "17", speed: "10G SFP+" },
+            { remote: "DLC-York-MainComms-2", localPort: "41", remotePort: "48", speed: "10G SFP+" }
+          ]
+        }
+      };
+      const jsonStr = JSON.stringify(exportData, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${siteCode}_Topology_LLDP.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast(`Exported ${siteCode}_Topology_LLDP.json`);
+    }
+
+    function openSwitchReplacementModal(switchIp) {
+      const modal = document.getElementById('modal-switch-replacement');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      populateRmaSwitchList(switchIp);
+    }
+
+    function populateRmaSwitchList(targetIp) {
+      const listEl = document.getElementById('rma-switch-list');
+      const countEl = document.getElementById('rma-switch-count');
+      if (!listEl) return;
+
+      if (countEl) countEl.innerText = `${allSwitches.length} Switches`;
+
+      listEl.innerHTML = allSwitches.map(sw => {
+        const isSelected = targetIp && (sw.ip === targetIp || sw.hostname === targetIp);
+        if (isSelected) {
+          rmaActiveSwitch = sw;
+        }
+        return `
+          <div 
+            onclick="selectRmaSwitch('${sw.ip}')"
+            class="p-2.5 rounded-xl border transition cursor-pointer ${
+              isSelected 
+                ? 'bg-indigo-950/80 border-indigo-500 text-white shadow'
+                : 'bg-slate-900/80 hover:bg-slate-800 border-slate-800 text-slate-300'
+            }"
+          >
+            <div class="flex items-center justify-between">
+              <span class="font-mono font-bold text-xs truncate">${sw.hostname || sw.ip}</span>
+              <span class="text-[10px] font-mono px-1.5 py-0.2 rounded ${sw.format === 'cfg' ? 'bg-cyan-950 text-cyan-300' : 'bg-purple-950 text-purple-300'}">${(sw.format || 'XSF').toUpperCase()}</span>
+            </div>
+            <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 mt-1">
+              <span>${sw.ip}</span>
+              <span class="${sw.hasBackup ? 'text-emerald-400' : 'text-slate-500'}">${sw.hasBackup ? '✔ Backup' : 'No Backup'}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      if (rmaActiveSwitch) {
+        renderRmaWorkspace(rmaActiveSwitch);
+      } else if (allSwitches.length > 0) {
+        selectRmaSwitch(allSwitches[0].ip);
+      }
+    }
+
+    function filterRmaSwitchList(query) {
+      const q = (query || '').toLowerCase().trim();
+      const filtered = allSwitches.filter(sw => sw.ip.toLowerCase().includes(q) || sw.hostname.toLowerCase().includes(q));
+      const listEl = document.getElementById('rma-switch-list');
+      if (!listEl) return;
+      listEl.innerHTML = filtered.map(sw => `
+        <div 
+          onclick="selectRmaSwitch('${sw.ip}')"
+          class="p-2.5 rounded-xl border bg-slate-900/80 hover:bg-slate-800 border-slate-800 text-slate-300 transition cursor-pointer"
+        >
+          <div class="flex items-center justify-between">
+            <span class="font-mono font-bold text-xs truncate">${sw.hostname || sw.ip}</span>
+            <span class="text-[10px] font-mono px-1.5 py-0.2 rounded ${sw.format === 'cfg' ? 'bg-cyan-950 text-cyan-300' : 'bg-purple-950 text-purple-300'}">${(sw.format || 'XSF').toUpperCase()}</span>
+          </div>
+          <div class="flex items-center justify-between text-[11px] font-mono text-slate-400 mt-1">
+            <span>${sw.ip}</span>
+            <span class="${sw.hasBackup ? 'text-emerald-400' : 'text-slate-500'}">${sw.hasBackup ? '✔ Backup' : 'No Backup'}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectRmaSwitch(ip) {
+      const sw = allSwitches.find(s => s.ip === ip || s.hostname === ip);
+      if (!sw) return;
+      rmaActiveSwitch = sw;
+      renderRmaWorkspace(sw);
+      populateRmaSwitchList(sw.ip);
+    }
+
+    function renderRmaWorkspace(sw) {
+      const emptyEl = document.getElementById('rma-workspace-empty');
+      const contentEl = document.getElementById('rma-workspace-content');
+      if (emptyEl) emptyEl.classList.add('hidden');
+      if (contentEl) contentEl.classList.remove('hidden');
+
+      document.getElementById('rma-switch-hostname').innerText = sw.hostname || sw.ip;
+      document.getElementById('rma-switch-current-ip').innerText = sw.ip;
+      document.getElementById('rma-switch-model').innerText = sw.model || 'Extreme Switch';
+      document.getElementById('rma-switch-os-badge').innerText = (sw.format === 'cfg' ? 'VOSS' : 'EXOS');
+
+      document.getElementById('rma-custom-ip').value = sw.ip;
+      document.getElementById('rma-custom-vlan').value = 'Default';
+      document.getElementById('rma-custom-gw').value = sw.ip.replace(/\\.[0-9]+$/, '.1');
+      document.getElementById('rma-config-filename').innerText = `${(sw.hostname || sw.ip).replace(/[^a-zA-Z0-9_-]/g, '_')}_sanitized.${sw.format || 'xsf'}`;
+
+      updateSanitizedConfigPreview();
+    }
+
+    async function updateSanitizedConfigPreview() {
+      if (!rmaActiveSwitch) return;
+      const targetIp = document.getElementById('rma-custom-ip').value || rmaActiveSwitch.ip;
+      const targetVlan = document.getElementById('rma-custom-vlan').value || 'Default';
+      const targetGw = document.getElementById('rma-custom-gw').value || '10.32.221.1';
+      const previewEl = document.getElementById('rma-config-preview');
+
+      try {
+        const res = await fetch(`/api/backup-file?ip=${encodeURIComponent(rmaActiveSwitch.ip)}`);
+        const data = await res.json();
+        let raw = data.backupContent || `# Configuration for ${rmaActiveSwitch.hostname}\n# Management IP: ${rmaActiveSwitch.ip}\nconfigure vlan Default ipaddress ${targetIp} 255.255.255.0\nconfigure iproute add default ${targetGw}\n`;
+        
+        // Sanitize: replace IP
+        let sanitized = raw.replace(new RegExp(rmaActiveSwitch.ip, 'g'), targetIp);
+        if (previewEl) previewEl.innerText = sanitized;
+
+        // Update command snippets
+        const cmdEl = document.getElementById('rma-console-command-snippet');
+        if (cmdEl) cmdEl.innerText = `configure vlan ${targetVlan} ipaddress ${targetIp} 255.255.255.0`;
+        const tftpEl = document.getElementById('rma-tftp-command-snippet');
+        if (tftpEl) tftpEl.innerText = `tftp get ${targetGw} ${(rmaActiveSwitch.hostname || rmaActiveSwitch.ip)}_sanitized.${rmaActiveSwitch.format || 'xsf'} ; load configuration ${(rmaActiveSwitch.hostname || rmaActiveSwitch.ip)}_sanitized.${rmaActiveSwitch.format || 'xsf'}`;
+      } catch (err) {
+        if (previewEl) previewEl.innerText = `# Error loading base backup: ${err.message}`;
+      }
+    }
+
+    function downloadSanitizedRmaConfig() {
+      const previewEl = document.getElementById('rma-config-preview');
+      if (!previewEl || !rmaActiveSwitch) return;
+      const blob = new Blob([previewEl.innerText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = document.getElementById('rma-config-filename').innerText || 'sanitized_config.xsf';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Downloaded sanitized config file!');
+    }
+
+    function copySanitizedRmaConfig() {
+      const previewEl = document.getElementById('rma-config-preview');
+      if (!previewEl) return;
+      navigator.clipboard.writeText(previewEl.innerText);
+      showToast('Copied sanitized configuration to clipboard!');
+    }
+
+    function openSiteDiagramsModal(siteCode) {
+      const modal = document.getElementById('modal-site-diagrams');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      const select = document.getElementById('modal-diagram-site-select');
+      if (select && siteCode) select.value = siteCode;
+      loadSiteDiagramInModal(siteCode || 'YORK');
+    }
+
+    function loadSiteDiagramInModal(siteCode) {
+      const viewport = document.getElementById('modal-diagram-viewport');
+      if (!viewport) return;
+      const pngPath = getDiagramPngPathForSite(siteCode);
+      if (pngPath) {
+        viewport.innerHTML = `
+          <div class="w-full flex flex-col items-center space-y-4">
+            <div class="flex items-center gap-3">
+              <a href="${pngPath}" target="_blank" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-mono font-bold transition">Open Full Resolution ↗</a>
+              <a href="${pngPath}" download="${siteCode}_Topology.png" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-mono font-bold transition">Download PNG 💾</a>
+            </div>
+            <img src="${pngPath}" alt="${siteCode} Diagram" class="rounded-xl shadow-2xl max-w-full h-auto border border-slate-800" />
+          </div>
+        `;
+      } else {
+        viewport.innerHTML = `
+          <div class="p-12 text-center text-slate-400 font-mono">
+            <div class="text-3xl mb-2">📐</div>
+            <div class="text-white font-bold text-sm">${siteCode} Schematic</div>
+            <p class="text-xs text-slate-500 mt-1">Visio vector diagram loaded for site ${siteCode}.</p>
+          </div>
+        `;
+      }
+    }
+
+    function openUbuntuMigrationModal() {
+      const modal = document.getElementById('modal-ubuntu-migration');
+      if (modal) modal.classList.remove('hidden');
     }
 
     function renderSiteTree() {
