@@ -56,7 +56,7 @@ try:
 except ImportError:
     telnetlib = None
 
-PORT = 3000
+PORT = int(os.environ.get("PORT", 3000))
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 CONFIG_FILE = os.path.join(DIRECTORY, "config.ini")
 
@@ -2478,11 +2478,16 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
 </body>
 </html>"""
 
+
+class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
 def run():
     print(f"=======================================================")
-    print(f"&#x1F680; Extreme Switch Backup Portal (Zero-Dependencies)")
-    print(f"&#x1F310; Protocol: Telnet (Port 23) | Controller Port: {PORT}")
-    print(f"&#x1F4C2; Directory: {DIRECTORY}")
+    print(f"[*] Extreme Switch Backup Portal (Zero-Dependencies)")
+    print(f"[*] Protocol: Telnet (Port 23) | Controller Port: {PORT}")
+    print(f"[*] Directory: {DIRECTORY}")
     print(f"=======================================================")
     try:
         # Start background backup scheduler daemon
