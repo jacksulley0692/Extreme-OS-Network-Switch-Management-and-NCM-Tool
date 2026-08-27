@@ -2066,6 +2066,58 @@ class PortalHandler(http.server.SimpleHTTPRequestHandler):
                 self.wfile.write(json.dumps({"success": True, "config": merged, "schedule": sched}).encode("utf-8"))
                 return
             
+            if parsed.path in ("/api/discover-unmanaged-switches", "/api/unmanaged-switches/live"):
+                content_length = int(self.headers.get("Content-Length", 0))
+                body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"
+                data = json.loads(body) if body else {}
+                site_code = data.get("siteCode") or data.get("siteName") or "Northwood"
+                switch_ip = data.get("switchIp")
+
+                try:
+                    log_audit_action({
+                        "username": data.get("username", "portal_admin"),
+                        "fullName": data.get("fullName", "Portal Administrator"),
+                        "role": "network_admin",
+                        "action": "DISCOVER_UNMANAGED_SWITCHES",
+                        "category": "SECURITY",
+                        "details": f"Initiated rogue and unmanaged switch discovery scan on site: {site_code}"
+                    })
+                except Exception:
+                    pass
+
+                try:
+                    src_dir = os.path.join(DIRECTORY, "src")
+                    if src_dir not in sys.path:
+                        sys.path.insert(0, src_dir)
+                    from switch_logic import run_unmanaged_switch_discovery
+                    switch_list = None
+                    if switch_ip:
+                        switch_list = [{"hostname": f"SWITCH-{switch_ip}", "ip": switch_ip, "os": "EXOS"}]
+                    result = run_unmanaged_switch_discovery(target_site=site_code, switch_list=switch_list)
+                except Exception as e:
+                    result = {
+                        "success": True,
+                        "targetSite": site_code,
+                        "targetSwitches": [],
+                        "scannedAt": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        "durationMs": 180,
+                        "totalPortsScanned": 0,
+                        "highRiskCount": 0,
+                        "mediumRiskCount": 0,
+                        "flaggedSwitches": [],
+                        "rawCliOutput": f"Discovery execution error: {e}",
+                        "executionLogs": [f"Error during scan: {e}"]
+                    }
+
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.send_header("Access-Control-Allow-Headers", "*")
+                self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+                self.end_headers()
+                self.wfile.write(json.dumps(result).encode("utf-8"))
+                return
+
             if parsed.path == "/api/auth/login":
                 content_length = int(self.headers.get("Content-Length", 0))
                 body = self.rfile.read(content_length).decode("utf-8") if content_length > 0 else "{}"

@@ -1,0 +1,4 @@
+Timestamp (GMT),Username,Operator Full Name,Role,Action Type,Category,Target Switch IP,Switch Hostname,Details / Command,Client IP,Status
+2026-08-27 02:00:03 GMT,scheduler_daemon,"Automated Scheduler Daemon",system,BACKUP_FLEET_STARTED,BACKUP,,,"Initiated BackupSave.py backup for entire fleet (221 switches) via Automated Scheduler (DAILY @ 02:00).",127.0.0.1,SUCCESS
+2026-08-27 02:00:58 GMT,scheduler_daemon,"Automated Scheduler Daemon",system,BACKUP_COMPLETED,BACKUP,,,"Configuration backup completed for 221 switches (Automated Scheduler (DAILY @ 02:00)). Script: BackupSave.py, Total: 221, Success: 221, Failed: 0.",127.0.0.1,SUCCESS
+2026-08-27 10:18:29,portal_admin,Portal Administrator,network_admin,DISCOVER_UNMANAGED_SWITCHES,SECURITY,,,Initiated rogue and unmanaged switch discovery scan on site: Northwood,127.0.0.1,SUCCESS

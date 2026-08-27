@@ -201,11 +201,18 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
           <button
             id="btn-discover-unmanaged-switches"
             onClick={() => setShowUnmanagedDiscoveryModal(true)}
-            className="flex items-center space-x-2 px-3.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:border-amber-500/50 text-xs font-bold rounded-xl transition cursor-pointer shadow-sm"
+            className={`flex items-center space-x-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl transition cursor-pointer shadow-lg shadow-amber-600/25 border border-amber-400/40 ${
+              displayName.toLowerCase().includes("northwood") || siteName.toLowerCase().includes("northwood") ? "ring-2 ring-amber-400" : ""
+            }`}
             title="Scan edge ports for rogue unmanaged switches and multi-MAC drops (Hardcoded test target: Northwood)"
           >
-            <ShieldAlert className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-            <span>Discover Unmanaged Switches</span>
+            <ShieldAlert className="w-4 h-4 text-amber-200 animate-pulse" />
+            <span>🛡️ Discover Unmanaged Switches</span>
+            {(displayName.toLowerCase().includes("northwood") || siteName.toLowerCase().includes("northwood")) && (
+              <span className="px-1.5 py-0.2 rounded bg-amber-950/80 text-amber-200 border border-amber-400/40 text-[10px] font-mono font-bold">
+                Northwood Test
+              </span>
+            )}
           </button>
 
           <div className="text-right mr-1 hidden lg:block">
@@ -299,6 +306,24 @@ export const SitePageView: React.FC<SitePageViewProps> = ({
           >
             <RotateCcw className="w-4 h-4 text-emerald-400" />
             <span>🔄 Switch Replacement</span>
+          </button>
+
+          <button
+            id="btn-site-tab-unmanaged"
+            onClick={() => setShowUnmanagedDiscoveryModal(true)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+              (displayName.toLowerCase().includes("northwood") || siteName.toLowerCase().includes("northwood"))
+                ? "bg-amber-600/20 hover:bg-amber-600/30 text-amber-300 border border-amber-500/40"
+                : "text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800"
+            }`}
+          >
+            <ShieldAlert className="w-4 h-4 text-amber-400" />
+            <span>🛡️ Unmanaged Rogue Scan</span>
+            {(displayName.toLowerCase().includes("northwood") || siteName.toLowerCase().includes("northwood")) && (
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/30 text-amber-200 border border-amber-400/40 font-mono font-bold">
+                Northwood
+              </span>
+            )}
           </button>
         </div>
 

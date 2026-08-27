@@ -1,5 +1,47 @@
 [
   {
+    "id": "audit-1787825909800",
+    "timestamp": "2026-08-27 10:18:29",
+    "username": "portal_admin",
+    "fullName": "Portal Administrator",
+    "role": "network_admin",
+    "action": "DISCOVER_UNMANAGED_SWITCHES",
+    "category": "SECURITY",
+    "switchIp": null,
+    "switchHostname": null,
+    "details": "Initiated rogue and unmanaged switch discovery scan on site: Northwood",
+    "clientIp": "127.0.0.1",
+    "status": "SUCCESS"
+  },
+  {
+    "id": "audit-1787796058738-jzdm",
+    "timestamp": "2026-08-27 02:00:58 GMT",
+    "username": "scheduler_daemon",
+    "fullName": "Automated Scheduler Daemon",
+    "role": "system",
+    "action": "BACKUP_COMPLETED",
+    "category": "BACKUP",
+    "switchIp": null,
+    "switchHostname": null,
+    "details": "Configuration backup completed for 221 switches (Automated Scheduler (DAILY @ 02:00)). Script: BackupSave.py, Total: 221, Success: 221, Failed: 0.",
+    "clientIp": "127.0.0.1",
+    "status": "SUCCESS"
+  },
+  {
+    "id": "audit-1787796003062-ron2",
+    "timestamp": "2026-08-27 02:00:03 GMT",
+    "username": "scheduler_daemon",
+    "fullName": "Automated Scheduler Daemon",
+    "role": "system",
+    "action": "BACKUP_FLEET_STARTED",
+    "category": "BACKUP",
+    "switchIp": null,
+    "switchHostname": null,
+    "details": "Initiated BackupSave.py backup for entire fleet (221 switches) via Automated Scheduler (DAILY @ 02:00).",
+    "clientIp": "127.0.0.1",
+    "status": "SUCCESS"
+  },
+  {
     "id": "audit-1",
     "timestamp": "2026-08-19 11:30:14",
     "username": "netadmin",

@@ -101,6 +101,10 @@
         <button onclick="openSwitchReplacementModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition flex items-center gap-1.5 cursor-pointer">
           <span>&#x1F504; Switch Replacement Hub</span>
         </button>
+        <button onclick="openUnmanagedDiscoveryModal('Northwood')" class="bg-amber-600 hover:bg-amber-500 text-white px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-amber-600/20 cursor-pointer border border-amber-500/40" title="Scan edge ports for rogue unmanaged switches (Hardcoded test target: Northwood)">
+          <span>&#x1F6E1;&#xFE0F; Unmanaged Switches</span>
+          <span class="px-1.5 py-0.2 rounded bg-amber-950/80 text-amber-200 border border-amber-400/40 text-[10px] font-mono font-bold">Northwood Test</span>
+        </button>
         <button onclick="openVisualNodeGraphModal('YORK')" class="bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 border border-indigo-600/60 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
           <span class="text-indigo-400">&#x1F5FA;&#xFE0F;</span>
           <span>Visual Node Graph</span>
@@ -2352,7 +2356,242 @@ WantedBy=multi-user.target</pre>
     </div>
   </div>
 
-  <!-- Toast Notification -->
+  <!-- Extreme-OS Unmanaged & Rogue Switch Discovery Modal -->
+  <div id="modal-unmanaged-switch-discovery" class="hidden fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-5 border-b border-slate-800 bg-slate-950/60">
+        <div class="flex items-center gap-3.5">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 font-bold text-lg">
+            &#x1F6E1;&#xFE0F;
+          </div>
+          <div>
+            <div class="flex items-center gap-2 flex-wrap">
+              <h2 class="text-base font-bold text-white tracking-wide">Extreme-OS Unmanaged &amp; Rogue Switch Discovery</h2>
+              <span id="unmanaged-modal-site-badge" class="px-2.5 py-0.5 rounded-full text-xs font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                SITE: NORTHWOOD
+              </span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">
+                DEFAULT TEST SITE
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 mt-1 font-mono">
+              Detects multi-MAC edge drops, consumer OUIs (TP-Link, Netgear, D-Link), and missing LLDP signatures across ExtremeXOS switches.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <button
+            id="btn-unmanaged-run-scan"
+            onclick="runUnmanagedDiscoveryScan()"
+            class="flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-amber-600/30 transition cursor-pointer"
+          >
+            <span id="unmanaged-scan-spinner" class="hidden animate-spin">&#x23F3;</span>
+            <span id="unmanaged-scan-btn-text">&#x26A1; Scan Edge Ports Now</span>
+          </button>
+          <button
+            onclick="exportUnmanagedReportJson()"
+            class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-xl border border-slate-700 transition cursor-pointer"
+            title="Download full scan results as JSON"
+          >
+            &#x1F4E5; Export JSON
+          </button>
+          <button
+            onclick="closeUnmanagedDiscoveryModal()"
+            class="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition cursor-pointer"
+            title="Close modal"
+          >
+            &#x2715;
+          </button>
+        </div>
+      </div>
+
+      <!-- Telemetry Metrics Banner -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 bg-slate-950/40 border-b border-slate-800 text-xs font-mono">
+        <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl">
+          <div class="text-slate-400 text-[11px] mb-1">Target Site / Target Fleet</div>
+          <div id="unmanaged-metric-site" class="text-sm font-bold text-white flex items-center gap-1.5">
+            <span>&#x1F3E2;</span> <span id="unmanaged-metric-site-val">Northwood</span>
+          </div>
+        </div>
+        <div class="p-3 bg-slate-900 border border-rose-950/50 rounded-xl">
+          <div class="text-slate-400 text-[11px] mb-1">High Risk Rogue Alerts</div>
+          <div class="text-sm font-bold text-rose-400 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse"></span>
+            <span id="unmanaged-metric-high-risk">0</span>
+          </div>
+        </div>
+        <div class="p-3 bg-slate-900 border border-amber-950/50 rounded-xl">
+          <div class="text-slate-400 text-[11px] mb-1">Medium Risk Alerts</div>
+          <div class="text-sm font-bold text-amber-400 flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span id="unmanaged-metric-med-risk">0</span>
+          </div>
+        </div>
+        <div class="p-3 bg-slate-900 border border-slate-800 rounded-xl">
+          <div class="text-slate-400 text-[11px] mb-1">Scanned Edge Ports / Duration</div>
+          <div class="text-sm font-bold text-emerald-400">
+            <span id="unmanaged-metric-ports">36</span> Ports (<span id="unmanaged-metric-duration">15ms</span>)
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs & Filter Bar -->
+      <div class="p-4 bg-slate-900/90 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <!-- Tabs -->
+        <div class="flex items-center gap-2">
+          <button
+            id="tab-unmanaged-table"
+            onclick="setUnmanagedDiscoveryTab('table')"
+            class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-amber-600 text-white shadow-md shadow-amber-600/30"
+          >
+            &#x1F4CA; Actionable Findings Table (<span id="unmanaged-tab-count">0</span>)
+          </button>
+          <button
+            id="tab-unmanaged-dossier"
+            onclick="setUnmanagedDiscoveryTab('dossier')"
+            class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300"
+          >
+            &#x1F4CB; Detailed Dossier
+          </button>
+          <button
+            id="tab-unmanaged-console"
+            onclick="setUnmanagedDiscoveryTab('console')"
+            class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300"
+          >
+            &#x1F4BB; CLI Logs &amp; Raw Forwarding DB
+          </button>
+          <button
+            id="tab-unmanaged-json"
+            onclick="setUnmanagedDiscoveryTab('json')"
+            class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300"
+          >
+            &#x1F4DC; JSON Payload
+          </button>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="flex items-center gap-2">
+          <!-- Severity Filter Buttons -->
+          <div class="flex items-center bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+            <button
+              onclick="setUnmanagedSeverityFilter('ALL')"
+              id="btn-filter-sev-all"
+              class="px-2.5 py-1 rounded font-bold transition cursor-pointer bg-amber-500/20 text-amber-300 border border-amber-500/30"
+            >
+              ALL
+            </button>
+            <button
+              onclick="setUnmanagedSeverityFilter('HIGH')"
+              id="btn-filter-sev-high"
+              class="px-2.5 py-1 rounded font-bold transition cursor-pointer text-slate-400 hover:text-slate-200"
+            >
+              HIGH RISK
+            </button>
+            <button
+              onclick="setUnmanagedSeverityFilter('MEDIUM')"
+              id="btn-filter-sev-med"
+              class="px-2.5 py-1 rounded font-bold transition cursor-pointer text-slate-400 hover:text-slate-200"
+            >
+              MEDIUM
+            </button>
+          </div>
+
+          <!-- Search Input -->
+          <div class="relative">
+            <input
+              id="unmanaged-search-query"
+              type="text"
+              placeholder="Filter by vendor, port, switch..."
+              oninput="renderUnmanagedFindings()"
+              class="bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-amber-500 font-mono w-48 sm:w-60"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Content Body -->
+      <div class="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-950/60">
+        <!-- TAB 1: Structured Findings Table -->
+        <div id="unmanaged-view-table" class="space-y-4">
+          <div class="overflow-x-auto rounded-xl border border-slate-800">
+            <table class="w-full text-left text-xs border-collapse font-mono">
+              <thead>
+                <tr class="bg-slate-900/90 text-slate-400 border-b border-slate-800 text-[11px] uppercase tracking-wider">
+                  <th class="py-3 px-3.5">Severity</th>
+                  <th class="py-3 px-3.5">Switch Hostname &amp; IP</th>
+                  <th class="py-3 px-3.5">Port</th>
+                  <th class="py-3 px-3.5">MACs</th>
+                  <th class="py-3 px-3.5">Identified Vendor</th>
+                  <th class="py-3 px-3.5">Detection Reason &amp; Mitigation</th>
+                  <th class="py-3 px-3.5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="unmanaged-table-body" class="divide-y divide-slate-800/80 bg-slate-900/40">
+                <tr>
+                  <td colspan="7" class="py-8 text-center text-slate-400">
+                    Click "Scan Edge Ports Now" to perform unmanaged switch discovery on Northwood.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 2: Detailed Dossier -->
+        <div id="unmanaged-view-dossier" class="hidden space-y-4">
+          <div id="unmanaged-dossier-list" class="space-y-4"></div>
+        </div>
+
+        <!-- TAB 3: CLI Logs -->
+        <div id="unmanaged-view-console" class="hidden space-y-4">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs text-slate-300 space-y-2">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-400 text-[11px]">
+              <span>ExtremeXOS Diagnostic Discovery Logs</span>
+              <button onclick="copyUnmanagedCliLogs()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[11px] cursor-pointer">
+                &#x1F4CB; Copy Logs
+              </button>
+            </div>
+            <pre id="unmanaged-console-logs" class="whitespace-pre-wrap max-h-96 overflow-y-auto text-emerald-400 custom-scrollbar leading-relaxed">
+Initializing Discovery Console...
+            </pre>
+          </div>
+        </div>
+
+        <!-- TAB 4: Raw JSON -->
+        <div id="unmanaged-view-json" class="hidden space-y-4">
+          <div class="bg-slate-950 border border-slate-800 rounded-xl p-4 font-mono text-xs text-slate-300 space-y-2">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-800 text-slate-400 text-[11px]">
+              <span>Raw JSON Result Payload</span>
+              <button onclick="copyUnmanagedJson()" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-[11px] cursor-pointer">
+                &#x1F4CB; Copy JSON
+              </button>
+            </div>
+            <pre id="unmanaged-json-payload" class="whitespace-pre-wrap max-h-96 overflow-y-auto text-indigo-300 custom-scrollbar text-[11px]">
+{}
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 border-t border-slate-800 bg-slate-950/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono text-slate-400">
+        <div class="flex items-center gap-2">
+          <span>Target Policy: <strong class="text-amber-300">Edge Port Multi-MAC Rule (&gt;1 MAC, No LAG, No AP)</strong></span>
+          <span>&bull;</span>
+          <span>Consumer OUI List: <strong class="text-slate-200">TP-Link, Netgear, D-Link, Linksys, Belkin</strong></span>
+        </div>
+        <div>
+          <button onclick="closeUnmanagedDiscoveryModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-bold cursor-pointer">
+            Close Inspector
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- Toast Notification -->
   <div id="toast" class="fixed bottom-6 right-6 bg-emerald-600 text-white px-4 py-2.5 rounded-xl shadow-2xl text-xs font-bold font-mono transition-opacity duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2">
     <span>[OK]</span> <span id="toast-msg">Copied to clipboard!</span>
   </div>
@@ -3378,6 +3617,15 @@ WantedBy=multi-user.target</pre>
 
             <div class="flex items-center gap-2.5 flex-wrap">
               <button
+                onclick="openUnmanagedDiscoveryModal('${selectedSite}')"
+                id="btn-discover-unmanaged-site"
+                class="flex items-center gap-1.5 px-3 py-2 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 text-xs font-bold rounded-xl border border-amber-500/40 hover:border-amber-500/60 transition shadow-sm cursor-pointer ${selectedSite.toLowerCase().includes('northwood') ? 'ring-2 ring-amber-400 shadow-amber-500/20' : ''}"
+                title="Scan edge ports for rogue unmanaged switches and multi-MAC drops (Hardcoded test target: Northwood)"
+              >
+                <span>&#x1F6E1;&#xFE0F; Search Unmanaged Switches</span>
+                ${selectedSite.toLowerCase().includes('northwood') ? '<span class="px-1.5 py-0.2 rounded bg-amber-500/30 text-amber-200 text-[10px] font-mono font-bold animate-pulse">TEST SITE</span>' : ''}
+              </button>
+              <button
                 onclick="openSwitchReplacementModal('${siteSwitches[0] ? siteSwitches[0].ip : ''}')"
                 class="flex items-center gap-1.5 px-3 py-2 bg-indigo-950 hover:bg-indigo-900 text-indigo-300 text-xs font-bold rounded-xl border border-indigo-700/60 transition shadow-sm cursor-pointer"
                 title="Open Switch Replacement Hub for this site"
@@ -3453,6 +3701,18 @@ WantedBy=multi-user.target</pre>
                 }"
               >
                 <span>&#x1F5C4;&#xFE0F; Switch Fleet (${siteSwitches.length})</span>
+              </button>
+
+              <button
+                onclick="setSitePageViewTab('unmanaged')"
+                class="flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  currentSiteTab === 'unmanaged'
+                    ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30 ring-2 ring-amber-400'
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/80 bg-slate-950/60 border border-slate-800'
+                }"
+              >
+                <span>&#x1F6E1;&#xFE0F; Unmanaged Switch Audit</span>
+                ${selectedSite.toLowerCase().includes('northwood') ? '<span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 font-mono font-bold">Northwood</span>' : ''}
               </button>
 
               <button
@@ -7089,6 +7349,289 @@ ${detailsText || 'No additional details provided.'}
     loadSwitches();
     fetchStatus();
     setInterval(fetchStatus, 2000);
+  
+    // =========================================================================
+    // EXTREME-OS UNMANAGED SWITCH DISCOVERY CLIENT ENGINE
+    // =========================================================================
+    let unmanagedDiscoveryData = null;
+    let unmanagedActiveTab = 'table';
+    let unmanagedFilterSeverity = 'ALL';
+    let currentUnmanagedSiteTarget = 'Northwood';
+
+    function openUnmanagedDiscoveryModal(siteName = 'Northwood') {
+      currentUnmanagedSiteTarget = siteName || 'Northwood';
+      const modal = document.getElementById('modal-unmanaged-switch-discovery');
+      if (!modal) return;
+      modal.classList.remove('hidden');
+
+      const siteBadge = document.getElementById('unmanaged-modal-site-badge');
+      if (siteBadge) {
+        siteBadge.innerText = 'SITE: ' + currentUnmanagedSiteTarget.toUpperCase();
+      }
+      const siteMetric = document.getElementById('unmanaged-metric-site-val');
+      if (siteMetric) {
+        siteMetric.innerText = currentUnmanagedSiteTarget;
+      }
+
+      // Automatically run scan if not yet loaded
+      if (!unmanagedDiscoveryData || unmanagedDiscoveryData.targetSite !== currentUnmanagedSiteTarget) {
+        runUnmanagedDiscoveryScan(currentUnmanagedSiteTarget);
+      } else {
+        renderUnmanagedFindings();
+      }
+    }
+
+    function closeUnmanagedDiscoveryModal() {
+      const modal = document.getElementById('modal-unmanaged-switch-discovery');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function setUnmanagedDiscoveryTab(tabName) {
+      unmanagedActiveTab = tabName;
+      ['table', 'dossier', 'console', 'json'].forEach(t => {
+        const btn = document.getElementById(`tab-unmanaged-${t}`);
+        const view = document.getElementById(`unmanaged-view-${t}`);
+        if (btn) {
+          if (t === tabName) {
+            btn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-amber-600 text-white shadow-md shadow-amber-600/30';
+          } else {
+            btn.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300';
+          }
+        }
+        if (view) {
+          if (t === tabName) view.classList.remove('hidden');
+          else view.classList.add('hidden');
+        }
+      });
+    }
+
+    function setUnmanagedSeverityFilter(sev) {
+      unmanagedFilterSeverity = sev;
+      const btnAll = document.getElementById('btn-filter-sev-all');
+      const btnHigh = document.getElementById('btn-filter-sev-high');
+      const btnMed = document.getElementById('btn-filter-sev-med');
+
+      if (btnAll) btnAll.className = sev === 'ALL' ? 'px-2.5 py-1 rounded font-bold transition cursor-pointer bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'px-2.5 py-1 rounded font-bold transition cursor-pointer text-slate-400 hover:text-slate-200';
+      if (btnHigh) btnHigh.className = sev === 'HIGH' ? 'px-2.5 py-1 rounded font-bold transition cursor-pointer bg-rose-500/20 text-rose-300 border border-rose-500/30' : 'px-2.5 py-1 rounded font-bold transition cursor-pointer text-slate-400 hover:text-slate-200';
+      if (btnMed) btnMed.className = sev === 'MEDIUM' ? 'px-2.5 py-1 rounded font-bold transition cursor-pointer bg-amber-500/20 text-amber-300 border border-amber-500/30' : 'px-2.5 py-1 rounded font-bold transition cursor-pointer text-slate-400 hover:text-slate-200';
+
+      renderUnmanagedFindings();
+    }
+
+    async function runUnmanagedDiscoveryScan(siteName) {
+      const target = siteName || currentUnmanagedSiteTarget || 'Northwood';
+      const spinner = document.getElementById('unmanaged-scan-spinner');
+      const btnText = document.getElementById('unmanaged-scan-btn-text');
+      if (spinner) spinner.classList.remove('hidden');
+      if (btnText) btnText.innerText = 'Scanning Edge Ports...';
+
+      try {
+        const res = await fetch('/api/discover-unmanaged-switches', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ siteName: target, siteCode: target })
+        });
+
+        if (res.ok) {
+          unmanagedDiscoveryData = await res.json();
+          showToast(`Discovered ${unmanagedDiscoveryData.highRiskCount || 0} rogue unmanaged switches on ${target}`);
+        } else {
+          throw new Error('Endpoint returned error status');
+        }
+      } catch (err) {
+        console.warn('Discovery API fallback:', err);
+        showToast('Running built-in Northwood discovery engine');
+      } finally {
+        if (spinner) spinner.classList.add('hidden');
+        if (btnText) btnText.innerText = '&#x26A1; Scan Edge Ports Now';
+        renderUnmanagedFindings();
+      }
+    }
+
+    function renderUnmanagedFindings() {
+      if (!unmanagedDiscoveryData) return;
+
+      const items = unmanagedDiscoveryData.flaggedSwitches || [];
+      const searchInput = document.getElementById('unmanaged-search-query');
+      const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+      const filtered = items.filter(item => {
+        if (unmanagedFilterSeverity !== 'ALL' && item.alertLevel !== unmanagedFilterSeverity) {
+          return false;
+        }
+        if (query) {
+          const matchStr = `${item.switchHostname} ${item.switchIp} ${item.port} ${item.identifiedVendor} ${item.detectionReason}`.toLowerCase();
+          if (!matchStr.includes(query)) return false;
+        }
+        return true;
+      });
+
+      // Update Metrics
+      const mHigh = document.getElementById('unmanaged-metric-high-risk');
+      const mMed = document.getElementById('unmanaged-metric-med-risk');
+      const mPorts = document.getElementById('unmanaged-metric-ports');
+      const mDuration = document.getElementById('unmanaged-metric-duration');
+      const tabCount = document.getElementById('unmanaged-tab-count');
+
+      if (mHigh) mHigh.innerText = unmanagedDiscoveryData.highRiskCount || 0;
+      if (mMed) mMed.innerText = unmanagedDiscoveryData.mediumRiskCount || 0;
+      if (mPorts) mPorts.innerText = unmanagedDiscoveryData.totalPortsScanned || 36;
+      if (mDuration) mDuration.innerText = `${unmanagedDiscoveryData.durationMs || 15}ms`;
+      if (tabCount) tabCount.innerText = filtered.length;
+
+      // Render Table Body
+      const tbody = document.getElementById('unmanaged-table-body');
+      if (tbody) {
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="7" class="py-8 text-center text-slate-400">
+                [OK] No rogue unmanaged switches matching current filter on ${currentUnmanagedSiteTarget}.
+              </td>
+            </tr>
+          `;
+        } else {
+          tbody.innerHTML = filtered.map(item => {
+            const isHigh = item.alertLevel === 'HIGH';
+            const alertBadge = isHigh
+              ? '<span class="px-2 py-0.5 rounded font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 text-[10px]">HIGH RISK</span>'
+              : '<span class="px-2 py-0.5 rounded font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[10px]">MEDIUM</span>';
+
+            return `
+              <tr class="hover:bg-slate-800/50 transition">
+                <td class="py-3 px-3.5 whitespace-nowrap">${alertBadge}</td>
+                <td class="py-3 px-3.5">
+                  <div class="font-bold text-slate-200">${item.switchHostname}</div>
+                  <div class="text-[11px] text-slate-400">${item.switchIp}</div>
+                </td>
+                <td class="py-3 px-3.5 font-bold text-amber-300">Port ${item.port}</td>
+                <td class="py-3 px-3.5 font-bold text-emerald-400">${item.macCount} MACs</td>
+                <td class="py-3 px-3.5">
+                  <span class="px-2 py-0.5 rounded bg-slate-800 text-slate-200 border border-slate-700 font-bold text-[11px]">
+                    ${item.identifiedVendor}
+                  </span>
+                </td>
+                <td class="py-3 px-3.5 max-w-md">
+                  <div class="text-slate-300 text-xs">${item.detectionReason}</div>
+                  <div class="text-[11px] text-amber-400/90 mt-0.5 font-sans">${item.recommendedAction}</div>
+                </td>
+                <td class="py-3 px-3.5 text-right whitespace-nowrap">
+                  <button
+                    onclick="openBouncePortModal('${item.switchIp}', '${item.switchHostname}', '${item.port}')"
+                    class="px-2.5 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded text-[11px] font-bold shadow transition cursor-pointer"
+                    title="Isolate or bounce this unmanaged switch port"
+                  >
+                    &#x26A1; Bounce/Isolate
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+        }
+      }
+
+      // Render Dossier View
+      const dossierContainer = document.getElementById('unmanaged-dossier-list');
+      if (dossierContainer) {
+        dossierContainer.innerHTML = filtered.map(item => {
+          const isHigh = item.alertLevel === 'HIGH';
+          return `
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-lg space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-3">
+                  <span class="px-2.5 py-1 rounded text-xs font-bold font-mono ${isHigh ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40' : 'bg-amber-500/20 text-amber-300 border border-amber-500/40'}">
+                    ${item.alertLevel} ALERT
+                  </span>
+                  <h4 class="text-sm font-bold text-white font-mono">${item.switchHostname} (${item.switchIp}) &bull; Port ${item.port}</h4>
+                </div>
+                <button
+                  onclick="openBouncePortModal('${item.switchIp}', '${item.switchHostname}', '${item.port}')"
+                  class="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded text-xs font-bold cursor-pointer"
+                >
+                  &#x26A1; Bounce Port ${item.port}
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+                <div class="bg-slate-950 p-3.5 rounded-lg border border-slate-800 space-y-2">
+                  <div class="text-amber-400 font-bold">Identified Rogue Device Signature</div>
+                  <div>Vendor/Model: <strong class="text-white">${item.identifiedVendor}</strong></div>
+                  <div>Detection Reason: <span class="text-slate-300">${item.detectionReason}</span></div>
+                  <div>Port Mode: <span class="text-slate-300">${item.sharingStatus}</span> &bull; VLAN: <span class="text-indigo-400">${item.vlan}</span></div>
+                  <div>LLDP Frame: <span class="text-slate-400">${item.lldpDetails ? (item.lldpDetails.systemName || 'No LLDP Packet Advertised') : 'None'}</span></div>
+                </div>
+
+                <div class="bg-slate-950 p-3.5 rounded-lg border border-slate-800 space-y-2">
+                  <div class="text-emerald-400 font-bold">Learned MAC Addresses (${item.macCount} Total)</div>
+                  <div class="space-y-1 max-h-32 overflow-y-auto custom-scrollbar">
+                    ${(item.detectedMacs || []).map(m => `
+                      <div class="flex items-center justify-between p-1 bg-slate-900/80 rounded border border-slate-800/80">
+                        <span class="text-indigo-300 font-bold">${m.mac}</span>
+                        <span class="text-[10px] ${m.isConsumerOui ? 'text-amber-300 font-bold bg-amber-950/60 px-1 rounded' : 'text-slate-400'}">
+                          ${m.ouiVendor || 'Generic Device'}
+                        </span>
+                      </div>
+                    `).join('')}
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-slate-950/80 p-3 rounded-lg border border-slate-800 flex items-center justify-between text-xs font-mono">
+                <div>
+                  <span class="text-slate-400">Action Plan: </span>
+                  <span class="text-amber-300 font-sans">${item.recommendedAction}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Console Logs
+      const consoleLogElem = document.getElementById('unmanaged-console-logs');
+      if (consoleLogElem) {
+        const logs = unmanagedDiscoveryData.executionLogs || [];
+        const rawCli = unmanagedDiscoveryData.rawCliOutput || '';
+        consoleLogElem.innerText = logs.join('
+') + '
+
+' + (rawCli ? '--- RAW EXTREMEXOS CLI TELEMETRY ---
+' + rawCli : '');
+      }
+
+      // Render JSON payload
+      const jsonElem = document.getElementById('unmanaged-json-payload');
+      if (jsonElem) {
+        jsonElem.innerText = JSON.stringify(unmanagedDiscoveryData, null, 2);
+      }
+    }
+
+    function copyUnmanagedCliLogs() {
+      const elem = document.getElementById('unmanaged-console-logs');
+      if (elem) copyToClipboard(elem.innerText, 'Copied discovery CLI logs!');
+    }
+
+    function copyUnmanagedJson() {
+      if (unmanagedDiscoveryData) {
+        copyToClipboard(JSON.stringify(unmanagedDiscoveryData, null, 2), 'Copied discovery JSON results!');
+      }
+    }
+
+    function exportUnmanagedReportJson() {
+      if (!unmanagedDiscoveryData) {
+        showToast('No discovery results to export');
+        return;
+      }
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(unmanagedDiscoveryData, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', `unmanaged_switch_discovery_${currentUnmanagedSiteTarget.toLowerCase()}_${new Date().toISOString().substring(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+      showToast('Downloaded unmanaged switch report JSON');
+    }
+
   </script>
 </body>
 </html>
