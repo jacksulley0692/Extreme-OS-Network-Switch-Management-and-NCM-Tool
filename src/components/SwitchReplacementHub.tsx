@@ -58,9 +58,10 @@ interface SwitchReplacementHubProps {
   liveStatus?: LiveStatusData | null;
   currentUserRole?: UserRole;
   currentUser?: AuthUser | null;
+  onOpenTopology?: () => void;
 }
 
-export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = false, liveStatus = null, currentUserRole, currentUser }: SwitchReplacementHubProps) {
+export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = false, liveStatus = null, currentUserRole, currentUser, onOpenTopology }: SwitchReplacementHubProps) {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedOs, setSelectedOs] = useState<"ALL" | SwitchOS>("ALL");
   const [reachabilityFilter, setReachabilityFilter] = useState<"ALL" | "REACHABLE" | "UNREACHABLE">("ALL");
@@ -454,6 +455,19 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
                 >
                   <Sliders className="w-3.5 h-3.5" />
                   <span>Configure Multiple Switches</span>
+                </button>
+              )}
+
+              {onOpenTopology && (
+                <button
+                  id="btn-hub-open-visual-topology"
+                  onClick={onOpenTopology}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/20 transition-all shrink-0 cursor-pointer"
+                  title="Open Interactive Visual Node Graph & LLDP Topology"
+                >
+                  <Network className="w-3.5 h-3.5" />
+                  <span>🗺️ Visual Node Graph</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
                 </button>
               )}
 
@@ -1253,12 +1267,22 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      {onOpenTopology && (
+                        <button
+                          onClick={onOpenTopology}
+                          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow"
+                        >
+                          <Network className="w-3.5 h-3.5" />
+                          <span>🗺️ Open Visual Topology Graph</span>
+                        </button>
+                      )}
+
                       <button
                         onClick={() => handleOpenLldpModal(selectedSwitch, "backup")}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white shadow"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 shadow"
                       >
-                        <HardDrive className="w-3.5 h-3.5" />
+                        <HardDrive className="w-3.5 h-3.5 text-indigo-400" />
                         <span>Launch Backup Explorer</span>
                       </button>
 

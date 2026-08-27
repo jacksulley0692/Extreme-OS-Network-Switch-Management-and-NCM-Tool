@@ -12,21 +12,30 @@ import {
   Image as ImageIcon,
   Upload,
   Sparkles,
-  Wifi
+  Wifi,
+  Activity
 } from "lucide-react";
 import { KNOWN_SITE_DIAGRAMS, SiteDiagram, findDiagramForSiteOrSwitch } from "../data/siteDiagramsData";
 import { YORK_DIAGRAM_SVG } from "../data/yorkDiagramSvg";
 import { SITE_TOPOLOGIES, getTopologySvgForSite } from "../data/siteTopologiesData";
 import { SiteHeatMapsSection } from "./SiteHeatMapsSection";
+import { YorkLiveLldpTopologyMap } from "./YorkLiveLldpTopologyMap";
+import { SwitchItem, AuthUser } from "../types";
 
 interface SiteDiagramViewerProps {
   initialSiteOrSwitch?: string;
+  switches?: SwitchItem[];
+  currentUser?: AuthUser | null;
+  onTriggerBackup?: (scriptName: string, targetSwitch: string) => void;
   onSelectSwitchForReplacement?: (hostname: string, ip: string) => void;
   onSwitchToHeatMaps?: (siteName: string) => void;
 }
 
 export const SiteDiagramViewer: React.FC<SiteDiagramViewerProps> = ({
   initialSiteOrSwitch = "York",
+  switches = [],
+  currentUser,
+  onTriggerBackup,
   onSelectSwitchForReplacement,
   onSwitchToHeatMaps
 }) => {
@@ -36,7 +45,7 @@ export const SiteDiagramViewer: React.FC<SiteDiagramViewerProps> = ({
     return findDiagramForSiteOrSwitch(initialSiteOrSwitch) || KNOWN_SITE_DIAGRAMS.find(d => d.id === "york") || KNOWN_SITE_DIAGRAMS[0];
   });
 
-  const [activeViewMode, setActiveViewMode] = useState<"diagram" | "heatmaps">("diagram");
+  const [activeViewMode, setActiveViewMode] = useState<"lldp" | "diagram" | "heatmaps">("lldp");
   const [zoomLevel, setZoomLevel] = useState<number>(100);
   const [isDragging, setIsDragging] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -359,49 +368,115 @@ export const SiteDiagramViewer: React.FC<SiteDiagramViewerProps> = ({
               </div>
             </div>
 
-            {/* Zoom & Canvas Actions */}
-            <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-lg border border-slate-800">
-              <button
-                id="btn-diagram-zoom-out"
-                onClick={handleZoomOut}
-                className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-                title="Zoom Out (-25%)"
-              >
-                <ZoomOut className="w-4 h-4" />
-              </button>
-              <span className="text-xs font-mono font-bold text-slate-300 px-2 min-w-[50px] text-center">
-                {zoomLevel}%
-              </span>
-              <button
-                id="btn-diagram-zoom-in"
-                onClick={handleZoomIn}
-                className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-                title="Zoom In (+25%)"
-              >
-                <ZoomIn className="w-4 h-4" />
-              </button>
-              <button
-                id="btn-diagram-reset-zoom"
-                onClick={handleResetZoom}
-                className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors border-l border-slate-800 ml-1 pl-2"
-                title="Reset Zoom (100%)"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </button>
+            {/* View Mode Switcher Pills */}
+            <div className="flex items-center gap-2">
+              <div className="bg-slate-950 p-1 rounded-lg border border-slate-800 flex items-center gap-1">
+                <button
+                  id="tab-view-lldp"
+                  onClick={() => setActiveViewMode("lldp")}
+                  className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                    activeViewMode === "lldp"
+                      ? "bg-indigo-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <Network className="w-3.5 h-3.5" />
+                  <span>🗺️ Live LLDP Topology</span>
+                </button>
+                <button
+                  id="tab-view-diagram"
+                  onClick={() => setActiveViewMode("diagram")}
+                  className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                    activeViewMode === "diagram"
+                      ? "bg-indigo-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <FileSpreadsheet className="w-3.5 h-3.5" />
+                  <span>📐 Visio Blueprint</span>
+                </button>
+                <button
+                  id="tab-view-heatmaps"
+                  onClick={() => setActiveViewMode("heatmaps")}
+                  className={`px-3 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition cursor-pointer ${
+                    activeViewMode === "heatmaps"
+                      ? "bg-indigo-600 text-white shadow-sm"
+                      : "text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <Wifi className="w-3.5 h-3.5" />
+                  <span>📶 RF Heatmaps</span>
+                </button>
+              </div>
+
+              {activeViewMode === "diagram" && (
+                /* Zoom & Canvas Actions */
+                <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-lg border border-slate-800">
+                  <button
+                    id="btn-diagram-zoom-out"
+                    onClick={handleZoomOut}
+                    className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                    title="Zoom Out (-25%)"
+                  >
+                    <ZoomOut className="w-4 h-4" />
+                  </button>
+                  <span className="text-xs font-mono font-bold text-slate-300 px-2 min-w-[50px] text-center">
+                    {zoomLevel}%
+                  </span>
+                  <button
+                    id="btn-diagram-zoom-in"
+                    onClick={handleZoomIn}
+                    className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                    title="Zoom In (+25%)"
+                  >
+                    <ZoomIn className="w-4 h-4" />
+                  </button>
+                  <button
+                    id="btn-diagram-reset-zoom"
+                    onClick={handleResetZoom}
+                    className="p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors border-l border-slate-800 ml-1 pl-2"
+                    title="Reset Zoom (100%)"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Diagram Canvas Box */}
-          <div
-            ref={containerRef}
-            id="site-diagram-canvas-viewport"
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
-            className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative min-h-[520px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none"
-          >
+          {/* View Mode 1: Live LLDP Topology Map */}
+          {activeViewMode === "lldp" && (
+            <YorkLiveLldpTopologyMap 
+              switches={switches}
+              currentUser={currentUser}
+              onTriggerBackup={onTriggerBackup}
+              onSelectSwitchForWorkspace={(sw) => {
+                if (onSelectSwitchForReplacement) {
+                  onSelectSwitchForReplacement(sw.hostname, sw.ip);
+                }
+              }}
+            />
+          )}
+
+          {/* View Mode 2: Wireless RF Heatmaps */}
+          {activeViewMode === "heatmaps" && (
+            <SiteHeatMapsSection 
+              siteName={selectedDiagram.siteName}
+            />
+          )}
+
+          {/* View Mode 3: Visio Diagram Blueprint Canvas */}
+          {activeViewMode === "diagram" && (
+            <div
+              ref={containerRef}
+              id="site-diagram-canvas-viewport"
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
+              className="bg-slate-950 border border-slate-800 rounded-xl overflow-hidden shadow-2xl relative min-h-[520px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none"
+            >
             {/* Visual Grid Background */}
             <div 
               className="absolute inset-0 opacity-20 pointer-events-none"
@@ -629,8 +704,9 @@ export const SiteDiagramViewer: React.FC<SiteDiagramViewerProps> = ({
               )}
             </div>
           </div>
+        )}
 
-          {/* Quick Actions Footer */}
+        {/* Quick Actions Footer */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow flex items-center justify-between">
             <div className="text-xs text-slate-400">
               Showing Visio site layout for <strong className="text-white">{selectedDiagram.siteName}</strong>.

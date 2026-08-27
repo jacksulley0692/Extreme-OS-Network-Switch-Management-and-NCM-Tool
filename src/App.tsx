@@ -53,10 +53,11 @@ import { ScriptSafetyAuditor } from "./components/ScriptSafetyAuditor";
 import { SiteDiagramViewer } from "./components/SiteDiagramViewer";
 import { LoginModal } from "./components/LoginModal";
 import { AuditTrailViewer } from "./components/AuditTrailViewer";
+import { YorkLiveLldpTopologyMap } from "./components/YorkLiveLldpTopologyMap";
 
 export default function App() {
   // Navigation tabs state - Add new tab identifiers here:
-  const [activeTab, setActiveTab] = useState<"replacement" | "diagrams" | "operations" | "cheatsheet" | "migration" | "auditor" | "audit_trail">("replacement");
+  const [activeTab, setActiveTab] = useState<"replacement" | "topology" | "diagrams" | "operations" | "cheatsheet" | "migration" | "auditor" | "audit_trail">("replacement");
   const [switches] = useState<SwitchItem[]>(MOCK_SWITCHES);
   
   // Authentication & Session State
@@ -309,6 +310,23 @@ export default function App() {
             </button>
 
             <button
+              id="nav-tab-topology"
+              onClick={() => setActiveTab("topology")}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                activeTab === "topology"
+                  ? "bg-indigo-600 text-white shadow font-semibold ring-2 ring-indigo-400"
+                  : "text-indigo-300 hover:text-white bg-indigo-950/60 hover:bg-indigo-900/80 border border-indigo-800/60"
+              }`}
+            >
+              <Network className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="font-bold">🗺️ Visual Node Graph</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 font-mono">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Live LLDP
+              </span>
+            </button>
+
+            <button
               id="nav-tab-diagrams"
               onClick={() => setActiveTab("diagrams")}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
@@ -317,7 +335,7 @@ export default function App() {
                   : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
               }`}
             >
-              <Network className="w-3.5 h-3.5" />
+              <Layers className="w-3.5 h-3.5" />
               <span>Site Network Diagrams</span>
               <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                 130+ Sites
@@ -402,12 +420,29 @@ export default function App() {
             liveStatus={liveStatus}
             currentUserRole={currentUser?.role}
             currentUser={currentUser}
+            onOpenTopology={() => setActiveTab("topology")}
           />
+        )}
+
+        {activeTab === "topology" && (
+          <div className="space-y-4 animate-in fade-in duration-200">
+            <YorkLiveLldpTopologyMap 
+              switches={switches}
+              currentUser={currentUser}
+              onTriggerBackup={handleTriggerBackup}
+              onSelectSwitchForWorkspace={(sw) => {
+                setActiveTab("replacement");
+              }}
+            />
+          </div>
         )}
 
         {activeTab === "diagrams" && (
           <SiteDiagramViewer 
-            initialSiteOrSwitch="Leeds" 
+            initialSiteOrSwitch="York"
+            switches={switches}
+            currentUser={currentUser}
+            onTriggerBackup={handleTriggerBackup}
             onSelectSwitchForReplacement={(hostname, ip) => {
               setActiveTab("replacement");
             }}
