@@ -23,6 +23,21 @@ export function extractSiteCode(hostnameOrIpOrSite: string): string {
   
   const clean = String(hostnameOrIpOrSite).trim();
   
+  // Direct site matches
+  const directUpper = clean.toUpperCase().replace(/[^A-Z0-9]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+  if (clean.toLowerCase() === "amsterdam") return "AMSTERDAM";
+  if (clean.toLowerCase() === "aberdeen") return "ABERDEEN";
+  if (clean.toLowerCase() === "acton park" || clean.toLowerCase() === "acton") return "ACTON-PARK";
+  if (clean.toLowerCase() === "antwerp") return "ANTWERP";
+  if (clean.toLowerCase() === "barcelona") return "BARCELONA";
+  if (clean.toLowerCase() === "beckenham") return "BECKENHAM";
+  if (clean.toLowerCase() === "belfast") return "BELFAST";
+  if (clean.toLowerCase() === "birmingham") return "BIRMINGHAM";
+  if (clean.toLowerCase() === "bolton") return "BOLTON";
+  if (clean.toLowerCase() === "brighton") return "BRIGHTON";
+  if (clean.toLowerCase().includes("long ashton") || clean.toLowerCase().includes("bristol-la") || clean.toLowerCase().includes("briston")) return "BRISTOL-LA";
+  if (clean.toLowerCase().includes("westbury")) return "BRISTOL-WESTBURY";
+
   // Known IP subnet mappings
   if (clean.startsWith("10.32.224.")) return "ABERDEEN";
   if (clean.startsWith("10.32.221.")) return "YORK";
@@ -33,8 +48,20 @@ export function extractSiteCode(hostnameOrIpOrSite: string): string {
   if (clean.startsWith("10.32.227.")) return "BEACONSFIELD";
   if (clean.startsWith("10.32.52.")) return "LINCOLN";
   if (clean.startsWith("10.32.48.")) return "LUTON";
+  if (clean.startsWith("10.2.7.")) return "AMSTERDAM";
   if (clean.startsWith("10.32.104.")) return "AMSTERDAM";
   if (clean.startsWith("10.32.172.")) return "NORTHWOOD";
+  if (clean.startsWith("10.32.69.")) return "ABERDEEN";
+  if (clean.startsWith("10.32.225.")) return "ACTON-PARK";
+  if (clean.startsWith("10.32.206.")) return "ANTWERP";
+  if (clean.startsWith("10.32.29.")) return "BASILDON";
+  if (clean.startsWith("10.32.100.")) return "BARCELONA";
+  if (clean.startsWith("10.161.2.") || clean.startsWith("10.32.88.")) return "BECKENHAM";
+  if (clean.startsWith("10.32.40.")) return "BELFAST";
+  if (clean.startsWith("10.32.4.")) return "BIRMINGHAM";
+  if (clean.startsWith("10.32.39.")) return "BOLTON";
+  if (clean.startsWith("10.32.26.")) return "BRIGHTON";
+  if (clean.startsWith("10.32.15.")) return "BRISTOL-LA";
 
   // Pure IP address without known mapping
   const ipRegex = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;

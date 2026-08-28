@@ -36,7 +36,8 @@ import {
   Image as ImageIcon, 
   ZoomIn, 
   ZoomOut, 
-  RotateCcw
+  RotateCcw,
+  Plus
 } from "lucide-react";
 import { LldpNeighborModal } from "./LldpNeighborModal";
 import { PortDescriptionModal } from "./PortDescriptionModal";
@@ -49,13 +50,15 @@ import { BackupScheduleModal } from "./BackupScheduleModal";
 import { SwitchMonitorModal } from "./SwitchMonitorModal";
 import { SwitchPingModal } from "./SwitchPingModal";
 import { UnmanagedDiscoveryModal } from "./UnmanagedDiscoveryModal";
+import { SwitchesManagerModal } from "./SwitchesManagerModal";
+import { AddSwitchModal } from "./AddSwitchModal";
 import { findDiagramForSiteOrSwitch } from "../data/siteDiagramsData";
-import { YORK_DIAGRAM_SVG } from "../data/yorkDiagramSvg";
 import { SitePageView } from "./SitePageView";
 
 interface SwitchReplacementHubProps {
   switches: SwitchItem[];
   onTriggerBackup: (scriptName: string, targetSwitch: string) => void;
+  onSwitchesUpdated?: (newSwitches: SwitchItem[]) => void;
   isRunning?: boolean;
   liveStatus?: LiveStatusData | null;
   currentUserRole?: UserRole;
@@ -63,11 +66,15 @@ interface SwitchReplacementHubProps {
   onOpenTopology?: () => void;
 }
 
-export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = false, liveStatus = null, currentUserRole, currentUser, onOpenTopology }: SwitchReplacementHubProps) {
+export function SwitchReplacementHub({ switches, onTriggerBackup, onSwitchesUpdated, isRunning = false, liveStatus = null, currentUserRole, currentUser, onOpenTopology }: SwitchReplacementHubProps) {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedOs, setSelectedOs] = useState<"ALL" | SwitchOS>("ALL");
   const [reachabilityFilter, setReachabilityFilter] = useState<"ALL" | "REACHABLE" | "UNREACHABLE">("ALL");
   const [selectedSwitch, setSelectedSwitch] = useState<SwitchItem | null>(null);
+  
+  // Switches.txt & Fleet Discovery Modal state
+  const [switchesModalOpen, setSwitchesModalOpen] = useState<boolean>(false);
+  const [addSwitchModalOpen, setAddSwitchModalOpen] = useState<boolean>(false);
   
   // Rollout Configuration Modal state
   const [rolloutModalOpen, setRolloutModalOpen] = useState<boolean>(false);
@@ -114,7 +121,7 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
   const [customIp, setCustomIp] = useState<string>("");
   const [customGateway, setCustomGateway] = useState<string>("");
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
-  const [activeSubTab, setActiveSubTab] = useState<"config" | "ports" | "lldp" | "diagram" | "guide">("config");
+  const [activeSubTab, setActiveSubTab] = useState<"config" | "ports" | "lldp" | "guide">("config");
 
   // Site Hierarchy Selection State
   const [activeSite, setActiveSite] = useState<string | null>(null);
@@ -455,6 +462,31 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
             </div>
 
             <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+              {/* + Add Switch Button */}
+              <button
+                id="btn-hub-add-switch"
+                onClick={() => setAddSwitchModalOpen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition-all shrink-0 cursor-pointer"
+                title="Enroll a new switch into the fleet"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add Switch</span>
+              </button>
+
+              {/* Switches.txt Fleet Sync & Discovery Button */}
+              <button
+                id="btn-hub-switches-txt-discovery"
+                onClick={() => setSwitchesModalOpen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-600/20 transition-all shrink-0 cursor-pointer"
+                title="Manage Switches.txt, View Active IPs, and Run Fleet Discovery"
+              >
+                <Server className="w-3.5 h-3.5" />
+                <span>📋 Switches.txt &amp; Discover</span>
+                <span className="px-1.5 py-0.2 rounded-full text-[10px] bg-white/20 text-white font-mono">
+                  {switches.length}
+                </span>
+              </button>
+
               {/* Configure Multiple Switches Rollout Button (Strictly restricted to Network Admins) */}
               {(currentUserRole === "network_admin" || currentUser?.role === "network_admin") && (
                 <button
@@ -577,6 +609,7 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
               onTriggerBackup={onTriggerBackup}
               currentUser={currentUser}
               currentUserRole={currentUserRole}
+              onSwitchAdded={(newSw) => onSwitchesUpdated?.([...switches, newSw])}
             />
           ) : (
             <>
@@ -1082,21 +1115,6 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
               </button>
 
               <button
-                onClick={() => setActiveSubTab("diagram")}
-                className={`pb-3 border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
-                  activeSubTab === "diagram"
-                    ? "border-indigo-500 text-indigo-400 font-semibold"
-                    : "border-transparent text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <Layers className="w-4 h-4 text-emerald-400" />
-                <span>Visio Site Diagram</span>
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
-                  {findDiagramForSiteOrSwitch(selectedSwitch.hostname)?.tabName || "Site Diagram"}
-                </span>
-              </button>
-
-              <button
                 onClick={() => setActiveSubTab("guide")}
                 className={`pb-3 border-b-2 flex items-center gap-1.5 transition-colors whitespace-nowrap ${
                   activeSubTab === "guide"
@@ -1351,81 +1369,6 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
                 </div>
               )}
 
-              {activeSubTab === "diagram" && (
-                <div className="space-y-4">
-                  {(() => {
-                    const matchedDiagram = findDiagramForSiteOrSwitch(selectedSwitch.hostname) || findDiagramForSiteOrSwitch(selectedSwitch.ip);
-                    return (
-                      <div className="space-y-4">
-                        <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-3">
-                          <div>
-                            <span className="text-xs font-bold text-slate-200 flex items-center gap-2">
-                              <Layers className="w-4 h-4 text-emerald-400" />
-                              Matched Network Site: <strong className="text-white">{matchedDiagram?.siteName || selectedSwitch.hostname}</strong>
-                            </span>
-                            <div className="text-[11px] text-slate-400 font-mono mt-0.5">
-                              Visio Source: <span className="text-indigo-300">{matchedDiagram?.sourceFile || "DLC 2.vsdx"}</span> | Tab: <span className="text-emerald-300">{matchedDiagram?.tabName || `DLC - ${selectedSwitch.hostname}`}</span>
-                            </div>
-                          </div>
-
-                          <span className="text-xs font-mono px-2.5 py-1 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-800">
-                            ✓ Auto-Matched from Switch Hostname
-                          </span>
-                        </div>
-
-                        {/* Interactive Blueprint Render */}
-                        <div className="bg-slate-950 border border-slate-800 rounded-xl p-6 relative overflow-hidden">
-                          <div className="space-y-4">
-                            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                              <span className="text-xs font-bold text-white font-mono uppercase tracking-wider">
-                                {matchedDiagram?.siteName.toUpperCase() || selectedSwitch.hostname} - RACK & FIBER TOPOLOGY
-                              </span>
-                              <span className="text-[11px] font-mono text-slate-400">
-                                Switch: {selectedSwitch.hostname} ({selectedSwitch.ip})
-                              </span>
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {/* Active Switch Panel */}
-                              <div className="bg-slate-900 border-2 border-indigo-500/60 rounded-xl p-4 space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-xs font-bold text-indigo-300 font-mono">{selectedSwitch.hostname}</span>
-                                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800">
-                                    Target Switch ({selectedSwitch.os})
-                                  </span>
-                                </div>
-                                <div className="text-xs font-mono text-slate-300 space-y-1">
-                                  <div>IP: <strong className="text-emerald-400">{selectedSwitch.ip}</strong></div>
-                                  <div>Model: <span className="text-slate-400">{selectedSwitch.model}</span></div>
-                                  <div>Uplinks: <span className="text-indigo-400">{selectedSwitch.uplinkPorts.join(", ")}</span></div>
-                                </div>
-                              </div>
-
-                              {/* Core / Peer Uplink Partner */}
-                              <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <span className="text-xs font-bold text-slate-200 font-mono">
-                                    {selectedSwitch.backupLldpNeighbors?.[0]?.remoteSystemName || "CORE-SPINE-01"}
-                                  </span>
-                                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-950 text-slate-400 border border-slate-800">
-                                    Discovered Uplink Peer
-                                  </span>
-                                </div>
-                                <div className="text-xs font-mono text-slate-400 space-y-1">
-                                  <div>Peer Port: <strong className="text-slate-200">{selectedSwitch.backupLldpNeighbors?.[0]?.remotePortId || "Port 1/1"}</strong></div>
-                                  <div>Remote IP: <span className="text-slate-300">{selectedSwitch.backupLldpNeighbors?.[0]?.remoteMgmtIp || "10.36.226.1"}</span></div>
-                                  <div>Link Type: <span className="text-emerald-400">10GbE SFP+ Fiber Trunk</span></div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              )}
-
               {activeSubTab === "guide" && (
                 <div className="space-y-4">
                   <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 font-mono text-xs space-y-3">
@@ -1465,6 +1408,17 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
         </div>
       )}
 
+      {/* Global Add Switch Modal */}
+      <AddSwitchModal
+        isOpen={addSwitchModalOpen}
+        onClose={() => setAddSwitchModalOpen(false)}
+        onSwitchAdded={(newSwitch) => {
+          if (onSwitchesUpdated) {
+            onSwitchesUpdated([...switches, newSwitch]);
+          }
+        }}
+      />
+
       {/* Advanced Backup Options Modal */}
       <BackupOptionsModal
         isOpen={backupModalOpen}
@@ -1495,6 +1449,20 @@ export function SwitchReplacementHub({ switches, onTriggerBackup, isRunning = fa
           setSelectedSwitch(sw);
           setActiveSite(null);
         }}
+      />
+
+      {/* Switches.txt & Fleet Discovery Manager Modal */}
+      <SwitchesManagerModal
+        isOpen={switchesModalOpen}
+        onClose={() => setSwitchesModalOpen(false)}
+        switches={switches}
+        onSwitchesUpdated={(newSwitches) => {
+          if (onSwitchesUpdated) {
+            onSwitchesUpdated(newSwitches);
+          }
+        }}
+        currentUser={currentUser}
+        onTriggerBackup={onTriggerBackup}
       />
     </div>
   );

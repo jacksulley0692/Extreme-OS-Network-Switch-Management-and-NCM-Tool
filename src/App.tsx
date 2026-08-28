@@ -41,7 +41,8 @@ import {
   Info,
   User,
   LogOut,
-  History
+  History,
+  Plus
 } from "lucide-react";
 import { SwitchItem, LiveStatusData, AuthUser } from "./types";
 import { MOCK_SWITCHES } from "./data/mockSwitches";
@@ -50,15 +51,18 @@ import { ReplacementCheatSheet } from "./components/ReplacementCheatSheet";
 import { UbuntuMigrationKit } from "./components/UbuntuMigrationKit";
 import { LiveOperationsRunner } from "./components/LiveOperationsRunner";
 import { ScriptSafetyAuditor } from "./components/ScriptSafetyAuditor";
-import { SiteDiagramViewer } from "./components/SiteDiagramViewer";
 import { LoginModal } from "./components/LoginModal";
 import { AuditTrailViewer } from "./components/AuditTrailViewer";
 import { YorkLiveLldpTopologyMap } from "./components/YorkLiveLldpTopologyMap";
+import { SwitchesManagerModal } from "./components/SwitchesManagerModal";
+import { AddSwitchModal } from "./components/AddSwitchModal";
 
 export default function App() {
   // Navigation tabs state - Add new tab identifiers here:
-  const [activeTab, setActiveTab] = useState<"replacement" | "topology" | "diagrams" | "operations" | "cheatsheet" | "migration" | "auditor" | "audit_trail">("replacement");
-  const [switches] = useState<SwitchItem[]>(MOCK_SWITCHES);
+  const [activeTab, setActiveTab] = useState<"replacement" | "topology" | "audit_trail" | "operations" | "cheatsheet" | "migration" | "auditor">("replacement");
+  const [switches, setSwitches] = useState<SwitchItem[]>(MOCK_SWITCHES);
+  const [switchesModalOpen, setSwitchesModalOpen] = useState<boolean>(false);
+  const [addSwitchModalOpen, setAddSwitchModalOpen] = useState<boolean>(false);
   
   // Authentication & Session State
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
@@ -108,6 +112,18 @@ export default function App() {
       .catch((err) => console.error("Error loading file:", err));
   };
 
+  const fetchSwitches = async () => {
+    try {
+      const res = await fetch("/api/switches");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.switches && Array.isArray(data.switches) && data.switches.length > 0) {
+          setSwitches(data.switches);
+        }
+      }
+    } catch {}
+  };
+
   useEffect(() => {
     // Fetch available project files
     fetch("/api/files")
@@ -121,6 +137,7 @@ export default function App() {
 
     loadFile("BackupSave.py");
     fetchLiveStatus();
+    fetchSwitches();
 
     // Poll live status every 3 seconds
     const interval = setInterval(fetchLiveStatus, 3000);
@@ -234,8 +251,18 @@ export default function App() {
               </div>
             )}
 
-            {/* Quick 1-Click File Downloaders */}
+            {/* Quick 1-Click File Downloaders & Switch Enroller */}
             <div className="relative flex items-center gap-2">
+              <button
+                id="btn-quick-add-switch"
+                onClick={() => setAddSwitchModalOpen(true)}
+                className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-md shadow-emerald-600/20 transition cursor-pointer"
+                title="Add / Enroll New Network Switch to Fleet"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add Switch</span>
+              </button>
+
               <button
                 id="btn-quick-download-users-txt"
                 onClick={async () => {
@@ -261,6 +288,16 @@ export default function App() {
               >
                 <User className="w-3.5 h-3.5 text-indigo-400" />
                 <span>📥 users.txt</span>
+              </button>
+
+              <button
+                id="btn-quick-switches-manager"
+                onClick={() => setSwitchesModalOpen(true)}
+                className="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow transition cursor-pointer font-mono"
+                title="Manage Switches.txt, View Active IPs, and Run Fleet Discovery"
+              >
+                <Server className="w-3.5 h-3.5" />
+                <span>📋 Switches.txt ({switches.length})</span>
               </button>
 
               <button
@@ -323,22 +360,6 @@ export default function App() {
               <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 font-mono">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 Live LLDP
-              </span>
-            </button>
-
-            <button
-              id="nav-tab-diagrams"
-              onClick={() => setActiveTab("diagrams")}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === "diagrams"
-                  ? "bg-indigo-600 text-white shadow font-semibold"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" />
-              <span>Site Network Diagrams</span>
-              <span className="text-[10px] px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                130+ Sites
               </span>
             </button>
 
@@ -415,7 +436,8 @@ export default function App() {
         {activeTab === "replacement" && (
           <SwitchReplacementHub 
             switches={switches} 
-            onTriggerBackup={handleTriggerBackup} 
+            onTriggerBackup={handleTriggerBackup}
+            onSwitchesUpdated={(newSwitches) => setSwitches(newSwitches)}
             isRunning={isRunning}
             liveStatus={liveStatus}
             currentUserRole={currentUser?.role}
@@ -435,18 +457,6 @@ export default function App() {
               }}
             />
           </div>
-        )}
-
-        {activeTab === "diagrams" && (
-          <SiteDiagramViewer 
-            initialSiteOrSwitch="York"
-            switches={switches}
-            currentUser={currentUser}
-            onTriggerBackup={handleTriggerBackup}
-            onSelectSwitchForReplacement={(hostname, ip) => {
-              setActiveTab("replacement");
-            }}
-          />
         )}
 
         {activeTab === "audit_trail" && (
@@ -490,6 +500,26 @@ export default function App() {
           <span className="font-mono text-[11px]">Ready for Ubuntu Linux Server deployment</span>
         </div>
       </footer>
+
+      {/* Global Add Switch Modal */}
+      <AddSwitchModal
+        isOpen={addSwitchModalOpen}
+        onClose={() => setAddSwitchModalOpen(false)}
+        onSwitchAdded={(newSwitch) => {
+          setSwitches((prev) => [...prev, newSwitch]);
+          fetchSwitches();
+        }}
+      />
+
+      {/* Global Switches.txt & Fleet Discovery Manager Modal */}
+      <SwitchesManagerModal
+        isOpen={switchesModalOpen}
+        onClose={() => setSwitchesModalOpen(false)}
+        switches={switches}
+        onSwitchesUpdated={(newSwitches) => setSwitches(newSwitches)}
+        currentUser={currentUser}
+        onTriggerBackup={handleTriggerBackup}
+      />
     </div>
   );
 }

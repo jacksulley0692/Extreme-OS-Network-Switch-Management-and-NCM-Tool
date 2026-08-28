@@ -664,6 +664,209 @@ app.post("/api/save-switches-txt", (req, res) => {
   }
 });
 
+// Route to get full fleet switches synchronized with Switches.txt
+app.get("/api/switches", (_req, res) => {
+  try {
+    const switchesTxtPath = path.join(process.cwd(), "Switches.txt");
+    const activeIps: string[] = [];
+    if (fs.existsSync(switchesTxtPath)) {
+      const lines = fs.readFileSync(switchesTxtPath, "utf-8").split("\n");
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (trimmed && !trimmed.startsWith("#")) {
+          activeIps.push(trimmed);
+        }
+      }
+    }
+
+    // Load master switch inventory json
+    const jsonPath = path.join(process.cwd(), "src", "data", "allFleetSwitches.json");
+    let masterSwitches: any[] = [];
+    if (fs.existsSync(jsonPath)) {
+      try {
+        masterSwitches = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
+      } catch (e) {
+        console.error("Error reading allFleetSwitches.json:", e);
+      }
+    }
+
+    // Map existing switches and track matched IPs
+    const matchedIps = new Set<string>();
+    const resultSwitches = masterSwitches.map((sw) => {
+      matchedIps.add(sw.ip);
+      const inSwitchesTxt = activeIps.includes(sw.ip);
+      return {
+        ...sw,
+        inSwitchesTxt,
+        isReachable: inSwitchesTxt ? (sw.isReachable ?? true) : false
+      };
+    });
+
+    // Synthesize entries for any IPs in Switches.txt that weren't in master catalog
+    let newDiscoveredCount = 0;
+    for (const ip of activeIps) {
+      if (!matchedIps.has(ip)) {
+        newDiscoveredCount++;
+        // Infer site code from subnet if possible
+        const octets = ip.split(".");
+        const subnet3 = octets.length >= 3 ? `${octets[0]}.${octets[1]}.${octets[2]}` : "";
+        
+        let inferredSite = "UNKNOWN";
+        if (subnet3 === "10.32.104") inferredSite = "Amsterdam";
+        else if (subnet3 === "10.32.172") inferredSite = "Northwood";
+        else if (subnet3 === "10.32.221") inferredSite = "York";
+        else if (subnet3 === "10.32.224") inferredSite = "Aberdeen";
+        else if (subnet3 === "10.32.54") inferredSite = "Leeds";
+        else if (subnet3 === "10.32.61") inferredSite = "Leicester";
+        else if (subnet3 === "10.32.208") inferredSite = "Bristol-LA";
+        else if (subnet3 === "10.32.227") inferredSite = "Beaconsfield";
+        else if (subnet3 === "10.32.52") inferredSite = "Lincoln";
+        else if (subnet3 === "10.32.48") inferredSite = "Luton";
+        else if (subnet3 === "10.32.214") inferredSite = "Lichfield";
+        else inferredSite = `Site-${octets[2] || "New"}`;
+
+        const inferredHostname = `DLC-${inferredSite}-SW-${octets[3] || "1"}`;
+        
+        resultSwitches.push({
+          id: `disc-${ip.replace(/\./g, "-")}`,
+          site: inferredSite,
+          hostname: inferredHostname,
+          ip: ip,
+          os: "EXOS",
+          model: "Summit X440-24p-G2",
+          firmware: "31.7.1.4-patch1-19",
+          serialNumber: `SN-${ip.replace(/\./g, "")}`,
+          macAddress: `00:04:96:${(octets[1] || "32").padStart(2, "0")}:${(octets[2] || "00").padStart(2, "0")}:${(octets[3] || "01").padStart(2, "0")}`,
+          primaryVlan: Number(octets[2]) || 10,
+          gateway: `${subnet3}.1`,
+          uplinkPorts: ["1:25", "1:26"],
+          lastBackupTime: "Ready to backup",
+          lastBackupStatus: "SUCCESS",
+          tftpPath: `/srv/tftp/${inferredHostname}.xsf`,
+          configFormat: "xsf",
+          activeConfig: `# Configuration for ${inferredHostname} (${ip})\n# Discovered from Switches.txt\nconfigure vlan default delete ports all\nconfigure vlan mgmt ipaddress ${ip} 255.255.255.0\nconfigure iproute add default ${subnet3}.1\nenable ssh2\n`,
+          previousRevisions: [],
+          ports: [
+            { port: "1:1", name: "Client-Access", status: "up", vlan: "10", speed: "1000Mbps", duplex: "Full" },
+            { port: "1:2", name: "Client-Access", status: "up", vlan: "10", speed: "1000Mbps", duplex: "Full" },
+            { port: "1:25", name: "CORE-UPLINK-1", status: "up", vlan: "Trunk", speed: "10Gbps", duplex: "Full" }
+          ],
+          isReachable: true,
+          inSwitchesTxt: true
+        });
+      }
+    }
+
+    return res.json({
+      success: true,
+      totalSwitches: resultSwitches.length,
+      switchesTxtCount: activeIps.length,
+      newDiscoveredCount,
+      switches: resultSwitches
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// Route to add a switch directly from the GUI
+app.post("/api/switches/add", (req, res) => {
+  try {
+    const { site, hostname, ip, os = "EXOS", model = "Summit X440-G2-24p-10G", primaryVlan = 10, gateway, uplinkPorts = ["1:49", "1:50"] } = req.body || {};
+    
+    if (!ip || !hostname || !site) {
+      return res.status(400).json({ success: false, error: "Site, Hostname, and IP Address are required." });
+    }
+
+    const ipRegex = /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/;
+    if (!ipRegex.test(ip.trim())) {
+      return res.status(400).json({ success: false, error: "Invalid IPv4 address format." });
+    }
+
+    const cleanIp = ip.trim();
+    const cleanHostname = hostname.trim();
+    const cleanSite = site.trim();
+
+    // 1. Update allFleetSwitches.json
+    const jsonPath = path.join(process.cwd(), "src", "data", "allFleetSwitches.json");
+    let masterSwitches: any[] = [];
+    if (fs.existsSync(jsonPath)) {
+      try {
+        masterSwitches = JSON.parse(fs.readFileSync(jsonPath, "utf-8"));
+      } catch (e) {}
+    }
+
+    // Check if IP already exists
+    const existingIndex = masterSwitches.findIndex((s) => s.ip === cleanIp);
+    const octets = cleanIp.split(".");
+    const subnet = octets.slice(0, 3).join(".");
+    const effectiveGateway = gateway ? gateway.trim() : `${subnet}.1`;
+
+    const newSwitchObj = {
+      id: `sw-${cleanHostname.toLowerCase().replace(/[^a-z0-9]/g, "-")}-${cleanIp.replace(/\./g, "-")}`,
+      site: cleanSite,
+      hostname: cleanHostname,
+      ip: cleanIp,
+      os: os === "VOSS" ? "VOSS" : "EXOS",
+      model: model,
+      firmware: os === "VOSS" ? "VOSS 8.4.2.0" : "EXOS 31.7.1.4",
+      serialNumber: `21${Math.floor(1000 + Math.random() * 9000)}N-${Math.floor(10000 + Math.random() * 90000)}`,
+      macAddress: `00:04:96:${(octets[1] || "32").padStart(2, "0")}:${(octets[2] || "00").padStart(2, "0")}:${(octets[3] || "01").padStart(2, "0")}`,
+      primaryVlan: Number(primaryVlan) || Number(octets[2]) || 10,
+      gateway: effectiveGateway,
+      uplinkPorts: Array.isArray(uplinkPorts) && uplinkPorts.length > 0 ? uplinkPorts : ["1:49", "1:50"],
+      lastBackupTime: "Ready to backup",
+      lastBackupStatus: "SUCCESS",
+      tftpPath: `/srv/tftp/${cleanHostname}.${os === "VOSS" ? "cfg" : "xsf"}`,
+      configFormat: os === "VOSS" ? "cfg" : "xsf",
+      isReachable: true,
+      inSwitchesTxt: true,
+      latencyMs: 3.5,
+      notes: `${cleanSite} Network Switch (${cleanHostname}). Added via Web GUI.`,
+      activeConfig: os === "EXOS"
+        ? `# Extreme Networks Configuration File (.xsf)\n# Switch: ${cleanHostname}\n# Site: ${cleanSite}\nconfigure snmp sysName "${cleanHostname}"\nconfigure vlan default delete ports all\nconfigure vlan mgmt ipaddress ${cleanIp} 255.255.255.0\nconfigure iproute add default ${effectiveGateway}\nenable ssh2\n`
+        : `# Extreme Networks VOSS Configuration File (.cfg)\n# Switch: ${cleanHostname}\n# Site: ${cleanSite}\nsnmp-server name "${cleanHostname}"\nvlan create 10 name "Mgmt" type port-mstprstp 0\ninterface vlan 10\nip address ${cleanIp} 255.255.255.0\nexit\nip route 0.0.0.0 0.0.0.0 ${effectiveGateway}\n`,
+      ports: [
+        { port: "1:1", name: "AP-Access", status: "up", vlan: "10", speed: "1000Mbps", duplex: "Full" },
+        { port: "1:2", name: "POS-Client", status: "up", vlan: "20", speed: "1000Mbps", duplex: "Full" },
+        { port: "1:49", name: "CORE-UPLINK-1", status: "up", vlan: "Trunk", speed: "10Gbps", duplex: "Full" },
+        { port: "1:50", name: "CORE-UPLINK-2", status: "up", vlan: "Trunk", speed: "10Gbps", duplex: "Full" }
+      ],
+      previousRevisions: []
+    };
+
+    if (existingIndex >= 0) {
+      masterSwitches[existingIndex] = { ...masterSwitches[existingIndex], ...newSwitchObj };
+    } else {
+      masterSwitches.push(newSwitchObj);
+    }
+
+    fs.writeFileSync(jsonPath, JSON.stringify(masterSwitches, null, 2), "utf-8");
+
+    // 2. Also append to switches.txt and Switches.txt if not present
+    const switchesFiles = ["switches.txt", "Switches.txt"];
+    for (const sFile of switchesFiles) {
+      const sPath = path.join(process.cwd(), sFile);
+      if (fs.existsSync(sPath)) {
+        const curContent = fs.readFileSync(sPath, "utf-8");
+        const lines = curContent.split("\n").map((l) => l.trim());
+        if (!lines.includes(cleanIp)) {
+          fs.appendFileSync(sPath, `\n${cleanIp}\n`, "utf-8");
+        }
+      }
+    }
+
+    return res.json({
+      success: true,
+      message: `Switch ${cleanHostname} (${cleanIp}) added successfully to ${cleanSite}!`,
+      switch: newSwitchObj,
+      totalSwitches: masterSwitches.length
+    });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Route to fetch project script from workspace
 app.post("/api/ping", (req, res) => {
   const { ip, hostname, count, username, fullName, role } = req.body || {};
