@@ -1,218 +1,4465 @@
 [
   {
-    "id": "sw-york-core",
-    "hostname": "DLC-York-Core",
-    "ip": "10.32.221.253",
-    "os": "EXOS",
-    "model": "Summit X460-G2-48p-10GE4",
-    "format": "xsf"
-  },
-  {
-    "id": "sw-york-spa",
-    "hostname": "DLC-York-Spa-SW1",
-    "ip": "10.32.221.252",
+    "id": "sw-aberdeen-dll-aberdeen-comms-10-32-69-253",
+    "hostname": "DLL-Aberdeen-Comms",
+    "ip": "10.32.69.253",
+    "site": "Aberdeen",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-york-gym",
-    "hostname": "DLC-York-Gym",
-    "ip": "10.32.221.250",
-    "os": "EXOS",
-    "model": "Summit X440-G2-24p-10G",
-    "format": "xsf"
-  },
-  {
-    "id": "sw-york-dll",
-    "hostname": "DLL-York",
-    "ip": "10.32.221.249",
+    "id": "sw-aberdeen-dlc-aberdeen-lynxight-10-32-69-251",
+    "hostname": "DLC-Aberdeen-Lynxight",
+    "ip": "10.32.69.251",
+    "site": "Aberdeen",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-york-maincomms-2",
-    "hostname": "DLC-York-MainComms-2",
-    "ip": "10.32.221.248",
+    "id": "sw-aberdeen-dlc-aberdeen-gym-10-32-69-250",
+    "hostname": "DLC-Aberdeen-Gym",
+    "ip": "10.32.69.250",
+    "site": "Aberdeen",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-lichfield-core",
-    "hostname": "DLC-Lichfield-Core",
-    "ip": "10.32.214.253",
-    "os": "VOSS",
-    "model": "VSP 4450GSX-PWR+",
-    "format": "cfg"
-  },
-  {
-    "id": "sw-lichfield-spa",
-    "hostname": "DLC-Lichfield-Spa",
-    "ip": "10.32.214.252",
+    "id": "sw-acton-park-dll-acton-10-32-225-253",
+    "hostname": "DLL-Acton",
+    "ip": "10.32.225.253",
+    "site": "Acton Park",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-lichfield-gym",
-    "hostname": "DLC-Lichfield-Gym",
-    "ip": "10.32.214.251",
-    "os": "EXOS",
-    "model": "Summit X440-G2-24p-10G",
-    "format": "xsf"
-  },
-  {
-    "id": "sw-leeds-core",
-    "hostname": "DLC-Leeds-Core",
-    "ip": "10.32.54.253",
-    "os": "VOSS",
-    "model": "VSP 4450GSX-PWR+",
-    "format": "cfg"
-  },
-  {
-    "id": "sw-leeds-spa",
-    "hostname": "DLC-Leeds-Spa",
-    "ip": "10.32.54.250",
+    "id": "sw-acton-park-dlc-acton2-10-32-225-252",
+    "hostname": "DLC-Acton2",
+    "ip": "10.32.225.252",
+    "site": "Acton Park",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-leeds-edge",
+    "id": "sw-acton-park-dlc-acton-maincomms-3-10-32-225-249",
+    "hostname": "DLC-Acton-MainComms-3",
+    "ip": "10.32.225.249",
+    "site": "Acton Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-acton-park-dlc-actonpark-lynxight-10-32-225-248",
+    "hostname": "DLC-ActonPark-Lynxight",
+    "ip": "10.32.225.248",
+    "site": "Acton Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-antwerp-dll-antwerp-10-32-206-253",
+    "hostname": "DLL-Antwerp",
+    "ip": "10.32.206.253",
+    "site": "Antwerp",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-antwerp-dll-antwerp24-10-32-206-252",
+    "hostname": "DLL-Antwerp24",
+    "ip": "10.32.206.252",
+    "site": "Antwerp",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-antwerp-dll-antwerp-3-10-32-206-250",
+    "hostname": "DLL-Antwerp-3",
+    "ip": "10.32.206.250",
+    "site": "Antwerp",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-amsterdam-dlc-amsterdam-48p-10-2-7-253",
+    "hostname": "DLC-Amsterdam-48p",
+    "ip": "10.2.7.253",
+    "site": "Amsterdam",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-amsterdam-dlc-amsterdam-spa-10-2-7-252",
+    "hostname": "DLC-Amsterdam-Spa",
+    "ip": "10.2.7.252",
+    "site": "Amsterdam",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-amsterdam-dlc-amsterdam-maincomm-2-10-2-7-251",
+    "hostname": "DLC-Amsterdam-MainComm-2",
+    "ip": "10.2.7.251",
+    "site": "Amsterdam",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-amsterdam-dlc-amsterdam-lynxight-10-2-7-250",
+    "hostname": "DLC-Amsterdam-Lynxight",
+    "ip": "10.2.7.250",
+    "site": "Amsterdam",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-basildon-dlc-basildon-10-32-29-253",
+    "hostname": "DLC-Basildon",
+    "ip": "10.32.29.253",
+    "site": "Basildon",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-basildon-dlc-basildon-lynxight-10-32-29-251",
+    "hostname": "DLC-Basildon-Lynxight",
+    "ip": "10.32.29.251",
+    "site": "Basildon",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-basildon-dlc-basildon-gym-10-32-29-250",
+    "hostname": "DLC-Basildon-Gym",
+    "ip": "10.32.29.250",
+    "site": "Basildon",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-barcelona-dllbarcelona-10-32-100-253",
+    "hostname": "DLLBarcelona",
+    "ip": "10.32.100.253",
+    "site": "Barcelona",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-barcelona-dlc-barcelona-10-32-100-252",
+    "hostname": "DLC-Barcelona",
+    "ip": "10.32.100.252",
+    "site": "Barcelona",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-barcelona-dll-bar-gym24-10-32-100-251",
+    "hostname": "DLL-Bar-Gym24",
+    "ip": "10.32.100.251",
+    "site": "Barcelona",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-beckenham-dlc-beckenham-10-161-2-253",
+    "hostname": "DLC-Beckenham",
+    "ip": "10.161.2.253",
+    "site": "Beckenham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-beckenham-dlc-beckenham-maincomms-2-10-32-88-252",
+    "hostname": "DLC-Beckenham-MainComms-2",
+    "ip": "10.32.88.252",
+    "site": "Beckenham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-beckenham-dlc-beckenham-spa-10-32-88-250",
+    "hostname": "DLC-Beckenham-Spa",
+    "ip": "10.32.88.250",
+    "site": "Beckenham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-beckenham-dlc-beckenham-lynxight-10-32-88-251",
+    "hostname": "DLC-Beckenham-Lynxight",
+    "ip": "10.32.88.251",
+    "site": "Beckenham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-belfast-dll-belfast-maincomms-10-32-40-253",
+    "hostname": "DLL-Belfast-MainComms",
+    "ip": "10.32.40.253",
+    "site": "Belfast",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-belfast-dlc-belfast-maincomms-2-10-32-40-252",
+    "hostname": "DLC-Belfast-MainComms-2",
+    "ip": "10.32.40.252",
+    "site": "Belfast",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-belfast-dlc-belfast-lynxight-10-32-40-251",
+    "hostname": "DLC-Belfast-Lynxight",
+    "ip": "10.32.40.251",
+    "site": "Belfast",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-birmingham-dll-birmingham-comms-10-32-4-253",
+    "hostname": "DLL-Birmingham-Comms",
+    "ip": "10.32.4.253",
+    "site": "Birmingham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-birmingham-dlc-birmingham-lynxight-10-32-4-251",
+    "hostname": "DLC-Birmingham-Lynxight",
+    "ip": "10.32.4.251",
+    "site": "Birmingham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bolton-dll-bolton-comms-10-32-39-253",
+    "hostname": "DLL-Bolton-Comms",
+    "ip": "10.32.39.253",
+    "site": "Bolton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bolton-dlc-bolton-maincomms-2-10-32-39-252",
+    "hostname": "DLC-Bolton-MainComms-2",
+    "ip": "10.32.39.252",
+    "site": "Bolton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bolton-dlc-bolton-lnyxight-10-32-39-251",
+    "hostname": "DLC-Bolton-Lnyxight",
+    "ip": "10.32.39.251",
+    "site": "Bolton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-brighton-dlc-brighton-10-32-26-253",
+    "hostname": "DLC-Brighton",
+    "ip": "10.32.26.253",
+    "site": "Brighton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-brighton-dlc-brighton-subrack-10-32-26-252",
+    "hostname": "DLC-Brighton-SubRack",
+    "ip": "10.32.26.252",
+    "site": "Brighton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-briston-long-ashton-dll-bristol-la-maincomms-10-32-15-253",
+    "hostname": "DLL-Bristol-LA-MainComms",
+    "ip": "10.32.15.253",
+    "site": "Briston Long Ashton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-briston-long-ashton-dll-bristol-la-subrack-10-32-15-252",
+    "hostname": "DLL-Bristol-LA-SubRack",
+    "ip": "10.32.15.252",
+    "site": "Briston Long Ashton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-briston-long-ashton-dll-bristol-la-maincomms-2-10-32-15-250",
+    "hostname": "DLL-Bristol-LA-MainComms-2",
+    "ip": "10.32.15.250",
+    "site": "Briston Long Ashton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bristol-westbury-dll-bristolwestbury-10-32-79-253",
+    "hostname": "DLL-BristolWestbury",
+    "ip": "10.32.79.253",
+    "site": "Bristol Westbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bristol-westbury-dlc-bristol-westbury-gym-10-32-79-250",
+    "hostname": "DLC-Bristol-Westbury-Gym",
+    "ip": "10.32.79.250",
+    "site": "Bristol Westbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bristol-westbury-dlc-bristol-westbury-spa-10-32-79-249",
+    "hostname": "DLC-Bristol-Westbury-Spa",
+    "ip": "10.32.79.249",
+    "site": "Bristol Westbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bromsgrove-dlc-bromsgrove-10-32-57-253",
+    "hostname": "DLC-Bromsgrove",
+    "ip": "10.32.57.253",
+    "site": "Bromsgrove",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bromsgrove-dlc-bromsgrove-gym-subrack-10-32-57-252",
+    "hostname": "DLC-Bromsgrove-Gym-Subrack",
+    "ip": "10.32.57.252",
+    "site": "Bromsgrove",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bromsgrove-dlc-bromsgrove-lynxight-10-32-57-251",
+    "hostname": "DLC-Bromsgrove-Lynxight",
+    "ip": "10.32.57.251",
+    "site": "Bromsgrove",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-brooklands-dlc-brooklands-10-32-45-253",
+    "hostname": "DLC-Brooklands",
+    "ip": "10.32.45.253",
+    "site": "Brooklands",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-brooklands-dlc-brooklands-spa-10-32-45-252",
+    "hostname": "DLC-Brooklands-Spa",
+    "ip": "10.32.45.252",
+    "site": "Brooklands",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-brooklands-dlc-brooklands-lynxight-10-32-45-251",
+    "hostname": "DLC-Brooklands-Lynxight",
+    "ip": "10.32.45.251",
+    "site": "Brooklands",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-brussles-dll-brussels-main-10-2-8-253",
+    "hostname": "DLL-Brussels-MAIN",
+    "ip": "10.2.8.253",
+    "site": "Brussles",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-brussles-dlc-brussels-gym-10-2-8-252",
+    "hostname": "DLC-Brussels-Gym",
+    "ip": "10.2.8.252",
+    "site": "Brussles",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-brussles-dlc-brussels-new-10-2-8-251",
+    "hostname": "DLC-Brussels-New",
+    "ip": "10.2.8.251",
+    "site": "Brussles",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-brussles-dlc-brussels-b19-10-2-8-250",
+    "hostname": "DLC-Brussels-B19",
+    "ip": "10.2.8.250",
+    "site": "Brussles",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-brussles-dlc-brussels-b19-firstfloor-10-2-8-249",
+    "hostname": "DLC-Brussels-B19-FirstFloor",
+    "ip": "10.2.8.249",
+    "site": "Brussles",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bushey-dlc-bushey-maincomms-10-32-1-253",
+    "hostname": "DLC-Bushey-MainComms",
+    "ip": "10.32.1.253",
+    "site": "Bushey",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bushey-dll-bushey-mainextreme-10-32-1-252",
+    "hostname": "DLL-Bushey-MainExtreme",
+    "ip": "10.32.1.252",
+    "site": "Bushey",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bushey-dlc-bushey-subrack-10-32-1-250",
+    "hostname": "DLC-Bushey-Subrack",
+    "ip": "10.32.1.250",
+    "site": "Bushey",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cambridge-dlc-cambridge-maincomms-2-10-32-82-250",
+    "hostname": "DLC-Cambridge-MainComms-2",
+    "ip": "10.32.82.250",
+    "site": "Cambridge",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cambridge-dll-cambridge-10-32-82-253",
+    "hostname": "DLL-Cambridge",
+    "ip": "10.32.82.253",
+    "site": "Cambridge",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cambridge-dlc-cambridge-lnyxight-10-32-82-252",
+    "hostname": "DLC-Cambridge-Lnyxight",
+    "ip": "10.32.82.252",
+    "site": "Cambridge",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cambridge-dlc-cambridge-gym-10-32-82-251",
+    "hostname": "DLC-Cambridge-Gym",
+    "ip": "10.32.82.251",
+    "site": "Cambridge",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-capelle-dlc-capell-10-2-9-253",
+    "hostname": "DLC-Capell",
+    "ip": "10.2.9.253",
+    "site": "Capelle",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-capelle-dlc-capelle-maincomms-2-10-2-9-252",
+    "hostname": "DLC-Capelle-MainComms-2",
+    "ip": "10.2.9.252",
+    "site": "Capelle",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cardiff-dll-cardiff-maincomms-10-32-9-253",
+    "hostname": "DLL-Cardiff-Maincomms",
+    "ip": "10.32.9.253",
+    "site": "Cardiff",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cardiff-dlc-cardiff-maincomms-2-10-32-9-251",
+    "hostname": "DLC-Cardiff-MainComms-2",
+    "ip": "10.32.9.251",
+    "site": "Cardiff",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cardiff-dll-cardiff-subrack-10-32-9-252",
+    "hostname": "DLL-Cardiff-Subrack",
+    "ip": "10.32.9.252",
+    "site": "Cardiff",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cardiff-dlc-cardiff-lynxight-10-32-9-249",
+    "hostname": "DLC-Cardiff-Lynxight",
+    "ip": "10.32.9.249",
+    "site": "Cardiff",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cheadle-royal-dlc-cheadle-x440-10-32-17-253",
+    "hostname": "DLC-Cheadle-X440",
+    "ip": "10.32.17.253",
+    "site": "Cheadle Royal",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cheadle-royal-dll-cheadle-stack-10-32-17-252",
+    "hostname": "DLL-Cheadle-Stack",
+    "ip": "10.32.17.252",
+    "site": "Cheadle Royal",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cheadle-royal-dll-cheadle-x440-24p-10-32-17-251",
+    "hostname": "DLL-Cheadle-X440-24P",
+    "ip": "10.32.17.251",
+    "site": "Cheadle Royal",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cheadle-royal-cheadlesubrack-10-32-17-250",
+    "hostname": "CheadleSubRack",
+    "ip": "10.32.17.250",
+    "site": "Cheadle Royal",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cheadle-royal-dlc-cheadle-lynxight-10-32-17-249",
+    "hostname": "DLC-Cheadle-Lynxight",
+    "ip": "10.32.17.249",
+    "site": "Cheadle Royal",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cheam-dlc-cheam-lynxight-10-32-55-252",
+    "hostname": "DLC-Cheam-Lynxight",
+    "ip": "10.32.55.252",
+    "site": "Cheam",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chelsea-harbour-club-dll-chelsea-main-middle-10-32-91-253",
+    "hostname": "DLL-CHelsea-Main-Middle",
+    "ip": "10.32.91.253",
+    "site": "Chelsea Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chelsea-harbour-club-dlc-chelsea-maincomms-3-10-36-91-248",
+    "hostname": "DLC-Chelsea-MainComms-3",
+    "ip": "10.36.91.248",
+    "site": "Chelsea Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chelsea-harbour-club-dlc-chelsea-basement-10-32-91-251",
+    "hostname": "DLC-Chelsea-Basement",
+    "ip": "10.32.91.251",
+    "site": "Chelsea Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chelsea-harbour-club-dll-chelsea-main-bottom-10-32-91-252",
+    "hostname": "DLL-Chelsea-Main-Bottom",
+    "ip": "10.32.91.252",
+    "site": "Chelsea Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chelsea-harbour-club-hc-chelsea-gym-10-32-91-250",
+    "hostname": "HC-Chelsea-GYM",
+    "ip": "10.32.91.250",
+    "site": "Chelsea Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chelsea-harbour-club-dlc-chelsea-lynxight-10-32-91-247",
+    "hostname": "DLC-Chelsea-Lynxight",
+    "ip": "10.32.91.247",
+    "site": "Chelsea Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cheshire-oaks-dlc-cheshireoaks-10-32-46-253",
+    "hostname": "DLC-CheshireOaks",
+    "ip": "10.32.46.253",
+    "site": "Cheshire Oaks",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cheshire-oaks-dlc-cheshireoaks-lynxight-10-32-46-252",
+    "hostname": "DLC-CheshireOaks-Lynxight",
+    "ip": "10.32.46.252",
+    "site": "Cheshire Oaks",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cheshire-oaks-dlc-cheshireoaks-gym-subrack-10-32-46-251",
+    "hostname": "DLC-CheshireOaks-Gym-Subrack",
+    "ip": "10.32.46.251",
+    "site": "Cheshire Oaks",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cheshire-oaks-dlc-cheshireoaks-spa-10-32-46-250",
+    "hostname": "DLC-CheshireOaks-Spa",
+    "ip": "10.32.46.250",
+    "site": "Cheshire Oaks",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chigwell-chigwell-spa-10-32-6-252",
+    "hostname": "Chigwell-Spa",
+    "ip": "10.32.6.252",
+    "site": "Chigwell",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chigwell-dll-chigwell-stack-10-32-6-253",
+    "hostname": "DLL-Chigwell-Stack",
+    "ip": "10.32.6.253",
+    "site": "Chigwell",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chorley-dll-chorley-maincomms-10-32-76-253",
+    "hostname": "DLL-Chorley-MainComms",
+    "ip": "10.32.76.253",
+    "site": "Chorley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chorley-dlc-chorley-maincomms-2-10-32-76-252",
+    "hostname": "DLC-Chorley-MainComms-2",
+    "ip": "10.32.76.252",
+    "site": "Chorley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-chorley-dlc-chorley-lynxight-10-32-76-251",
+    "hostname": "DLC-Chorley-Lynxight",
+    "ip": "10.32.76.251",
+    "site": "Chorley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-colchester-dll-colchester-1-10-32-205-253",
+    "hostname": "DLL-Colchester-1",
+    "ip": "10.32.205.253",
+    "site": "Colchester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-colchester-dll-colchester-2-10-32-205-252",
+    "hostname": "DLL-Colchester-2",
+    "ip": "10.32.205.252",
+    "site": "Colchester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-colchester-dlc-colchester-lnyxight-10-32-205-250",
+    "hostname": "DLC-Colchester-Lnyxight",
+    "ip": "10.32.205.250",
+    "site": "Colchester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-coventry-dlc-coventry-x440-10-32-211-253",
+    "hostname": "DLC-Coventry-X440",
+    "ip": "10.32.211.253",
+    "site": "Coventry",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-coventry-dlc-coventry-main-10-32-211-252",
+    "hostname": "DLC-Coventry-Main",
+    "ip": "10.32.211.252",
+    "site": "Coventry",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-coventry-dlc-coventry-spa-10-32-211-251",
+    "hostname": "DLC-Coventry-Spa",
+    "ip": "10.32.211.251",
+    "site": "Coventry",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-coventry-dlc-coventry-lynxight-10-32-211-250",
+    "hostname": "DLC-Coventry-Lynxight",
+    "ip": "10.32.211.250",
+    "site": "Coventry",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dartford-dlc-dartford-x440-main-10-32-80-253",
+    "hostname": "DLC-Dartford-X440-Main",
+    "ip": "10.32.80.253",
+    "site": "Dartford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dartford-dlc-dartford-x440-2-10-32-80-252",
+    "hostname": "DLC-Dartford-X440-2",
+    "ip": "10.32.80.252",
+    "site": "Dartford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dartford-dlc-dartford-x440-3-10-32-80-251",
+    "hostname": "DLC-Dartford-X440-3",
+    "ip": "10.32.80.251",
+    "site": "Dartford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dartford-dlc-dartford-gym-10-32-80-250",
+    "hostname": "DLC-Dartford-Gym",
+    "ip": "10.32.80.250",
+    "site": "Dartford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dartford-dlc-dartford-spa-10-32-80-249",
+    "hostname": "DLC-Dartford-Spa",
+    "ip": "10.32.80.249",
+    "site": "Dartford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dartford-dlc-dartford-lynxight-10-32-80-248",
+    "hostname": "DLC-Dartford-Lynxight",
+    "ip": "10.32.80.248",
+    "site": "Dartford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-derby-dlc-derby-subrack-10-32-27-251",
+    "hostname": "DLC-Derby-Subrack",
+    "ip": "10.32.27.251",
+    "site": "Derby",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-derby-dlc-derby-lynxight-10-32-27-250",
+    "hostname": "DLC-Derby-Lynxight",
+    "ip": "10.32.27.250",
+    "site": "Derby",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-derby-dlc-derby-maincomms-10-32-27-249",
+    "hostname": "DLC-Derby-MainComms",
+    "ip": "10.32.27.249",
+    "site": "Derby",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dublin-dll-dublin-maincomms-10-32-51-253",
+    "hostname": "DLL-Dublin-MainComms",
+    "ip": "10.32.51.253",
+    "site": "Dublin",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dublin-dublin-kids-10-32-51-252",
+    "hostname": "Dublin-KIDS",
+    "ip": "10.32.51.252",
+    "site": "Dublin",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dublin-kids-poe-10-32-51-251",
+    "hostname": "KIDS-POE",
+    "ip": "10.32.51.251",
+    "site": "Dublin",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dublin-dll-dublin-24-comms-10-32-51-250",
+    "hostname": "DLL-Dublin-24-Comms",
+    "ip": "10.32.51.250",
+    "site": "Dublin",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dublin-dlc-dublin-gym-10-32-51-249",
+    "hostname": "DLC-Dublin-Gym",
+    "ip": "10.32.51.249",
+    "site": "Dublin",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dublin-dlc-dublin-spa-subrack-10-32-51-248",
+    "hostname": "DLC-Dublin-Spa-Subrack",
+    "ip": "10.32.51.248",
+    "site": "Dublin",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dublin-dlc-dublin-lynxight-10-32-51-247",
+    "hostname": "DLC-Dublin-Lynxight",
+    "ip": "10.32.51.247",
+    "site": "Dublin",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dudley-dll-dudley-192-168-5-253",
+    "hostname": "dll-dudley",
+    "ip": "192.168.5.253",
+    "site": "Dudley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dudley-dll-dudleywifiswitch-10-32-77-252",
+    "hostname": "DLL-DudleyWIFIswitch",
+    "ip": "10.32.77.252",
+    "site": "Dudley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dudley-dlc-dudley-maincomms-2-10-32-77-251",
+    "hostname": "DLC-Dudley-MainComms-2",
+    "ip": "10.32.77.251",
+    "site": "Dudley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dudley-dlc-dudley-gym-10-32-77-250",
+    "hostname": "DLC-Dudley-Gym",
+    "ip": "10.32.77.250",
+    "site": "Dudley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dudley-dlc-dudley-lynxight-10-32-77-248",
+    "hostname": "DLC-Dudley-Lynxight",
+    "ip": "10.32.77.248",
+    "site": "Dudley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dundee-dll-dundee-maincomms-192-168-0-253",
+    "hostname": "DLL-Dundee-MainComms",
+    "ip": "192.168.0.253",
+    "site": "Dundee",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dundee-dlc-dundee-lynxight-192-168-0-252",
+    "hostname": "DLC-Dundee-Lynxight",
+    "ip": "192.168.0.252",
+    "site": "Dundee",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-eastbourne-dll-eastbourne-10-32-10-253",
+    "hostname": "DLL-Eastbourne",
+    "ip": "10.32.10.253",
+    "site": "Eastbourne",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-eastbourne-dlc-eastbourne-lnyxight-10-32-10-252",
+    "hostname": "DLC-Eastbourne-Lnyxight",
+    "ip": "10.32.10.252",
+    "site": "Eastbourne",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-eastbourne-dlc-eastbourne-24p-10-32-10-251",
+    "hostname": "DLC-Eastbourne-24p",
+    "ip": "10.32.10.251",
+    "site": "Eastbourne",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-eastbourne-dlc-eastbourne-commsaudio-10-32-10-250",
+    "hostname": "DLC-Eastbourne-CommsAudio",
+    "ip": "10.32.10.250",
+    "site": "Eastbourne",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-edinburgh-dll-edinburgh-10-32-42-253",
+    "hostname": "DLL-Edinburgh",
+    "ip": "10.32.42.253",
+    "site": "Edinburgh",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-edinburgh-dlc-edinburgh-maincomms-2-10-32-42-251",
+    "hostname": "DLC-Edinburgh-MainComms-2",
+    "ip": "10.32.42.251",
+    "site": "Edinburgh",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-edinburgh-dlc-edinburgh-lynxight-10-32-42-250",
+    "hostname": "DLC-Edinburgh-Lynxight",
+    "ip": "10.32.42.250",
+    "site": "Edinburgh",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-eindhoven-dlc-veldhoven-10-2-1-253",
+    "hostname": "DLC-Veldhoven",
+    "ip": "10.2.1.253",
+    "site": "Eindhoven",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-eindhoven-dlc-eindhoven-lynxight-10-2-1-252",
+    "hostname": "DLC-Eindhoven-Lynxight",
+    "ip": "10.2.1.252",
+    "site": "Eindhoven",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-emersons-green-dlc-emersonsgreen-10-32-230-253",
+    "hostname": "DLC-EmersonsGreen",
+    "ip": "10.32.230.253",
+    "site": "Emersons Green",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-emersons-green-dlc-emersons-2-10-32-230-252",
+    "hostname": "DLC-Emersons-2",
+    "ip": "10.32.230.252",
+    "site": "Emersons Green",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-epsom-dlc-epsom-10-32-56-251",
+    "hostname": "DLC-Epsom",
+    "ip": "10.32.56.251",
+    "site": "Epsom",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-epsom-dlc-epsom-lynxight-10-32-56-250",
+    "hostname": "DLC-Epsom-Lynxight",
+    "ip": "10.32.56.250",
+    "site": "Epsom",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-exeter-dlc-exeter-maincomms-2-10-32-67-252",
+    "hostname": "DLC-Exeter-MainComms-2",
+    "ip": "10.32.67.252",
+    "site": "Exeter",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-exeter-dll-exeter-10-32-67-251",
+    "hostname": "DLL-Exeter",
+    "ip": "10.32.67.251",
+    "site": "Exeter",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-exeter-dlc-exeter-gym-10-32-67-250",
+    "hostname": "DLC-Exeter-Gym",
+    "ip": "10.32.67.250",
+    "site": "Exeter",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-exeter-dlc-exeter-spa-10-32-67-249",
+    "hostname": "DLC-Exeter-Spa",
+    "ip": "10.32.67.249",
+    "site": "Exeter",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-exeter-dlc-exeter-mandb-10-32-67-248",
+    "hostname": "DLC-Exeter-MandB",
+    "ip": "10.32.67.248",
+    "site": "Exeter",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-farnham-dll-farnham-club-10-32-201-253",
+    "hostname": "DLL-Farnham-Club",
+    "ip": "10.32.201.253",
+    "site": "Farnham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-farnham-dlc-farnham-subrack-10-32-201-252",
+    "hostname": "DLC-Farnham-Subrack",
+    "ip": "10.32.201.252",
+    "site": "Farnham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-farnham-dlc-farnham-maincomms-2-10-32-201-251",
+    "hostname": "DLC-Farnham-MainComms-2",
+    "ip": "10.32.201.251",
+    "site": "Farnham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-farnham-dlc-farnham-lynxight-10-32-201-250",
+    "hostname": "DLC-Farnham-Lynxight",
+    "ip": "10.32.201.250",
+    "site": "Farnham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-farnham-dlc-farnham-lynxight-2-10-32-201-249",
+    "hostname": "DLC-Farnham-Lynxight-2",
+    "ip": "10.32.201.249",
+    "site": "Farnham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-finchley-dll-finchley-10-32-2-253",
+    "hostname": "DLL-Finchley",
+    "ip": "10.32.2.253",
+    "site": "Finchley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-finchley-dlc-finchley-maincomms-2-10-32-2-249",
+    "hostname": "DLC-Finchley-MainComms-2",
+    "ip": "10.32.2.249",
+    "site": "Finchley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-finchley-dlc-finchley-gym-10-32-2-251",
+    "hostname": "DLC-Finchley-Gym",
+    "ip": "10.32.2.251",
+    "site": "Finchley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-finchley-dlc-finchley-spa-10-32-2-252",
+    "hostname": "DLC-Finchley-Spa",
+    "ip": "10.32.2.252",
+    "site": "Finchley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-fulham-dlc-fulham-10-32-58-253",
+    "hostname": "DLC-Fulham",
+    "ip": "10.32.58.253",
+    "site": "Fulham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-fulham-dlc-fulham-spa-10-32-58-252",
+    "hostname": "DLC-Fulham-Spa",
+    "ip": "10.32.58.252",
+    "site": "Fulham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-fulham-dlc-fulham-lynxight-10-32-58-251",
+    "hostname": "DLC-Fulham-Lynxight",
+    "ip": "10.32.58.251",
+    "site": "Fulham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-geneva-city-green-dlc-geneva-bottom-10-32-228-253",
+    "hostname": "DLC-Geneva-Bottom",
+    "ip": "10.32.228.253",
+    "site": "Geneva City Green",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-geneva-city-green-dlc-geneva-top-10-32-228-249",
+    "hostname": "DLC-Geneva-Top",
+    "ip": "10.32.228.249",
+    "site": "Geneva City Green",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-geneva-city-green-dlc-geneva-citygreen-lynxight-10-32-228-252",
+    "hostname": "DLC-Geneva-CityGreen-Lynxight",
+    "ip": "10.32.228.252",
+    "site": "Geneva City Green",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gidea-park-dll-gideapark-maincomms-10-32-84-253",
+    "hostname": "DLL-GideaPark-MainComms",
+    "ip": "10.32.84.253",
+    "site": "Gidea Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gidea-park-dlc-gideapark-maincomms-2-10-36-84-252",
+    "hostname": "DLC-GideaPark-MainComms-2",
+    "ip": "10.36.84.252",
+    "site": "Gidea Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gidea-park-dlc-gideapark-lynxight-10-32-84-251",
+    "hostname": "DLC-GideaPark-Lynxight",
+    "ip": "10.32.84.251",
+    "site": "Gidea Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-west-end-dlc-glasgow-we-main-1-192-168-3-253",
+    "hostname": "DLC-Glasgow-WE-Main-1",
+    "ip": "192.168.3.253",
+    "site": "Glasgow West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-west-end-dlc-glasgow-we-membership-10-32-75-252",
+    "hostname": "DLC-Glasgow-WE-Membership",
+    "ip": "10.32.75.252",
+    "site": "Glasgow West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-west-end-dlc-glasgow-we-sales-192-168-3-251",
+    "hostname": "DLC-Glasgow-WE-Sales",
+    "ip": "192.168.3.251",
+    "site": "Glasgow West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-west-end-dlc-glasgow-we-main-2-192-168-3-250",
+    "hostname": "DLC-Glasgow-WE-Main-2",
+    "ip": "192.168.3.250",
+    "site": "Glasgow West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-west-end-dlc-glasgowwe-spa-192-168-3-248",
+    "hostname": "DLC-GlasgowWE-Spa",
+    "ip": "192.168.3.248",
+    "site": "Glasgow West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-rouken-glen-rouken-48p-10-32-207-253",
+    "hostname": "Rouken-48P",
+    "ip": "10.32.207.253",
+    "site": "Glasgow Rouken Glen",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-rouken-glen-dll-roukenglen-new-10-32-207-250",
+    "hostname": "DLL-RoukenGlen-NEW",
+    "ip": "10.32.207.250",
+    "site": "Glasgow Rouken Glen",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-rouken-glen-dll-rouken-golf-10-32-207-251",
+    "hostname": "DLL-Rouken-Golf",
+    "ip": "10.32.207.251",
+    "site": "Glasgow Rouken Glen",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-rouken-glen-dll-rouken-10-32-207-252",
+    "hostname": "DLL-Rouken",
+    "ip": "10.32.207.252",
+    "site": "Glasgow Rouken Glen",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-rouken-glen-dlc-roukenglen-lynxight-10-32-207-249",
+    "hostname": "DLC-RoukenGlen-Lynxight",
+    "ip": "10.32.207.249",
+    "site": "Glasgow Rouken Glen",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-renfrew-dll-renfrew-10-32-5-253",
+    "hostname": "DLL-Renfrew",
+    "ip": "10.32.5.253",
+    "site": "Glasgow Renfrew",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-glasgow-renfrew-dlc-renfrew-lynxight-10-32-5-252",
+    "hostname": "DLC-Renfrew-Lynxight",
+    "ip": "10.32.5.252",
+    "site": "Glasgow Renfrew",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gloucestershire-dlc-gloucester-main-commms-1-10-32-212-253",
+    "hostname": "DLC-Gloucester-Main-Commms-1",
+    "ip": "10.32.212.253",
+    "site": "Gloucestershire",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gloucestershire-dlc-gloucestershire-main-2-10-32-212-251",
+    "hostname": "DLC-Gloucestershire-Main-2",
+    "ip": "10.32.212.251",
+    "site": "Gloucestershire",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gloucestershire-dlc-gloucestershire-av-10-32-212-250",
+    "hostname": "DLC-Gloucestershire-AV",
+    "ip": "10.32.212.250",
+    "site": "Gloucestershire",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gloucestershire-dlc-gloucestershire-spa-10-32-212-249",
+    "hostname": "DLC-Gloucestershire-Spa",
+    "ip": "10.32.212.249",
+    "site": "Gloucestershire",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gloucestershire-dlc-gloucester-lynxight-10-32-212-248",
+    "hostname": "DLC-Gloucester-Lynxight",
+    "ip": "10.32.212.248",
+    "site": "Gloucestershire",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hamilton-dl-hamilton-10-32-213-253",
+    "hostname": "DL-Hamilton",
+    "ip": "10.32.213.253",
+    "site": "Hamilton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hamilton-dlc-hamilton-lnyxight-172-20-213-251",
+    "hostname": "DLC-Hamilton-Lnyxight",
+    "ip": "172.20.213.251",
+    "site": "Hamilton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hamilton-dlc-hamilton-maincomms-10-32-213-250",
+    "hostname": "DLC-Hamilton-MainComms",
+    "ip": "10.32.213.250",
+    "site": "Hamilton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hampton-dlc-hampton-1-10-161-1-253",
+    "hostname": "DLC-Hampton-1",
+    "ip": "10.161.1.253",
+    "site": "Hampton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hampton-dlc-hampton-2-10-161-1-251",
+    "hostname": "DLC-Hampton-2",
+    "ip": "10.161.1.251",
+    "site": "Hampton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hampton-dlc-hampton-x440-48p-subrack-10-161-1-250",
+    "hostname": "DLC-Hampton-X440-48p-SubRack",
+    "ip": "10.161.1.250",
+    "site": "Hampton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hampton-dlc-hampton-boardroom-10-161-1-249",
+    "hostname": "DLC-Hampton-Boardroom",
+    "ip": "10.161.1.249",
+    "site": "Hampton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hampton-dlc-hampton-2-10-161-1-252",
+    "hostname": "DLC-Hampton-2",
+    "ip": "10.161.1.252",
+    "site": "Hampton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-harrogate-dll-harrogate-10-32-226-253",
+    "hostname": "DLL-Harrogate",
+    "ip": "10.32.226.253",
+    "site": "Harrogate",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-harrogate-dlc-harrogate-subrack-2-10-32-226-251",
+    "hostname": "DLC-Harrogate-Subrack-2",
+    "ip": "10.32.226.251",
+    "site": "Harrogate",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-harrogate-newcomms-10-32-226-252",
+    "hostname": "NewComms",
+    "ip": "10.32.226.252",
+    "site": "Harrogate",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-harrogate-dlc-harrogate-lnyxight-10-32-226-250",
+    "hostname": "DLC-Harrogate-Lnyxight",
+    "ip": "10.32.226.250",
+    "site": "Harrogate",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-heston-dll-heston-maincomms-10-32-12-253",
+    "hostname": "DLL-Heston-MainComms",
+    "ip": "10.32.12.253",
+    "site": "Heston",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-heston-dll-heston-gym-10-32-12-252",
+    "hostname": "DLL-Heston-Gym",
+    "ip": "10.32.12.252",
+    "site": "Heston",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-heston-dll-heston-campus-10-32-12-251",
+    "hostname": "DLL-Heston-Campus",
+    "ip": "10.32.12.251",
+    "site": "Heston",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-heston-dll-heston-membership-10-32-12-249",
+    "hostname": "DLL-Heston-Membership",
+    "ip": "10.32.12.249",
+    "site": "Heston",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-heston-dlc-heston-lynxight-10-32-12-248",
+    "hostname": "DLC-Heston-Lynxight",
+    "ip": "10.32.12.248",
+    "site": "Heston",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-beaconsfield-dll-glorymill-maincomms-10-32-87-253",
+    "hostname": "DLL-GloryMill-MainComms",
+    "ip": "10.32.87.253",
+    "site": "Beaconsfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-beaconsfield-dlc-beaconsfield-maincomms-2-10-32-87-251",
+    "hostname": "DLC-Beaconsfield-MainComms-2",
+    "ip": "10.32.87.251",
+    "site": "Beaconsfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-beaconsfield-beaconsfield-spa-10-32-87-252",
+    "hostname": "Beaconsfield-Spa",
+    "ip": "10.32.87.252",
+    "site": "Beaconsfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hull-dlc-hull-10-32-28-253",
+    "hostname": "DLC-Hull",
+    "ip": "10.32.28.253",
+    "site": "Hull",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hull-dlc-hull-lynxight-10-32-28-250",
+    "hostname": "DLC-Hull-Lynxight",
+    "ip": "10.32.28.250",
+    "site": "Hull",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-ipswich-dlc-ipswich-maincomms-10-32-78-253",
+    "hostname": "DLC-Ipswich-MainComms",
+    "ip": "10.32.78.253",
+    "site": "Ipswich",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-ipswich-dlc-ipswich-lnyxight-172-20-78-252",
+    "hostname": "DLC-Ipswich-Lnyxight",
+    "ip": "172.20.78.252",
+    "site": "Ipswich",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-ipswich-dlc-ipswich-gym-10-32-78-251",
+    "hostname": "DLC-Ipswich-Gym",
+    "ip": "10.32.78.251",
+    "site": "Ipswich",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-newbury-dll-newbury-stack-10-32-203-253",
+    "hostname": "DLL-Newbury-Stack",
+    "ip": "10.32.203.253",
+    "site": "Newbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-newbury-dlc-newbury-gym-subrack-10-32-203-251",
+    "hostname": "DLC-Newbury-Gym-SubRack",
+    "ip": "10.32.203.251",
+    "site": "Newbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-newbury-dlc-newbury-lynxight-10-32-203-250",
+    "hostname": "DLC-Newbury-Lynxight",
+    "ip": "10.32.203.250",
+    "site": "Newbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kensington-dll-kensington-mainrack-10-32-31-253",
+    "hostname": "DLL-Kensington-MainRack",
+    "ip": "10.32.31.253",
+    "site": "Kensington",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kensington-dll-kens-1st-10-32-31-252",
+    "hostname": "DLL-Kens-1st",
+    "ip": "10.32.31.252",
+    "site": "Kensington",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kensington-dll-kensington-b2-10-32-31-251",
+    "hostname": "DLL-Kensington-B2",
+    "ip": "10.32.31.251",
+    "site": "Kensington",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kensington-dlc-kensington-lynxight-10-32-31-249",
+    "hostname": "DLC-Kensington-Lynxight",
+    "ip": "10.32.31.249",
+    "site": "Kensington",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kidbrooke-dll-kidbrooke-maincomms-10-32-44-253",
+    "hostname": "DLL-Kidbrooke-MainComms",
+    "ip": "10.32.44.253",
+    "site": "Kidbrooke",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kidbrooke-dlc-kidbrooke-maincomms-2-10-32-44-251",
+    "hostname": "DLC-Kidbrooke-MainComms-2",
+    "ip": "10.32.44.251",
+    "site": "Kidbrooke",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kidbrooke-dll-kidbrooke-subrack-10-32-44-252",
+    "hostname": "DLL-Kidbrooke-Subrack",
+    "ip": "10.32.44.252",
+    "site": "Kidbrooke",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kidbrooke-dlc-kidbrooke-lynxight-10-32-44-250",
+    "hostname": "DLC-Kidbrooke-Lynxight",
+    "ip": "10.32.44.250",
+    "site": "Kidbrooke",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kingshill-dlc-kingshill-10-32-66-253",
+    "hostname": "DLC-KingsHill",
+    "ip": "10.32.66.253",
+    "site": "Kingshill",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kingshill-dlc-kingshill-lynxight-10-32-66-252",
+    "hostname": "DLC-KingsHill-Lynxight",
+    "ip": "10.32.66.252",
+    "site": "Kingshill",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kingston-dlc-kingston-10-32-59-253",
+    "hostname": "DLC-Kingston",
+    "ip": "10.32.59.253",
+    "site": "Kingston",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kingston-dlc-kingston-gym-10-32-59-252",
+    "hostname": "DLC-Kingston-Gym",
+    "ip": "10.32.59.252",
+    "site": "Kingston",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-kingston-dlc-kingston-lynxight-172-20-59-251",
+    "hostname": "DLC-Kingston-Lynxight",
+    "ip": "172.20.59.251",
+    "site": "Kingston",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-knowsley-dll-knowsley-maincomms-10-32-37-253",
+    "hostname": "DLL-Knowsley-MainComms",
+    "ip": "10.32.37.253",
+    "site": "Knowsley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-knowsley-dlc-knowsley-maincomms-2-10-32-37-251",
+    "hostname": "DLC-Knowsley-MainComms-2",
+    "ip": "10.32.37.251",
+    "site": "Knowsley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-knowsley-dlc-knowsley-lynxight-10-32-37-250",
+    "hostname": "DLC-Knowsley-Lynxight",
+    "ip": "10.32.37.250",
+    "site": "Knowsley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-leeds-dll-leeds-10-32-19-253",
+    "hostname": "DLL-Leeds",
+    "ip": "10.32.19.253",
+    "site": "Leeds",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-leeds-dll-leeds-subrack-10-32-19-252",
     "hostname": "DLL-Leeds-SubRack",
-    "ip": "10.32.54.249",
+    "ip": "10.32.19.252",
+    "site": "Leeds",
     "os": "EXOS",
-    "model": "Summit X440-G2-24p-10G",
+    "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-leicester-core",
-    "hostname": "DLC-Leicester-Core",
-    "ip": "10.32.61.253",
-    "os": "VOSS",
-    "model": "VSP 4450GSX-PWR+",
-    "format": "cfg"
+    "id": "sw-leeds-dll-leeds-subrack-x440-48p-10-32-19-251",
+    "hostname": "DLL-Leeds-Subrack-X440-48p",
+    "ip": "10.32.19.251",
+    "site": "Leeds",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
   },
   {
-    "id": "sw-leicester-gym",
+    "id": "sw-leeds-dlc-leeds-maincomms-2-192-168-55-250",
+    "hostname": "DLC-Leeds-MainComms-2",
+    "ip": "192.168.55.250",
+    "site": "Leeds",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-leeds-dlc-leeds-lynxight-10-32-19-249",
+    "hostname": "DLC-Leeds-Lynxight",
+    "ip": "10.32.19.249",
+    "site": "Leeds",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-leicester-dlc-leicester-10-32-25-250",
+    "hostname": "DLC-Leicester",
+    "ip": "10.32.25.250",
+    "site": "Leicester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-leicester-dlc-leicester-lnyxight-172-20-25-252",
+    "hostname": "DLC-Leicester-Lnyxight",
+    "ip": "172.20.25.252",
+    "site": "Leicester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-leicester-dlc-leicester-gym-10-32-25-251",
     "hostname": "DLC-Leicester-Gym",
-    "ip": "10.32.61.252",
+    "ip": "10.32.25.251",
+    "site": "Leicester",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-leicester-spa",
-    "hostname": "DLC-Leicester-Spa",
-    "ip": "10.32.61.251",
-    "os": "EXOS",
-    "model": "Summit X440-G2-24p-10G",
-    "format": "xsf"
-  },
-  {
-    "id": "sw-bristol-core",
-    "hostname": "DLC-Bristol-Core",
-    "ip": "10.32.208.253",
-    "os": "VOSS",
-    "model": "VSP 4450GSX-PWR+",
-    "format": "cfg"
-  },
-  {
-    "id": "sw-bristol-spa",
-    "hostname": "DLC-Bristol-Spa",
-    "ip": "10.32.208.252",
+    "id": "sw-lichfield-dl-lichfield-10-32-214-253",
+    "hostname": "DL-Lichfield",
+    "ip": "10.32.214.253",
+    "site": "Lichfield",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-bristol-gym",
-    "hostname": "DLC-Bristol-Gym",
-    "ip": "10.32.208.251",
-    "os": "EXOS",
-    "model": "Summit X440-G2-24p-10G",
-    "format": "xsf"
-  },
-  {
-    "id": "sw-beaconsfield-core",
-    "hostname": "DLC-Beaconsfield-Core",
-    "ip": "10.32.227.253",
-    "os": "VOSS",
-    "model": "VSP 4450GSX-PWR+",
-    "format": "cfg"
-  },
-  {
-    "id": "sw-beaconsfield-spa",
-    "hostname": "DLC-Beaconsfield-Spa",
-    "ip": "10.32.227.251",
+    "id": "sw-lichfield-dlc-lichfield-subrack-10-32-214-252",
+    "hostname": "DLC-Lichfield-Subrack",
+    "ip": "10.32.214.252",
+    "site": "Lichfield",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-beaconsfield-gym",
-    "hostname": "DLC-Beaconsfield-Gym",
-    "ip": "10.32.227.252",
-    "os": "EXOS",
-    "model": "Summit X440-G2-24p-10G",
-    "format": "xsf"
-  },
-  {
-    "id": "sw-beaconsfield-edge",
-    "hostname": "DLL-Beaconsfield",
-    "ip": "10.32.227.248",
+    "id": "sw-lichfield-dlc-lichfield-spa-10-32-214-251",
+    "hostname": "DLC-Lichfield-Spa",
+    "ip": "10.32.214.251",
+    "site": "Lichfield",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-lincoln-core",
-    "hostname": "DLC-Lincoln-Core",
-    "ip": "10.32.52.253",
-    "os": "VOSS",
-    "model": "VSP 4450GSX-PWR+",
-    "format": "cfg"
+    "id": "sw-lichfield-dlc-lichfield-sw-49-10-32-214-49",
+    "hostname": "DLC-Lichfield-SW-49",
+    "ip": "10.32.214.49",
+    "site": "Lichfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
   },
   {
-    "id": "sw-lincoln-spa",
+    "id": "sw-lincoln-dll-lincoln-maincomms-10-32-61-253",
     "hostname": "DLL-Lincoln-MainComms",
-    "ip": "10.32.52.252",
+    "ip": "10.32.61.253",
+    "site": "Lincoln",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-luton-core",
-    "hostname": "DLC-Luton-Core",
+    "id": "sw-lincoln-dll-lincoln-maincomms-2-10-32-61-252",
+    "hostname": "DLL-Lincoln-MainComms-2",
+    "ip": "10.32.61.252",
+    "site": "Lincoln",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-lincoln-dlc-lincoln-lynxight-10-32-61-251",
+    "hostname": "DLC-Lincoln-Lynxight",
+    "ip": "10.32.61.251",
+    "site": "Lincoln",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-luton-dlc-luton-10-32-54-253",
+    "hostname": "DLC-Luton",
+    "ip": "10.32.54.253",
+    "site": "Luton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-luton-dlc-luton-subrack-10-32-54-250",
+    "hostname": "DLC-Luton-Subrack",
+    "ip": "10.32.54.250",
+    "site": "Luton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-luton-dlc-luton-2-10-32-54-249",
+    "hostname": "DLC-Luton-2",
+    "ip": "10.32.54.249",
+    "site": "Luton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-aravaca-dll-madrid-maincomms-10-32-208-253",
+    "hostname": "DLL-Madrid-MainComms",
+    "ip": "10.32.208.253",
+    "site": "Aravaca",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-aravaca-dll-madrid-10-32-208-252",
+    "hostname": "DLL-Madrid",
+    "ip": "10.32.208.252",
+    "site": "Aravaca",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-aravaca-dll-mad-bar-10-32-208-251",
+    "hostname": "DLL-Mad-BAR",
+    "ip": "10.32.208.251",
+    "site": "Aravaca",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-malaspina-dlc-malaspina-1-10-32-227-253",
+    "hostname": "DLC-Malaspina-1",
+    "ip": "10.32.227.253",
+    "site": "Malaspina",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-malaspina-dlc-malaspina-spa-10-32-227-251",
+    "hostname": "DLC-Malaspina-Spa",
+    "ip": "10.32.227.251",
+    "site": "Malaspina",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-malaspina-dlc-malaspina-2-10-32-227-252",
+    "hostname": "DLC-Malaspina-2",
+    "ip": "10.32.227.252",
+    "site": "Malaspina",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-malaspina-dlc-malaspina-adminoffice-10-32-227-248",
+    "hostname": "DLC-Malaspina-AdminOffice",
+    "ip": "10.32.227.248",
+    "site": "Malaspina",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-maidenhead-dlc-maidenhead-10-32-52-253",
+    "hostname": "DLC-Maidenhead",
+    "ip": "10.32.52.253",
+    "site": "Maidenhead",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-maidenhead-dlc-maidenhead-lynxight-10-32-52-252",
+    "hostname": "DLC-Maidenhead-Lynxight",
+    "ip": "10.32.52.252",
+    "site": "Maidenhead",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-manchester-dll-manchester-maincomms-10-32-52-49",
+    "hostname": "DLL-Manchester-MainComms",
+    "ip": "10.32.52.49",
+    "site": "Manchester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-manchester-dll-manchester-maincomms-10-32-48-253",
+    "hostname": "DLL-Manchester-MainComms",
     "ip": "10.32.48.253",
+    "site": "Manchester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-manchester-dlc-manchester-spa-10-32-48-250",
+    "hostname": "DLC-Manchester-Spa",
+    "ip": "10.32.48.250",
+    "site": "Manchester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-manchester-dlc-manchester-maincomms-2-10-32-48-251",
+    "hostname": "DLC-Manchester-MainComms-2",
+    "ip": "10.32.48.251",
+    "site": "Manchester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-manchester-dlc-manchester-lynxight-10-32-48-249",
+    "hostname": "DLC-Manchester-Lynxight",
+    "ip": "10.32.48.249",
+    "site": "Manchester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-north-manchester-dl-manchester-north-10-32-216-253",
+    "hostname": "DL-Manchester-North",
+    "ip": "10.32.216.253",
+    "site": "North Manchester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-north-manchester-dlc-manchesternorth-lynxight-10-36-216-251",
+    "hostname": "DLC-ManchesterNorth-Lynxight",
+    "ip": "10.36.216.251",
+    "site": "North Manchester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-northwood-dlc-northwood-maincomms-2-10-32-216-49",
+    "hostname": "DLC-Northwood-MainComms-2",
+    "ip": "10.32.216.49",
+    "site": "Northwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-northwood-dll-northwood-10-32-217-253",
+    "hostname": "DLL-Northwood",
+    "ip": "10.32.217.253",
+    "site": "Northwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-northwood-dlc-northwood-maincomms-2-10-32-217-251",
+    "hostname": "DLC-Northwood-MainComms-2",
+    "ip": "10.32.217.251",
+    "site": "Northwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-northwood-femalechange-x435-24p-10-32-217-252",
+    "hostname": "FemaleChange-X435-24P",
+    "ip": "10.32.217.252",
+    "site": "Northwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-northwood-dlc-northwood-gym-10-32-217-249",
+    "hostname": "DLC-Northwood-Gym",
+    "ip": "10.32.217.249",
+    "site": "Northwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-northwood-dlc-northwood-lynxight-10-32-217-248",
+    "hostname": "DLC-Northwood-Lynxight",
+    "ip": "10.32.217.248",
+    "site": "Northwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-milton-keynes-dlc-miltonkeynes-maincomms1-10-32-20-253",
+    "hostname": "DLC-MiltonKeynes-MainComms1",
+    "ip": "10.32.20.253",
+    "site": "Milton Keynes",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-milton-keynes-dlc-miltonkeynes-office-10-32-20-252",
+    "hostname": "DLC-MiltonKeynes-Office",
+    "ip": "10.32.20.252",
+    "site": "Milton Keynes",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-milton-keynes-dlc-miltonkeynes-spa-10-32-20-251",
+    "hostname": "DLC-MiltonKeynes-Spa",
+    "ip": "10.32.20.251",
+    "site": "Milton Keynes",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-milton-keynes-dlc-miltonkeynes-lynxight-10-32-20-250",
+    "hostname": "DLC-MiltonKeynes-Lynxight",
+    "ip": "10.32.20.250",
+    "site": "Milton Keynes",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-narborough-dlc-narborough-lynxight-10-32-20-49",
+    "hostname": "DLC-Narborough-Lynxight",
+    "ip": "10.32.20.49",
+    "site": "Narborough",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-narborough-dlc-narborough-192-168-14-253",
+    "hostname": "DLC-Narborough",
+    "ip": "192.168.14.253",
+    "site": "Narborough",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-narborough-dlc-narborough-gym-192-168-14-251",
+    "hostname": "DLC-Narborough-Gym",
+    "ip": "192.168.14.251",
+    "site": "Narborough",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-narborough-dlc-narborough-lynxight-192-168-14-250",
+    "hostname": "DLC-Narborough-Lynxight",
+    "ip": "192.168.14.250",
+    "site": "Narborough",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-newcastle-dlc-newcastle-sw-49-192-168-14-49",
+    "hostname": "DLC-Newcastle-SW-49",
+    "ip": "192.168.14.49",
+    "site": "Newcastle",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-newcastle-dlc-newcastle-10-32-8-253",
+    "hostname": "DLC-Newcastle",
+    "ip": "10.32.8.253",
+    "site": "Newcastle",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-newcastle-dlc-newcastle-lynxight-10-32-8-252",
+    "hostname": "DLC-Newcastle-Lynxight",
+    "ip": "10.32.8.252",
+    "site": "Newcastle",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-newcastle-dlc-newcastle-maincomms2-10-32-8-251",
+    "hostname": "DLC-Newcastle-MainComms2",
+    "ip": "10.32.8.251",
+    "site": "Newcastle",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-notting-hill-harbour-club-hc-nottinghill-subrack-10-32-8-49",
+    "hostname": "HC-NottingHill-Subrack",
+    "ip": "10.32.8.49",
+    "site": "Notting Hill Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-edinburgh-newhaven-harbour-dlc-newhaven-48-10-32-73-253",
+    "hostname": "DLC-Newhaven-48",
+    "ip": "10.32.73.253",
+    "site": "Edinburgh Newhaven Harbour",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-edinburgh-newhaven-harbour-dlc-newhaven-lynxight-10-32-73-252",
+    "hostname": "DLC-Newhaven-Lynxight",
+    "ip": "10.32.73.252",
+    "site": "Edinburgh Newhaven Harbour",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-nottingham-dlc-nottingham-10-32-73-49",
+    "hostname": "DLC-Nottingham",
+    "ip": "10.32.73.49",
+    "site": "Nottingham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-notting-hill-harbour-club-hc-nottinghill-maincomms-192-168-7-253",
+    "hostname": "HC-Nottinghill-Maincomms",
+    "ip": "192.168.7.253",
+    "site": "Notting Hill Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-notting-hill-harbour-club-hc-nottinghill-subrack-192-168-7-252",
+    "hostname": "HC-NottingHill-Subrack",
+    "ip": "192.168.7.252",
+    "site": "Notting Hill Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-notting-hill-harbour-club-dlc-nottinghill-lynxight-192-168-7-251",
+    "hostname": "DLC-Nottinghill-Lynxight",
+    "ip": "192.168.7.251",
+    "site": "Notting Hill Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-notting-hill-harbour-club-dlc-nottinghill-maincomms-2-10-32-90-249",
+    "hostname": "DLC-NottingHill-MainComms-2",
+    "ip": "10.32.90.249",
+    "site": "Notting Hill Harbour Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-oxford-dlc-oxford-main-2-10-32-90-49",
+    "hostname": "DLC-Oxford-Main-2",
+    "ip": "10.32.90.49",
+    "site": "Oxford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-nottingham-dlc-nottingham-10-32-32-253",
+    "hostname": "DLC-Nottingham",
+    "ip": "10.32.32.253",
+    "site": "Nottingham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-nottingham-dlc-nottingham-membership-10-32-32-250",
+    "hostname": "DLC-Nottingham-Membership",
+    "ip": "10.32.32.250",
+    "site": "Nottingham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-nottingham-dlc-nottingham-lynxight-10-32-32-251",
+    "hostname": "DLC-Nottingham-Lynxight",
+    "ip": "10.32.32.251",
+    "site": "Nottingham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-nottingham-dlc-nottingham-wifiswitch-10-32-32-249",
+    "hostname": "DLC-Nottingham-WiFiSwitch",
+    "ip": "10.32.32.249",
+    "site": "Nottingham",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-oxford-dlc-oxford-10-32-63-253",
+    "hostname": "DLC-Oxford",
+    "ip": "10.32.63.253",
+    "site": "Oxford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-oxford-dlc-oxford-main-2-10-32-63-252",
+    "hostname": "DLC-Oxford-Main-2",
+    "ip": "10.32.63.252",
+    "site": "Oxford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-peterborough-dl-peterborough-10-32-223-253",
+    "hostname": "DL-Peterborough",
+    "ip": "10.32.223.253",
+    "site": "Peterborough",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-peterborough-dlc-peterborough-lnyxight-10-32-223-251",
+    "hostname": "DLC-Peterborough-Lnyxight",
+    "ip": "10.32.223.251",
+    "site": "Peterborough",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-port-solent-dlc-portsolent-2-10-32-223-49",
+    "hostname": "DLC-PortSolent-2",
+    "ip": "10.32.223.49",
+    "site": "Port Solent",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-poole-dlc-poole-main-1-10-32-219-253",
+    "hostname": "DLC-Poole-Main-1",
+    "ip": "10.32.219.253",
+    "site": "Poole",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-poole-dlc-pool-main-2-10-32-219-252",
+    "hostname": "DLC-Pool-Main-2",
+    "ip": "10.32.219.252",
+    "site": "Poole",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-poole-dlc-poole-plantroom-10-32-219-251",
+    "hostname": "DLC-Poole-Plantroom",
+    "ip": "10.32.219.251",
+    "site": "Poole",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-poole-dlc-poole-maincomms-sw3-10-32-219-250",
+    "hostname": "DLC-Poole-MainComms-SW3",
+    "ip": "10.32.219.250",
+    "site": "Poole",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-poole-dlc-poole-spa-10-32-219-249",
+    "hostname": "DLC-Poole-Spa",
+    "ip": "10.32.219.249",
+    "site": "Poole",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-raynes-park-dll-raynespark-maincomms-10-32-219-49",
+    "hostname": "DLL-RaynesPark-MainComms",
+    "ip": "10.32.219.49",
+    "site": "Raynes Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-port-solent-dlc-portsolent-10-32-53-253",
+    "hostname": "DLC-PortSolent",
+    "ip": "10.32.53.253",
+    "site": "Port Solent",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-port-solent-dlc-portsolent-2-10-32-53-252",
+    "hostname": "DLC-PortSolent-2",
+    "ip": "10.32.53.252",
+    "site": "Port Solent",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-purley-dl-purley-10-32-224-253",
+    "hostname": "DL-Purley",
+    "ip": "10.32.224.253",
+    "site": "Purley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-purley-dlc-purley-gym-10-32-224-252",
+    "hostname": "DLC-Purley-Gym",
+    "ip": "10.32.224.252",
+    "site": "Purley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-purley-dlc-purley-lynxight-10-32-224-251",
+    "hostname": "DLC-Purley-Lynxight",
+    "ip": "10.32.224.251",
+    "site": "Purley",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-ringwood-dlc-ringwood-sw2-10-32-224-49",
+    "hostname": "DLC-Ringwood-SW2",
+    "ip": "10.32.224.49",
+    "site": "Ringwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-raynes-park-dll-raynespark-maincomms-10-32-11-253",
+    "hostname": "DLL-RaynesPark-MainComms",
+    "ip": "10.32.11.253",
+    "site": "Raynes Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-raynes-park-dll-raynespark-gymx48-10-32-11-251",
+    "hostname": "DLL-RaynesPark-GymX48",
+    "ip": "10.32.11.251",
+    "site": "Raynes Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-raynes-park-dlc-rayespark-office-10-32-11-249",
+    "hostname": "DLC-RayesPark-Office",
+    "ip": "10.32.11.249",
+    "site": "Raynes Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-raynes-park-dlc-raynespark-spa-10-32-11-250",
+    "hostname": "DLC-RaynesPark-Spa",
+    "ip": "10.32.11.250",
+    "site": "Raynes Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-raynes-park-dlc-raynes-lnyxight-10-32-11-252",
+    "hostname": "DLC-Raynes-Lnyxight",
+    "ip": "10.32.11.252",
+    "site": "Raynes Park",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-reading-dlc-reading-10-32-13-253",
+    "hostname": "DLC-Reading",
+    "ip": "10.32.13.253",
+    "site": "Reading",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-ringwood-dlc-ringwood-sw2-10-32-18-253",
+    "hostname": "DLC-Ringwood-SW2",
+    "ip": "10.32.18.253",
+    "site": "Ringwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-ringwood-dlc-ringwood-sw1-10-32-18-251",
+    "hostname": "DLC-Ringwood-SW1",
+    "ip": "10.32.18.251",
+    "site": "Ringwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-ringwood-dll-ringwood-gym-10-32-18-250",
+    "hostname": "DLL-Ringwood-Gym",
+    "ip": "10.32.18.250",
+    "site": "Ringwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-ringwood-dlc-ringwood-lynxight-10-32-18-249",
+    "hostname": "DLC-Ringwood-Lynxight",
+    "ip": "10.32.18.249",
+    "site": "Ringwood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-royal-berkshire-dl-royalberkshire-10-32-220-253",
+    "hostname": "DL-RoyalBerkshire",
+    "ip": "10.32.220.253",
+    "site": "Royal Berkshire",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-royal-berkshire-dl-rbc-48-2-10-32-220-252",
+    "hostname": "DL-RBC-48-2",
+    "ip": "10.32.220.252",
+    "site": "Royal Berkshire",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-royal-berkshire-dl-rbc-24-gym1-10-32-220-251",
+    "hostname": "DL-RBC-24-GYM1",
+    "ip": "10.32.220.251",
+    "site": "Royal Berkshire",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-royal-berkshire-dl-rbc-24-gym2-10-32-220-250",
+    "hostname": "DL-RBC-24-GYM2",
+    "ip": "10.32.220.250",
+    "site": "Royal Berkshire",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-royal-berkshire-dlc-royalberkshire-lnyxight-10-32-220-249",
+    "hostname": "DLC-RoyalBerkshire-Lnyxight",
+    "ip": "10.32.220.249",
+    "site": "Royal Berkshire",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-rotterdam-blijdorp-dlc-blijdorp-10-2-6-253",
+    "hostname": "DLC-Blijdorp",
+    "ip": "10.2.6.253",
+    "site": "Rotterdam - Blijdorp",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-rotterdam-blijdorp-dlc-blijdorp-lynxight-10-2-6-252",
+    "hostname": "DLC-Blijdorp-Lynxight",
+    "ip": "10.2.6.252",
+    "site": "Rotterdam - Blijdorp",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-rotterdam-akragon-dlc-rotterdamcentrum-10-2-5-253",
+    "hostname": "DLC-RotterdamCentrum",
+    "ip": "10.2.5.253",
+    "site": "Rotterdam - Akragon",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-rotterdam-akragon-dlc-rotterdamcentrum-lynxight-10-2-5-252",
+    "hostname": "DLC-RotterdamCentrum-Lynxight",
+    "ip": "10.2.5.252",
+    "site": "Rotterdam - Akragon",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sidcup-dll-sidcup-10-32-7-253",
+    "hostname": "DLL-Sidcup",
+    "ip": "10.32.7.253",
+    "site": "Sidcup",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sidcup-dlc-sidcup-maincomms-2-10-32-7-252",
+    "hostname": "DLC-Sidcup-MainComms-2",
+    "ip": "10.32.7.252",
+    "site": "Sidcup",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sidcup-dlc-sidcup-lynxight-10-32-7-251",
+    "hostname": "DLC-Sidcup-Lynxight",
+    "ip": "10.32.7.251",
+    "site": "Sidcup",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-solihull-cranmore-dll-solihullcranmore-maincomms-10-32-50-253",
+    "hostname": "DLL-SolihullCranmore-MainComms",
+    "ip": "10.32.50.253",
+    "site": "Solihull Cranmore",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-solihull-cranmore-dlc-solihullcranmore-lynxight-10-32-50-252",
+    "hostname": "DLC-SolihullCranmore-Lynxight",
+    "ip": "10.32.50.252",
+    "site": "Solihull Cranmore",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-west-end-dlc-swe-maincomms-sw2-10-32-50-49",
+    "hostname": "DLC-SWE-MainComms-SW2",
+    "ip": "10.32.50.49",
+    "site": "Southampton West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-dll-southampton-comms-10-32-43-253",
+    "hostname": "DLL-Southampton-Comms",
+    "ip": "10.32.43.253",
+    "site": "Southampton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-dll-southampton-x440-g2-24t-10-32-43-252",
+    "hostname": "DLL-Southampton-X440-G2-24t",
+    "ip": "10.32.43.252",
+    "site": "Southampton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-dll-southampton-comms-2-10-32-43-251",
+    "hostname": "DLL-Southampton-Comms-2",
+    "ip": "10.32.43.251",
+    "site": "Southampton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-dlc-southampton-plant-10-32-43-250",
+    "hostname": "DLC-Southampton-Plant",
+    "ip": "10.32.43.250",
+    "site": "Southampton",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-west-end-dlc-swe-maincomms-sw3-10-32-221-253",
+    "hostname": "DLC-SWE-MainComms-SW3",
+    "ip": "10.32.221.253",
+    "site": "Southampton West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-west-end-dlc-swe-cabc-sw1-10-32-221-252",
+    "hostname": "DLC-SWE-CabC-SW1",
+    "ip": "10.32.221.252",
+    "site": "Southampton West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-west-end-dlc-swe-maincomms-sw1-10-32-221-250",
+    "hostname": "DLC-SWE-MainComms-SW1",
+    "ip": "10.32.221.250",
+    "site": "Southampton West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-west-end-dlc-swe-cabd-sw1-10-32-221-249",
+    "hostname": "DLC-SWE-CabD-SW1",
+    "ip": "10.32.221.249",
+    "site": "Southampton West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-west-end-dlc-swe-maincomms-sw2-10-32-221-248",
+    "hostname": "DLC-SWE-MainComms-SW2",
+    "ip": "10.32.221.248",
+    "site": "Southampton West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-west-end-dlc-swe-cabb-sw1-10-32-221-247",
+    "hostname": "DLC-SWE-CabB-SW1",
+    "ip": "10.32.221.247",
+    "site": "Southampton West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southampton-west-end-dlc-swe-caba-sw1-10-32-221-246",
+    "hostname": "DLC-SWE-CabA-SW1",
+    "ip": "10.32.221.246",
+    "site": "Southampton West End",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-swansea-dl-glamorgan-10-32-215-253",
+    "hostname": "DL-Glamorgan",
+    "ip": "10.32.215.253",
+    "site": "Swansea",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-swansea-dlc-swansea-lynxight-10-32-215-251",
+    "hostname": "DLC-Swansea-Lynxight",
+    "ip": "10.32.215.251",
+    "site": "Swansea",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-speke-dlc-speke-spa-10-32-215-49",
+    "hostname": "DLC-Speke-Spa",
+    "ip": "10.32.215.49",
+    "site": "Speke",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-norwich-dlc-norwich-10-32-218-253",
+    "hostname": "DLC-Norwich",
+    "ip": "10.32.218.253",
+    "site": "Norwich",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-norwich-dlc-norwich-lnyxight-10-32-218-252",
+    "hostname": "DLC-Norwich-Lnyxight",
+    "ip": "10.32.218.252",
+    "site": "Norwich",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-stevenage-dlc-stevenage-sw-49-10-32-218-49",
+    "hostname": "DLC-Stevenage-SW-49",
+    "ip": "10.32.218.49",
+    "site": "Stevenage",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southend-dlc-southend-10-32-68-253",
+    "hostname": "DLC-Southend",
+    "ip": "10.32.68.253",
+    "site": "Southend",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southend-dlc-southend-lynxight-10-32-68-251",
+    "hostname": "DLC-Southend-Lynxight",
+    "ip": "10.32.68.251",
+    "site": "Southend",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southend-dlc-southend-gym-10-32-68-250",
+    "hostname": "DLC-Southend-Gym",
+    "ip": "10.32.68.250",
+    "site": "Southend",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-southend-dlc-southend-maincomms-2-10-32-68-249",
+    "hostname": "DLC-Southend-MainComms-2",
+    "ip": "10.32.68.249",
+    "site": "Southend",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sunderland-dlc-sunderland-maincomms-10-32-68-49",
+    "hostname": "DLC-Sunderland-MainComms",
+    "ip": "10.32.68.49",
+    "site": "Sunderland",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-speke-dlc-speke-10-32-41-253",
+    "hostname": "DLC-Speke",
+    "ip": "10.32.41.253",
+    "site": "Speke",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-speke-dlc-speke-spa-192-168-200-252",
+    "hostname": "DLC-Speke-Spa",
+    "ip": "192.168.200.252",
+    "site": "Speke",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-speke-dlc-speke-lynxight-10-32-41-251",
+    "hostname": "DLC-Speke-Lynxight",
+    "ip": "10.32.41.251",
+    "site": "Speke",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-swindon-dlc-swindon-sw-49-10-32-41-49",
+    "hostname": "DLC-Swindon-SW-49",
+    "ip": "10.32.41.49",
+    "site": "Swindon",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-stevenage-dlc-stevenage-10-32-0-253",
+    "hostname": "DLC-Stevenage",
+    "ip": "10.32.0.253",
+    "site": "Stevenage",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-stevenage-dlc-stevenage-lynxitght-10-32-0-252",
+    "hostname": "DLC-Stevenage-Lynxitght",
+    "ip": "10.32.0.252",
+    "site": "Stevenage",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-teesside-dlc-teesside-sw-49-10-32-0-49",
+    "hostname": "DLC-Teesside-SW-49",
+    "ip": "10.32.0.49",
+    "site": "Teesside",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sudbury-hill-dlc-sudburyhill-10-32-47-253",
+    "hostname": "DLC-SudburyHill",
+    "ip": "10.32.47.253",
+    "site": "Sudbury Hill",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sudbury-hill-dlc-sudburyhill-maincomms-2-10-32-47-252",
+    "hostname": "DLC-SudburyHill-MainComms-2",
+    "ip": "10.32.47.252",
+    "site": "Sudbury Hill",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sudbury-hill-dlc-sudburyhill-lynxight-10-32-47-251",
+    "hostname": "DLC-SudburyHill-Lynxight",
+    "ip": "10.32.47.251",
+    "site": "Sudbury Hill",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sudbury-hill-dlc-sudburyhill-spa-10-32-47-250",
+    "hostname": "DLC-SudburyHill-Spa",
+    "ip": "10.32.47.250",
+    "site": "Sudbury Hill",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-west-bridgeford-dlc-westbridgford-maincomms-10-32-47-49",
+    "hostname": "DLC-WestBridgford-MainComms",
+    "ip": "10.32.47.49",
+    "site": "West Bridgeford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sunderland-dlc-sunderland-maincomms-10-32-222-253",
+    "hostname": "DLC-Sunderland-MainComms",
+    "ip": "10.32.222.253",
+    "site": "Sunderland",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sunderland-dlc-sunderland-lynxight-10-32-222-252",
+    "hostname": "DLC-Sunderland-Lynxight",
+    "ip": "10.32.222.252",
+    "site": "Sunderland",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-west-bridgeford-dlc-westbridgeford-sw-49-10-32-222-49",
+    "hostname": "DLC-WestBridgeford-SW-49",
+    "ip": "10.32.222.49",
+    "site": "West Bridgeford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-swindon-dlc-swindon-10-32-70-253",
+    "hostname": "DLC-Swindon",
+    "ip": "10.32.70.253",
+    "site": "Swindon",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-swindon-dlc-swindon-lynxight-10-32-70-252",
+    "hostname": "DLC-Swindon-Lynxight",
+    "ip": "10.32.70.252",
+    "site": "Swindon",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-woking-dlc-woking-sw-49-10-32-70-49",
+    "hostname": "DLC-Woking-SW-49",
+    "ip": "10.32.70.49",
+    "site": "Woking",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-teesside-dlc-teeside-10-32-30-253",
+    "hostname": "DLC-Teeside",
+    "ip": "10.32.30.253",
+    "site": "Teesside",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-teesside-dlc-teeside-2-10-32-30-251",
+    "hostname": "DLC-Teeside-2",
+    "ip": "10.32.30.251",
+    "site": "Teesside",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-teesside-dlc-teeside-lynxight-10-32-30-250",
+    "hostname": "DLC-Teeside-Lynxight",
+    "ip": "10.32.30.250",
+    "site": "Teesside",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-warrington-dlc-warrington-10-32-38-253",
+    "hostname": "DLC-Warrington",
+    "ip": "10.32.38.253",
+    "site": "Warrington",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-warrington-dlc-warrington-lynxight-10-32-38-252",
+    "hostname": "DLC-Warrington-Lynxight",
+    "ip": "10.32.38.252",
+    "site": "Warrington",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-warrington-dlc-warrington-gym-10-32-38-251",
+    "hostname": "DLC-Warrington-Gym",
+    "ip": "10.32.38.251",
+    "site": "Warrington",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-york-dlc-york-10-32-38-49",
+    "hostname": "DLC-York",
+    "ip": "10.32.38.49",
+    "site": "York",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-west-bridgeford-dlc-westbridgford-maincomms-10-32-49-252",
+    "hostname": "DLC-WestBridgford-MainComms",
+    "ip": "10.32.49.252",
+    "site": "West Bridgeford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-west-bridgeford-dlc-westbridgford-subrack-10-32-49-251",
+    "hostname": "DLC-WestBridgford-Subrack",
+    "ip": "10.32.49.251",
+    "site": "West Bridgeford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-west-bridgeford-dlc-westbridgeford-lynxight-10-32-49-249",
+    "hostname": "DLC-WestBridgeford-Lynxight",
+    "ip": "10.32.49.249",
+    "site": "West Bridgeford",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bad-homborg-dlc-bad-homburg-10-32-49-49",
+    "hostname": "DLC-Bad-Homburg",
+    "ip": "10.32.49.49",
+    "site": "Bad Homborg",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-woking-dlc-woking-10-32-60-253",
+    "hostname": "DLC-Woking",
+    "ip": "10.32.60.253",
+    "site": "Woking",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-woking-dlc-woking-maincomms-2-10-32-60-252",
+    "hostname": "DLC-Woking-MainComms-2",
+    "ip": "10.32.60.252",
+    "site": "Woking",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-woking-dlc-woking-lnyxight-10-32-60-251",
+    "hostname": "DLC-Woking-Lnyxight",
+    "ip": "10.32.60.251",
+    "site": "Woking",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hatfield-hatfieldcorestack-10-32-60-49",
+    "hostname": "HatfieldCoreStack",
+    "ip": "10.32.60.49",
+    "site": "Hatfield",
     "os": "VOSS",
     "model": "VSP 4450GSX-PWR+",
     "format": "cfg"
   },
   {
-    "id": "sw-luton-spa",
-    "hostname": "DLC-Luton-Spa",
-    "ip": "10.32.48.250",
+    "id": "sw-worcester-dll-worcester-x440-10-32-202-253",
+    "hostname": "DLL-Worcester-X440",
+    "ip": "10.32.202.253",
+    "site": "Worcester",
     "os": "EXOS",
     "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-luton-gym",
-    "hostname": "DLC-Luton-Gym",
-    "ip": "10.32.48.251",
+    "id": "sw-worcester-dll-worcester2-10-32-202-252",
+    "hostname": "DLL-Worcester2",
+    "ip": "10.32.202.252",
+    "site": "Worcester",
     "os": "EXOS",
-    "model": "Summit X440-G2-24p-10G",
+    "model": "Summit X440-G2-48p-10G",
     "format": "xsf"
   },
   {
-    "id": "sw-luton-edge",
-    "hostname": "DLC-Luton-Subrack",
-    "ip": "10.32.48.249",
+    "id": "sw-worcester-dlc-worcester-lynxight-10-32-202-251",
+    "hostname": "DLC-Worcester-Lynxight",
+    "ip": "10.32.202.251",
+    "site": "Worcester",
     "os": "EXOS",
-    "model": "Summit X440-G2-24p-10G",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-worthing-dlc-worthing-10-32-64-253",
+    "hostname": "DLC-Worthing",
+    "ip": "10.32.64.253",
+    "site": "Worthing",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-worthing-dlc-worthing-main-2-10-32-64-250",
+    "hostname": "DLC-Worthing-Main-2",
+    "ip": "10.32.64.250",
+    "site": "Worthing",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-worthing-dlc-worthing-gym-10-32-64-251",
+    "hostname": "DLC-Worthing-Gym",
+    "ip": "10.32.64.251",
+    "site": "Worthing",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-worthing-dlc-lynxight-outdoor-8p-10-32-64-249",
+    "hostname": "DLC-Lynxight-Outdoor-8P",
+    "ip": "10.32.64.249",
+    "site": "Worthing",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bicester-dlc-bicester-lynxight-10-32-64-49",
+    "hostname": "DLC-Bicester-Lynxight",
+    "ip": "10.32.64.49",
+    "site": "Bicester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-york-dlc-york-192-168-9-253",
+    "hostname": "DLC-York",
+    "ip": "192.168.9.253",
+    "site": "York",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-york-dlc-york-gym-10-32-81-252",
+    "hostname": "DLC-York-Gym",
+    "ip": "10.32.81.252",
+    "site": "York",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-york-dlc-york-maincomms-2-10-32-81-251",
+    "hostname": "DLC-York-MainComms-2",
+    "ip": "10.32.81.251",
+    "site": "York",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-york-dlc-york-spa-sw1-10-32-81-250",
+    "hostname": "DLC-York-Spa-SW1",
+    "ip": "10.32.81.250",
+    "site": "York",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-rugby-dlc-rugby-48-2-10-32-81-49",
+    "hostname": "DLC-Rugby-48-2",
+    "ip": "10.32.81.49",
+    "site": "Rugby",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bad-homborg-dlc-bad-homburg-10-32-229-253",
+    "hostname": "DLC-Bad-Homburg",
+    "ip": "10.32.229.253",
+    "site": "Bad Homborg",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hatfield-dll-hatfield-temp-192-168-17-10",
+    "hostname": "DLL-Hatfield-Temp",
+    "ip": "192.168.17.10",
+    "site": "Hatfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hatfield-dll-hatfield-hotel-192-168-12-12",
+    "hostname": "DLL-Hatfield-Hotel",
+    "ip": "192.168.12.12",
+    "site": "Hatfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hatfield-dlc-hatfield-clubrecep-2-192-168-12-10",
+    "hostname": "DLC-Hatfield-ClubRecep-2",
+    "ip": "192.168.12.10",
+    "site": "Hatfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hatfield-hatfieldcorestack-192-168-12-252",
+    "hostname": "HatfieldCoreStack",
+    "ip": "192.168.12.252",
+    "site": "Hatfield",
+    "os": "VOSS",
+    "model": "VSP 4450GSX-PWR+",
+    "format": "cfg"
+  },
+  {
+    "id": "sw-hatfield-dlc-hatfield-trident-10-32-83-246",
+    "hostname": "DLC-Hatfield-Trident",
+    "ip": "10.32.83.246",
+    "site": "Hatfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hatfield-dlc-hatfield-reception-temp-192-168-12-249",
+    "hostname": "DLC-Hatfield-Reception-Temp",
+    "ip": "192.168.12.249",
+    "site": "Hatfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hatfield-dlc-hatfield-clubrecep-1-192-168-12-9",
+    "hostname": "DLC-Hatfield-ClubRecep-1",
+    "ip": "192.168.12.9",
+    "site": "Hatfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hatfield-hat-admin-192-168-12-11",
+    "hostname": "HAT-ADMIN",
+    "ip": "192.168.12.11",
+    "site": "Hatfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hatfield-dlc-hatfield-lynxight-10-32-83-248",
+    "hostname": "DLC-Hatfield-Lynxight",
+    "ip": "10.32.83.248",
+    "site": "Hatfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-hatfield-dlc-hatfield-spa-10-36-83-247",
+    "hostname": "DLC-Hatfield-Spa",
+    "ip": "10.36.83.247",
+    "site": "Hatfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bicester-dlc-bicester-main-x440-48p-10-32-232-253",
+    "hostname": "DLC-Bicester-Main-X440-48p",
+    "ip": "10.32.232.253",
+    "site": "Bicester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bicester-dlc-bicester-2-10-32-232-252",
+    "hostname": "DLC-Bicester-2",
+    "ip": "10.32.232.252",
+    "site": "Bicester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bicester-dlc-bicester-subrack-b-10-32-232-251",
+    "hostname": "DLC-Bicester-SubRack-B",
+    "ip": "10.32.232.251",
+    "site": "Bicester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bicester-dlc-bicester-lynxight-10-32-232-250",
+    "hostname": "DLC-Bicester-Lynxight",
+    "ip": "10.32.232.250",
+    "site": "Bicester",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-rugby-dlc-rugby-48-1-10-32-158-253",
+    "hostname": "DLC-Rugby-48-1",
+    "ip": "10.32.158.253",
+    "site": "Rugby",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-rugby-dlc-rugby-48-2-10-32-158-252",
+    "hostname": "DLC-Rugby-48-2",
+    "ip": "10.32.158.252",
+    "site": "Rugby",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-rugby-dlc-rugby-subrack-10-32-158-251",
+    "hostname": "DLC-Rugby-Subrack",
+    "ip": "10.32.158.251",
+    "site": "Rugby",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-rugby-dlc-rugby-lynxight-10-32-158-250",
+    "hostname": "DLC-Rugby-Lynxight",
+    "ip": "10.32.158.250",
+    "site": "Rugby",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shawfair-dlc-shawfair-main-10-36-156-253",
+    "hostname": "DLC-Shawfair-Main",
+    "ip": "10.36.156.253",
+    "site": "Shawfair",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shawfair-dlc-shawfair-48-2-10-36-156-252",
+    "hostname": "DLC-Shawfair-48-2",
+    "ip": "10.36.156.252",
+    "site": "Shawfair",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shawfair-dlc-shawfair-subrack-10-36-156-251",
+    "hostname": "DLC-Shawfair-Subrack",
+    "ip": "10.36.156.251",
+    "site": "Shawfair",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shawfair-dlc-shawfair-lynxight-10-36-156-250",
+    "hostname": "DLC-Shawfair-Lynxight",
+    "ip": "10.36.156.250",
+    "site": "Shawfair",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bury-st-edmunds-dlc-bury-st-edmunds-48-1-10-32-164-253",
+    "hostname": "DLC-Bury-St-Edmunds-48-1",
+    "ip": "10.32.164.253",
+    "site": "Bury St Edmunds",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bury-st-edmunds-dlc-bury-st-edmunds-48-2-10-32-164-252",
+    "hostname": "DLC-Bury-St-Edmunds-48-2",
+    "ip": "10.32.164.252",
+    "site": "Bury St Edmunds",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bury-st-edmunds-dlc-bury-st-edmunds-subrack-10-32-164-251",
+    "hostname": "DLC-Bury-St-Edmunds-Subrack",
+    "ip": "10.32.164.251",
+    "site": "Bury St Edmunds",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bury-st-edmunds-dlc-bury-st-edmunds-hiimpact-10-32-164-250",
+    "hostname": "DLC-Bury-St-Edmunds-HiImpact",
+    "ip": "10.32.164.250",
+    "site": "Bury St Edmunds",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-bury-st-edmunds-dlc-bury-st-edmunds-lynxight-10-32-164-249",
+    "hostname": "DLC-Bury-St-Edmunds-Lynxight",
+    "ip": "10.32.164.249",
+    "site": "Bury St Edmunds",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-serrano-dlc-serrano-comms-48-10-32-163-253",
+    "hostname": "DLC-Serrano-Comms-48",
+    "ip": "10.32.163.253",
+    "site": "Serrano",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-serrano-dlc-serrano-recp-8-10-32-163-252",
+    "hostname": "DLC-Serrano-Recp-8",
+    "ip": "10.32.163.252",
+    "site": "Serrano",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-serrano-serrano-bar-8p-10-32-163-251",
+    "hostname": "Serrano-Bar-8p",
+    "ip": "10.32.163.251",
+    "site": "Serrano",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-serrano-dlc-tempoffice-10-32-163-246",
+    "hostname": "DLC-TempOffice",
+    "ip": "10.32.163.246",
+    "site": "Serrano",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-serrano-dlc-serrano-highimpact-10-32-163-250",
+    "hostname": "DLC-Serrano-HighImpact",
+    "ip": "10.32.163.250",
+    "site": "Serrano",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-serrano-dlc-serrano-7th-floor-10-32-163-248",
+    "hostname": "DLC-Serrano-7th-Floor",
+    "ip": "10.32.163.248",
+    "site": "Serrano",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-serrano-dlc-serrano-6th-floor-48p-10-32-163-247",
+    "hostname": "DLC-Serrano-6th-Floor-48P",
+    "ip": "10.32.163.247",
+    "site": "Serrano",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-la-finca-dlc-lafina-lower-comms-10-32-162-253",
+    "hostname": "DLC-LaFina-Lower-Comms",
+    "ip": "10.32.162.253",
+    "site": "La Finca",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-la-finca-dlc-lafinca-ho-comms-24-10-32-162-252",
+    "hostname": "DLC-LaFinca-HO-Comms-24",
+    "ip": "10.32.162.252",
+    "site": "La Finca",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-la-finca-1st-floor-comm-room-24p-10-32-162-251",
+    "hostname": "1st-Floor-Comm-Room-24p",
+    "ip": "10.32.162.251",
+    "site": "La Finca",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-la-finca-1st-floor-comm-room-10-32-162-250",
+    "hostname": "1st-Floor-Comm-Room",
+    "ip": "10.32.162.250",
+    "site": "La Finca",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-la-finca-dlc-lafinca-kids-10-32-162-249",
+    "hostname": "DLC-LaFinca-Kids",
+    "ip": "10.32.162.249",
+    "site": "La Finca",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-la-finca-dlc-lafica-spa-10-32-162-248",
+    "hostname": "DLC-Lafica-Spa",
+    "ip": "10.32.162.248",
+    "site": "La Finca",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gava-mar-dlc-gava-core-10-32-153-253",
+    "hostname": "DLC-Gava-Core",
+    "ip": "10.32.153.253",
+    "site": "Gava Mar",
+    "os": "VOSS",
+    "model": "VSP 4450GSX-PWR+",
+    "format": "cfg"
+  },
+  {
+    "id": "sw-gava-mar-dlc-gava-gym-10-32-153-252",
+    "hostname": "DLC-Gava-Gym",
+    "ip": "10.32.153.252",
+    "site": "Gava Mar",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gava-mar-dlc-gavamar-reception-10-32-153-251",
+    "hostname": "DLC-GavaMar-Reception",
+    "ip": "10.32.153.251",
+    "site": "Gava Mar",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gava-mar-dlc-gava-tempoffice-10-32-153-250",
+    "hostname": "DLC-Gava-TempOffice",
+    "ip": "10.32.153.250",
+    "site": "Gava Mar",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-gava-mar-dlc-gava-spa-10-32-153-249",
+    "hostname": "DLC-Gava-Spa",
+    "ip": "10.32.153.249",
+    "site": "Gava Mar",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-malaga-dlc-malaga-48-10-32-155-253",
+    "hostname": "DLC-Malaga-48",
+    "ip": "10.32.155.253",
+    "site": "Malaga",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-malaga-dlc-malaga-2-10-32-155-252",
+    "hostname": "DLC-Malaga-2",
+    "ip": "10.32.155.252",
+    "site": "Malaga",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-zaragoza-dlc-zaragoza-10-32-154-253",
+    "hostname": "DLC-Zaragoza",
+    "ip": "10.32.154.253",
+    "site": "Zaragoza",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-zaragoza-dlc-zaragoza-48-10-32-154-252",
+    "hostname": "DLC-Zaragoza-48",
+    "ip": "10.32.154.252",
+    "site": "Zaragoza",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sterrebeek-dlc-sterr-comms24-10-32-160-253",
+    "hostname": "DLC-Sterr-Comms24",
+    "ip": "10.32.160.253",
+    "site": "Sterrebeek",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sterrebeek-dlc-sterrebeek-comms-48-10-32-160-251",
+    "hostname": "DLC-Sterrebeek-Comms-48",
+    "ip": "10.32.160.251",
+    "site": "Sterrebeek",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-sterrebeek-dlc-ster-temp-10-32-160-249",
+    "hostname": "DLC-Ster-TEMP",
+    "ip": "10.32.160.249",
+    "site": "Sterrebeek",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-wickwoods-dlc-wickwoods-extplant-10-32-165-252",
+    "hostname": "DLC-Wickwoods-ExtPlant",
+    "ip": "10.32.165.252",
+    "site": "Wickwoods",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-wickwoods-dlc-wickwoods-accounts-10-32-165-251",
+    "hostname": "DLC-Wickwoods-Accounts",
+    "ip": "10.32.165.251",
+    "site": "Wickwoods",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-wickwoods-dlc-wickwoods-sales-10-32-165-250",
+    "hostname": "DLC-Wickwoods-Sales",
+    "ip": "10.32.165.250",
+    "site": "Wickwoods",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-wickwoods-dlc-wickwoods-main-2-10-32-165-249",
+    "hostname": "DLC-Wickwoods-Main-2",
+    "ip": "10.32.165.249",
+    "site": "Wickwoods",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-wickwoods-dlc-wickwoods-electrical-10-32-165-248",
+    "hostname": "DLC-Wickwoods-Electrical",
+    "ip": "10.32.165.248",
+    "site": "Wickwoods",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-wickwoods-dlc-wickwoods-pilates-10-32-165-247",
+    "hostname": "DLC-Wickwoods-Pilates",
+    "ip": "10.32.165.247",
+    "site": "Wickwoods",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-wickwoods-dlc-wickwoods-gym-10-32-165-246",
+    "hostname": "DLC-Wickwoods-Gym",
+    "ip": "10.32.165.246",
+    "site": "Wickwoods",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-wickwoods-dlc-wickwoods-main-1-10-32-165-245",
+    "hostname": "DLC-Wickwoods-Main-1",
+    "ip": "10.32.165.245",
+    "site": "Wickwoods",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-wickwoods-dlc-wickwoods-lnyxight-10-32-165-244",
+    "hostname": "DLC-Wickwoods-Lnyxight",
+    "ip": "10.32.165.244",
+    "site": "Wickwoods",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cricklewood-dlc-cricklewood-main-10-32-157-253",
+    "hostname": "DLC-Cricklewood-Main",
+    "ip": "10.32.157.253",
+    "site": "Cricklewood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cricklewood-dlc-cricklewood-main-2-10-32-157-252",
+    "hostname": "DLC-Cricklewood-Main-2",
+    "ip": "10.32.157.252",
+    "site": "Cricklewood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cricklewood-dlc-cricklewood-1stplant-10-32-157-251",
+    "hostname": "DLC-Cricklewood-1stPlant",
+    "ip": "10.32.157.251",
+    "site": "Cricklewood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-cricklewood-dlc-cricklewood-lynxight-10-32-157-250",
+    "hostname": "DLC-Cricklewood-Lynxight",
+    "ip": "10.32.157.250",
+    "site": "Cricklewood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-modena-dlc-modena-main-10-32-159-253",
+    "hostname": "DLC-Modena-Main",
+    "ip": "10.32.159.253",
+    "site": "Modena",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-modena-dlc-modena-2nd-10-32-159-252",
+    "hostname": "DLC-Modena-2nd",
+    "ip": "10.32.159.252",
+    "site": "Modena",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-modena-dlc-modena-lynxight-10-32-159-251",
+    "hostname": "DLC-Modena-Lynxight",
+    "ip": "10.32.159.251",
+    "site": "Modena",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-enfield-dll-enfield-maincomms-10-32-3-253",
+    "hostname": "DLL-Enfield-MainComms",
+    "ip": "10.32.3.253",
+    "site": "Enfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-enfield-dlc-enfield-blazeoffice-10-32-3-252",
+    "hostname": "DLC-Enfield-BlazeOffice",
+    "ip": "10.32.3.252",
+    "site": "Enfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-enfield-dll-enfield-subrack-10-32-3-251",
+    "hostname": "DLL-Enfield-SubRack",
+    "ip": "10.32.3.251",
+    "site": "Enfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-enfield-dlc-enfield-maincomms-2-10-32-3-250",
+    "hostname": "DLC-Enfield-MainComms-2",
+    "ip": "10.32.3.250",
+    "site": "Enfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-enfield-dlc-enfield-lynxight-10-32-3-249",
+    "hostname": "DLC-Enfield-Lynxight",
+    "ip": "10.32.3.249",
+    "site": "Enfield",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-boadilla-dlc-boadilla-12p-10-32-161-253",
+    "hostname": "DLC-Boadilla-12P",
+    "ip": "10.32.161.253",
+    "site": "Boadilla",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-boadilla-boadilla-48p-1-10-32-161-252",
+    "hostname": "Boadilla-48P-1",
+    "ip": "10.32.161.252",
+    "site": "Boadilla",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-boadilla-boadilla-48p-2-10-32-161-251",
+    "hostname": "Boadilla-48P-2",
+    "ip": "10.32.161.251",
+    "site": "Boadilla",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-boadilla-dlc-boadilla-spa-10-32-161-250",
+    "hostname": "DLC-Boadilla-Spa",
+    "ip": "10.32.161.250",
+    "site": "Boadilla",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-boadilla-dlc-padelkiosk-10-32-161-249",
+    "hostname": "DLC-PadelKiosk",
+    "ip": "10.32.161.249",
+    "site": "Boadilla",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-geneva-country-club-geneva-cc-10-32-243-253",
+    "hostname": "Geneva-CC",
+    "ip": "10.32.243.253",
+    "site": "Geneva Country Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-geneva-country-club-gcc-mainrack-2-10-32-243-252",
+    "hostname": "GCC-MainRack-2",
+    "ip": "10.32.243.252",
+    "site": "Geneva Country Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-geneva-country-club-dlc-geneva-gym-10-32-243-251",
+    "hostname": "DLC-Geneva-Gym",
+    "ip": "10.32.243.251",
+    "site": "Geneva Country Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-geneva-country-club-dlc-geneva-cc-lynxight-10-32-243-250",
+    "hostname": "DLC-Geneva-CC-Lynxight",
+    "ip": "10.32.243.250",
+    "site": "Geneva Country Club",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shrewsbury-dlc-shrewsbury-main-10-32-167-253",
+    "hostname": "DLC-Shrewsbury-Main",
+    "ip": "10.32.167.253",
+    "site": "Shrewsbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shrewsbury-dlc-shrewsbury-lnyxight-10-32-167-252",
+    "hostname": "DLC-Shrewsbury-Lnyxight",
+    "ip": "10.32.167.252",
+    "site": "Shrewsbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shrewsbury-dlc-shrewsbury-temp-1-10-32-167-251",
+    "hostname": "DLC-Shrewsbury-Temp-1",
+    "ip": "10.32.167.251",
+    "site": "Shrewsbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shrewsbury-dlc-shrewsbury-gym-10-32-167-250",
+    "hostname": "DLC-Shrewsbury-Gym",
+    "ip": "10.32.167.250",
+    "site": "Shrewsbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shrewsbury-dlc-shrewsbury-temp-3-10-32-167-249",
+    "hostname": "DLC-Shrewsbury-Temp-3",
+    "ip": "10.32.167.249",
+    "site": "Shrewsbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shrewsbury-dlc-shrewsbury-spa-10-32-167-248",
+    "hostname": "DLC-Shrewsbury-Spa",
+    "ip": "10.32.167.248",
+    "site": "Shrewsbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shrewsbury-dlc-shrewsbury-temp-5-10-32-167-247",
+    "hostname": "DLC-Shrewsbury-Temp-5",
+    "ip": "10.32.167.247",
+    "site": "Shrewsbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-shrewsbury-dlc-shrewsbury-wifi-10-32-167-246",
+    "hostname": "DLC-Shrewsbury-Wifi",
+    "ip": "10.32.167.246",
+    "site": "Shrewsbury",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-harlow-dlc-harlow-core-10-32-170-253",
+    "hostname": "DLC-Harlow-Core",
+    "ip": "10.32.170.253",
+    "site": "Harlow",
+    "os": "VOSS",
+    "model": "VSP 4450GSX-PWR+",
+    "format": "cfg"
+  },
+  {
+    "id": "sw-harlow-dlc-harlow-main-2-10-32-170-252",
+    "hostname": "DLC-Harlow-Main-2",
+    "ip": "10.32.170.252",
+    "site": "Harlow",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-harlow-dlc-harlow-hienergy-10-32-170-251",
+    "hostname": "DLC-Harlow-HiEnergy",
+    "ip": "10.32.170.251",
+    "site": "Harlow",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-harlow-dlc-harlow-blaze-10-32-170-250",
+    "hostname": "DLC-Harlow-Blaze",
+    "ip": "10.32.170.250",
+    "site": "Harlow",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-harlow-dlc-harlow-audio-10-32-170-249",
+    "hostname": "DLC-Harlow-Audio",
+    "ip": "10.32.170.249",
+    "site": "Harlow",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-harlow-dlc-harlow-sportshall-10-32-170-247",
+    "hostname": "DLC-Harlow-SportsHall",
+    "ip": "10.32.170.247",
+    "site": "Harlow",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-colliers-wood-dlc-collierswood-maincomms-1-10-32-171-253",
+    "hostname": "DLC-Collierswood-MainComms-1",
+    "ip": "10.32.171.253",
+    "site": "Colliers Wood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-colliers-wood-dll-collierswood-reception-10-32-171-252",
+    "hostname": "DLL-Collierswood-Reception",
+    "ip": "10.32.171.252",
+    "site": "Colliers Wood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-colliers-wood-dlc-collierswood-maincomms-2-10-32-171-251",
+    "hostname": "DLC-ColliersWood-MainComms-2",
+    "ip": "10.32.171.251",
+    "site": "Colliers Wood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-colliers-wood-dlc-collierswood-subrack-10-32-171-250",
+    "hostname": "DLC-ColliersWood-Subrack",
+    "ip": "10.32.171.250",
+    "site": "Colliers Wood",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-herne-bay-dlc-hernebay-core-router-uplinks-10-32-168-253",
+    "hostname": "DLC-HerneBay- Core - Router Uplinks",
+    "ip": "10.32.168.253",
+    "site": "Herne Bay",
+    "os": "VOSS",
+    "model": "VSP 4450GSX-PWR+",
+    "format": "cfg"
+  },
+  {
+    "id": "sw-herne-bay-dlc-hernebay-maincomms-10-32-168-252",
+    "hostname": "DLC-HerneBay-MainComms",
+    "ip": "10.32.168.252",
+    "site": "Herne Bay",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-herne-bay-dlc-hernebay-hienergy-10-32-168-251",
+    "hostname": "DLC-HerneBay-HiEnergy",
+    "ip": "10.32.168.251",
+    "site": "Herne Bay",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-herne-bay-dlc-hernebay-blaze-10-32-168-250",
+    "hostname": "DLC-HerneBay-Blaze",
+    "ip": "10.32.168.250",
+    "site": "Herne Bay",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-herne-bay-dlc-hernebay-main-audio-rack-10-32-168-249",
+    "hostname": "DLC-HerneBay- Main Audio Rack",
+    "ip": "10.32.168.249",
+    "site": "Herne Bay",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-herne-bay-dlc-hernebay-10-32-168-248",
+    "hostname": "DLC-HerneBay-",
+    "ip": "10.32.168.248",
+    "site": "Herne Bay",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-herne-bay-dlc-hernebay-sports-hall-10-32-168-247",
+    "hostname": "DLC-HerneBay- Sports Hall",
+    "ip": "10.32.168.247",
+    "site": "Herne Bay",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10G",
+    "format": "xsf"
+  },
+  {
+    "id": "sw-dlc-site-7-sw-249",
+    "hostname": "DLC-Site-7-SW-249",
+    "ip": "10.2.7.249",
+    "os": "EXOS",
+    "model": "Summit X440-G2-48p-10GE4",
     "format": "xsf"
   }
 ]
