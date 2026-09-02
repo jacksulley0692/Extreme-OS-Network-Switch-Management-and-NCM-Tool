@@ -60,6 +60,7 @@ export function YorkLiveLldpTopologyMap({
 }: YorkLiveLldpTopologyMapProps) {
   // Current active site selection
   const [selectedSiteCode, setSelectedSiteCode] = useState<string>(siteCode);
+  const [selectedSiteName, setSelectedSiteName] = useState<string>(siteName);
   const [siteDropdownOpen, setSiteDropdownOpen] = useState<boolean>(false);
   const [siteSearchQuery, setSiteSearchQuery] = useState<string>("");
 
@@ -67,14 +68,15 @@ export function YorkLiveLldpTopologyMap({
   useEffect(() => {
     if (siteCode && siteCode !== selectedSiteCode) {
       setSelectedSiteCode(siteCode);
+      if (siteName) setSelectedSiteName(siteName);
     }
-  }, [siteCode]);
+  }, [siteCode, siteName]);
 
   // Load Topology data for current site
   const currentTopology = useMemo(() => {
-    const sName = siteName && siteCode === selectedSiteCode ? siteName : selectedSiteCode;
+    const sName = selectedSiteName || siteName || selectedSiteCode;
     return getOrCreateSiteLldpTopology(selectedSiteCode, sName, switches);
-  }, [selectedSiteCode, siteName, siteCode, switches]);
+  }, [selectedSiteCode, selectedSiteName, siteName, switches]);
 
   // Active nodes & links state
   const [nodes, setNodes] = useState<LldpNode[]>(currentTopology.nodes);
@@ -235,68 +237,91 @@ export function YorkLiveLldpTopologyMap({
                 Live LLDP Topology: <span className="text-indigo-300">{currentTopology.siteName}</span>
               </h3>
 
-              {/* Site Quick Switcher Dropdown Button */}
-              <div className="relative">
-                <button
-                  onClick={() => setSiteDropdownOpen(!siteDropdownOpen)}
-                  className="px-2.5 py-1 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-mono font-medium flex items-center gap-1.5 transition cursor-pointer"
+              {/* Site Quick Switcher Select & Dropdown */}
+              <div className="flex items-center gap-2">
+                <select
+                  id="select-topology-site-dropdown"
+                  value={selectedSiteCode}
+                  onChange={(e) => {
+                    const chosenCode = e.target.value;
+                    const match = filteredSiteList.find(s => s.id === chosenCode);
+                    setSelectedSiteCode(chosenCode);
+                    if (match) setSelectedSiteName(match.name);
+                    if (onNavigateToSite) onNavigateToSite(chosenCode);
+                  }}
+                  className="bg-slate-950 border border-slate-700 text-indigo-300 font-bold font-mono text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-indigo-500 cursor-pointer shadow-sm"
+                  title="Select Site for Visual Graph Node Topology"
                 >
-                  <Building2 className="w-3.5 h-3.5 text-indigo-400" />
-                  <span>Switch Site ({currentTopology.siteCode})</span>
-                  <ChevronDown className="w-3 h-3 text-slate-400" />
-                </button>
+                  {filteredSiteList.map(s => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} ({s.id}) {s.isPreconfigured ? "★ Live Verified" : ""}
+                    </option>
+                  ))}
+                </select>
 
-                {/* Dropdown Menu */}
-                {siteDropdownOpen && (
-                  <div className="absolute left-0 top-full mt-2 w-72 max-h-80 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
-                    <div className="p-2 border-b border-slate-800 bg-slate-950">
-                      <div className="relative">
-                        <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-500" />
-                        <input
-                          type="text"
-                          value={siteSearchQuery}
-                          onChange={(e) => setSiteSearchQuery(e.target.value)}
-                          placeholder="Search 100+ sites..."
-                          className="w-full pl-8 pr-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
-                          autoFocus
-                        />
+                <div className="relative">
+                  <button
+                    onClick={() => setSiteDropdownOpen(!siteDropdownOpen)}
+                    className="px-2.5 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-700 text-xs font-mono font-medium flex items-center gap-1.5 transition cursor-pointer"
+                  >
+                    <Building2 className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>Search Sites</span>
+                    <ChevronDown className="w-3 h-3 text-slate-400" />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  {siteDropdownOpen && (
+                    <div className="absolute left-0 top-full mt-2 w-72 max-h-80 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl z-50 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
+                      <div className="p-2 border-b border-slate-800 bg-slate-950">
+                        <div className="relative">
+                          <Search className="w-3.5 h-3.5 absolute left-2.5 top-2.5 text-slate-500" />
+                          <input
+                            type="text"
+                            value={siteSearchQuery}
+                            onChange={(e) => setSiteSearchQuery(e.target.value)}
+                            placeholder="Search 100+ sites..."
+                            className="w-full pl-8 pr-3 py-1.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                            autoFocus
+                          />
+                        </div>
+                      </div>
+
+                      <div className="overflow-y-auto max-h-60 p-1 divide-y divide-slate-800/40">
+                        {filteredSiteList.map(s => {
+                          const isCurrent = s.id === currentTopology.siteCode;
+                          return (
+                            <button
+                              key={s.id}
+                              onClick={() => {
+                                setSelectedSiteCode(s.id);
+                                setSelectedSiteName(s.name);
+                                setSiteDropdownOpen(false);
+                                if (onNavigateToSite) onNavigateToSite(s.id);
+                              }}
+                              className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between rounded-lg transition cursor-pointer ${
+                                isCurrent 
+                                  ? "bg-indigo-600 text-white font-bold" 
+                                  : "text-slate-300 hover:bg-slate-800 hover:text-white"
+                              }`}
+                            >
+                              <div className="flex items-center gap-2 truncate">
+                                <Building2 className={`w-3.5 h-3.5 ${isCurrent ? "text-white" : "text-slate-400"}`} />
+                                <span className="truncate">{s.name}</span>
+                              </div>
+                              {s.isPreconfigured && (
+                                <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono ${
+                                  isCurrent ? "bg-indigo-700 text-indigo-100" : "bg-emerald-950 text-emerald-300 border border-emerald-800"
+                                }`}>
+                                  Live Verified
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
-
-                    <div className="overflow-y-auto max-h-60 p-1 divide-y divide-slate-800/40">
-                      {filteredSiteList.map(s => {
-                        const isCurrent = s.id === currentTopology.siteCode;
-                        return (
-                          <button
-                            key={s.id}
-                            onClick={() => {
-                              setSelectedSiteCode(s.id);
-                              setSiteDropdownOpen(false);
-                              if (onNavigateToSite) onNavigateToSite(s.id);
-                            }}
-                            className={`w-full text-left px-3 py-2 text-xs flex items-center justify-between rounded-lg transition cursor-pointer ${
-                              isCurrent 
-                                ? "bg-indigo-600 text-white font-bold" 
-                                : "text-slate-300 hover:bg-slate-800 hover:text-white"
-                            }`}
-                          >
-                            <div className="flex items-center gap-2 truncate">
-                              <Building2 className={`w-3.5 h-3.5 ${isCurrent ? "text-white" : "text-slate-400"}`} />
-                              <span className="truncate">{s.name}</span>
-                            </div>
-                            {s.isPreconfigured && (
-                              <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono ${
-                                isCurrent ? "bg-indigo-700 text-indigo-100" : "bg-emerald-950 text-emerald-300 border border-emerald-800"
-                              }`}>
-                                Live Verified
-                              </span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
 
               <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-800 font-semibold flex items-center gap-1">

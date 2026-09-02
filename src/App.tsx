@@ -42,7 +42,11 @@ import {
   User,
   LogOut,
   History,
-  Plus
+  Plus,
+  Radio,
+  Building2,
+  Search,
+  X
 } from "lucide-react";
 import { SwitchItem, LiveStatusData, AuthUser } from "./types";
 import { MOCK_SWITCHES } from "./data/mockSwitches";
@@ -56,6 +60,8 @@ import { AuditTrailViewer } from "./components/AuditTrailViewer";
 import { YorkLiveLldpTopologyMap } from "./components/YorkLiveLldpTopologyMap";
 import { SwitchesManagerModal } from "./components/SwitchesManagerModal";
 import { AddSwitchModal } from "./components/AddSwitchModal";
+import { UnmanagedDiscoveryModal } from "./components/UnmanagedDiscoveryModal";
+import { KNOWN_SITE_DIAGRAMS } from "./data/siteDiagramsData";
 
 export default function App() {
   // Navigation tabs state - Add new tab identifiers here:
@@ -63,6 +69,13 @@ export default function App() {
   const [switches, setSwitches] = useState<SwitchItem[]>(MOCK_SWITCHES);
   const [switchesModalOpen, setSwitchesModalOpen] = useState<boolean>(false);
   const [addSwitchModalOpen, setAddSwitchModalOpen] = useState<boolean>(false);
+  const [unmanagedModalOpen, setUnmanagedModalOpen] = useState<boolean>(false);
+  
+  // Visual Node Graph site selector modal state
+  const [topologySiteModalOpen, setTopologySiteModalOpen] = useState<boolean>(false);
+  const [selectedTopologySiteCode, setSelectedTopologySiteCode] = useState<string>("YORK");
+  const [selectedTopologySiteName, setSelectedTopologySiteName] = useState<string>("York");
+  const [modalSiteSearch, setModalSiteSearch] = useState<string>("");
   
   // Authentication & Session State
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(() => {
@@ -251,8 +264,18 @@ export default function App() {
               </div>
             )}
 
-            {/* Quick 1-Click File Downloaders & Switch Enroller */}
-            <div className="relative flex items-center gap-2">
+            {/* Quick 1-Click File Downloaders & Netgear Audit & Switch Enroller */}
+            <div className="relative flex items-center gap-2 flex-wrap">
+              <button
+                id="btn-quick-netgear-audit"
+                onClick={() => setUnmanagedModalOpen(true)}
+                className="flex items-center gap-1.5 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs px-3 py-1.5 rounded-lg shadow-md shadow-amber-600/20 transition cursor-pointer"
+                title="Open Netgear & Rogue Switch Discovery Audit Window"
+              >
+                <Radio className="w-3.5 h-3.5" />
+                <span>🕵️ Netgear Audit</span>
+              </button>
+
               <button
                 id="btn-quick-add-switch"
                 onClick={() => setAddSwitchModalOpen(true)}
@@ -348,33 +371,54 @@ export default function App() {
 
             <button
               id="nav-tab-topology"
-              onClick={() => setActiveTab("topology")}
+              onClick={() => {
+                setActiveTab("topology");
+                setTopologySiteModalOpen(true);
+              }}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
                 activeTab === "topology"
                   ? "bg-indigo-600 text-white shadow font-semibold ring-2 ring-indigo-400"
                   : "text-indigo-300 hover:text-white bg-indigo-950/60 hover:bg-indigo-900/80 border border-indigo-800/60"
               }`}
+              title="Open Visual Graph Node Topology & Site Selector"
             >
               <Network className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="font-bold">🗺️ Visual Node Graph</span>
+              <span className="font-bold">🗺️ Visual Node Graph ({selectedTopologySiteName})</span>
               <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 font-mono">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Live LLDP
+                Select Site
               </span>
             </button>
 
             <button
-              id="nav-tab-audit-trail"
-              onClick={() => setActiveTab("audit_trail")}
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
-                activeTab === "audit_trail"
-                  ? "bg-indigo-600 text-white shadow font-semibold"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
-              }`}
+              id="nav-tab-netgear-audit"
+              onClick={() => setUnmanagedModalOpen(true)}
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg transition-all whitespace-nowrap cursor-pointer text-amber-300 hover:text-white bg-amber-950/40 hover:bg-amber-900/60 border border-amber-800/60"
+              title="Open Rogue & Unmanaged Netgear Switch Audit Window"
             >
-              <History className="w-3.5 h-3.5 text-indigo-400" />
-              <span>Activity Audit Trail</span>
+              <Radio className="w-3.5 h-3.5 text-amber-400" />
+              <span className="font-bold">🕵️ Netgear Audit</span>
+              <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-200 font-mono">
+                Active
+              </span>
             </button>
+
+            {/* Audit Trail Button - Only Available to NetAdmin Users */}
+            {currentUser?.role === "network_admin" && (
+              <button
+                id="nav-tab-audit-trail"
+                onClick={() => setActiveTab("audit_trail")}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
+                  activeTab === "audit_trail"
+                    ? "bg-indigo-600 text-white shadow font-semibold"
+                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
+                }`}
+                title="Activity Audit Trail (Network Admin Only)"
+              >
+                <History className="w-3.5 h-3.5 text-indigo-400" />
+                <span>Activity Audit Trail</span>
+              </button>
+            )}
 
             <button
               id="nav-tab-operations"
@@ -449,6 +493,8 @@ export default function App() {
         {activeTab === "topology" && (
           <div className="space-y-4 animate-in fade-in duration-200">
             <YorkLiveLldpTopologyMap 
+              siteCode={selectedTopologySiteCode}
+              siteName={selectedTopologySiteName}
               switches={switches}
               currentUser={currentUser}
               onTriggerBackup={handleTriggerBackup}
@@ -459,7 +505,7 @@ export default function App() {
           </div>
         )}
 
-        {activeTab === "audit_trail" && (
+        {activeTab === "audit_trail" && currentUser?.role === "network_admin" && (
           <AuditTrailViewer currentUserRole={currentUser?.role} />
         )}
 
@@ -520,6 +566,126 @@ export default function App() {
         currentUser={currentUser}
         onTriggerBackup={handleTriggerBackup}
       />
+
+      {/* Global Netgear & Rogue Switch Discovery Audit Modal */}
+      <UnmanagedDiscoveryModal
+        isOpen={unmanagedModalOpen}
+        onClose={() => setUnmanagedModalOpen(false)}
+        switches={switches}
+      />
+
+      {/* Visual Node Graph Site Selection Modal Window */}
+      {topologySiteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-xl shadow-2xl overflow-hidden flex flex-col">
+            <div className="p-5 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-indigo-600/20 border border-indigo-500/40 text-indigo-400">
+                  <Network className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-white tracking-wide">
+                    Visual Graph Node - Select Site
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5 font-mono">
+                    Select a site from the drop down to render its live LLDP node topology graph.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setTopologySiteModalOpen(false)}
+                className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5 bg-slate-900">
+              <div className="space-y-2">
+                <label className="text-xs font-bold font-mono text-indigo-300 flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-indigo-400" />
+                  <span>Choose Site Drop Down:</span>
+                </label>
+                <select
+                  id="select-modal-topology-site"
+                  value={selectedTopologySiteCode}
+                  onChange={(e) => {
+                    const chosenCode = e.target.value;
+                    const match = KNOWN_SITE_DIAGRAMS.find(d => d.id.toUpperCase() === chosenCode);
+                    setSelectedTopologySiteCode(chosenCode);
+                    if (match) {
+                      setSelectedTopologySiteName(match.siteName);
+                    } else {
+                      setSelectedTopologySiteName(chosenCode);
+                    }
+                  }}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white font-mono focus:outline-none focus:border-indigo-500 shadow-inner cursor-pointer"
+                >
+                  {KNOWN_SITE_DIAGRAMS.map((d) => (
+                    <option key={d.id} value={d.id.toUpperCase()}>
+                      {d.siteName} ({d.id.toUpperCase()})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 space-y-2">
+                <span className="text-xs font-mono text-slate-400 block font-semibold">
+                  Or filter sites by name:
+                </span>
+                <div className="relative">
+                  <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                  <input
+                    type="text"
+                    value={modalSiteSearch}
+                    onChange={(e) => setModalSiteSearch(e.target.value)}
+                    placeholder="Type to filter sites (e.g. Leeds, Farnham, Aberdeen)..."
+                    className="w-full pl-9 pr-3 py-2 bg-slate-900 border border-slate-800 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                </div>
+
+                {modalSiteSearch.trim() && (
+                  <div className="max-h-36 overflow-y-auto divide-y divide-slate-800 pt-1">
+                    {KNOWN_SITE_DIAGRAMS.filter(d => 
+                      d.siteName.toLowerCase().includes(modalSiteSearch.toLowerCase()) ||
+                      d.id.toLowerCase().includes(modalSiteSearch.toLowerCase())
+                    ).slice(0, 10).map((s) => (
+                      <button
+                        key={s.id}
+                        onClick={() => {
+                          setSelectedTopologySiteCode(s.id.toUpperCase());
+                          setSelectedTopologySiteName(s.siteName);
+                          setModalSiteSearch("");
+                        }}
+                        className={`w-full text-left px-3 py-1.5 text-xs flex items-center justify-between rounded hover:bg-indigo-950/60 transition cursor-pointer ${
+                          selectedTopologySiteCode === s.id.toUpperCase() ? "text-indigo-300 font-bold bg-indigo-950/80" : "text-slate-300"
+                        }`}
+                      >
+                        <span>{s.siteName}</span>
+                        <span className="font-mono text-[10px] text-slate-500">{s.id.toUpperCase()}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="p-4 border-t border-slate-800 bg-slate-950 flex items-center justify-between">
+              <span className="text-xs font-mono text-slate-400">
+                Selected: <strong className="text-indigo-300">{selectedTopologySiteName} ({selectedTopologySiteCode})</strong>
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setTopologySiteModalOpen(false)}
+                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs shadow-md shadow-indigo-600/30 transition cursor-pointer"
+                >
+                  Open Visual Graph
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

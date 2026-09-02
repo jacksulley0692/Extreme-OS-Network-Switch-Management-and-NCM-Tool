@@ -122,10 +122,6 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
                     <span>{group.siteName}</span>
                     <span className="text-[10px] text-slate-400">({group.totalCount} switches)</span>
                   </div>
-                  <div className="text-[10px] font-mono text-indigo-300 flex items-center gap-1">
-                    <ImageIcon className="w-3 h-3 text-purple-400" />
-                    <span>Visio Diagram Ready</span>
-                  </div>
                 </div>
               </div>
             );
@@ -260,15 +256,6 @@ export const SiteSidebar: React.FC<SiteSidebarProps> = ({
                 </div>
 
                 <div className="flex items-center gap-1.5 shrink-0">
-                  {group.hasDiagram && (
-                    <span 
-                      className="text-[10px] text-purple-400 px-1 py-0.5 rounded bg-purple-950/60 border border-purple-800/60 flex items-center" 
-                      title="Visio Topology Diagram available"
-                    >
-                      <ImageIcon className="w-2.5 h-2.5" />
-                    </span>
-                  )}
-
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold font-mono ${
                     isSelected 
                       ? "bg-indigo-500/30 text-indigo-200 border border-indigo-500/40" 

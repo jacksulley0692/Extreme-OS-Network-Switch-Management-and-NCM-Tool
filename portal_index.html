@@ -139,20 +139,22 @@
         </span>
 
         <!-- Primary Top Navigation Tabs & Tool Buttons -->
+        <button onclick="goHome()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition flex items-center gap-1.5 cursor-pointer" title="Return to Main Home Dashboard">
+          <span>🏠 Home</span>
+        </button>
         <button onclick="openDiscoverSwitchModal()" class="bg-gradient-to-r from-indigo-600 via-indigo-500 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition flex items-center gap-1.5 cursor-pointer" title="Discover a new switch by IP address, probe reachability & scan live telemetry">
-          <span>&#x1F50D; Discover Switch by IP</span>
+          <span>🔍 Discover Switch by IP</span>
+        </button>
+        <button onclick="openNetgearAuditModal()" class="bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-cyan-600/30 transition flex items-center gap-1.5 cursor-pointer" title="Audit switches for unmanaged Netgear switches (MAC density + EDP + LLDP vendor OUI)">
+          <span>🔌 Netgear Audit</span>
         </button>
         <button onclick="openSwitchReplacementModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl text-xs font-bold shadow-lg shadow-indigo-600/30 transition flex items-center gap-1.5 cursor-pointer">
           <span>&#x1F504; Switch Replacement Hub</span>
         </button>
-        <button onclick="openVisualNodeGraphModal('YORK')" class="bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 border border-indigo-600/60 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+        <button onclick="openVisualNodeGraphModal()" class="bg-indigo-950/90 hover:bg-indigo-900 text-indigo-200 border border-indigo-600/60 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer" title="Open Visual Node Graph Site Selector">
           <span class="text-indigo-400">&#x1F5FA;&#xFE0F;</span>
           <span>Visual Node Graph</span>
-          <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">Live LLDP</span>
-        </button>
-        <button onclick="openSiteDiagramsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
-          <span>&#x1F4D0; Site Diagrams</span>
-          <span class="text-[10px] px-1.5 py-0.2 rounded bg-slate-950 text-slate-400 border border-slate-800">130+</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-mono">Select Site</span>
         </button>
         <button onclick="openSwitchesEditor()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
           <span>&#x1F4CB; Fleet Inventory</span>
@@ -278,6 +280,14 @@
           </div>
           
           <div class="flex items-center gap-1.5">
+            <button 
+              type="button" 
+              onclick="openDiscoverSwitchModal()" 
+              class="px-2 py-1 text-[10px] font-mono font-bold rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-500/40 transition flex items-center gap-1 shadow-sm cursor-pointer"
+              title="Add New Site or Switch Device"
+            >
+              <span>+ Site</span>
+            </button>
             <button 
               type="button" 
               onclick="selectSite(null)" 
@@ -2402,6 +2412,186 @@ RestartSec=5
 [Install]
 WantedBy=multi-user.target</pre>
           <button onclick="copyToClipboard(`[Unit]\nDescription=Extreme Switch Backup & Management Portal Server\nAfter=network.target\n\n[Service]\nType=simple\nUser=root\nWorkingDirectory=/opt/switch-backup\nExecStart=/usr/bin/python3 /opt/switch-backup/portal_server_ubuntu.py\nRestart=always\nRestartSec=5\n\n[Install]\nWantedBy=multi-user.target`, 'Copied systemd unit file!')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded text-xs">&#x1F4CB; Copy Unit File</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: Netgear Unmanaged Switch Auditor & Rogue Port Detector -->
+  <div id="modal-netgear-audit" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 hidden">
+    <div class="bg-slate-900 border border-slate-700/80 rounded-2xl w-full max-w-5xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      
+      <!-- Modal Header -->
+      <div class="px-6 py-4 border-b border-slate-800 bg-slate-950/90 flex items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-lg">
+            &#x1F50C;
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h2 class="text-base font-bold text-white tracking-wide">
+                Unmanaged Netgear Switch Auditor &amp; Rogue Port Detector
+              </h2>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                MAC Density + EDP + LLDP Vendor
+              </span>
+            </div>
+            <p class="text-xs text-slate-400 mt-0.5">
+              Evaluates <code class="text-emerald-400 font-mono">sh fdb</code> (&ge;2 MACs), rules out EDP Extreme switches, and fingerprints Netgear OUIs.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="goHome()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-mono font-bold transition flex items-center gap-1 cursor-pointer shadow">
+            <span>🏠 Home</span>
+          </button>
+          <button onclick="closeModal('modal-netgear-audit')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white rounded-lg transition font-mono">
+            [X]
+          </button>
+        </div>
+      </div>
+
+      <!-- Execution Control Panel -->
+      <div class="p-4 bg-slate-950/80 border-b border-slate-800 space-y-3 shrink-0">
+        <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+          <!-- Mode Selector -->
+          <div class="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs font-mono">
+            <button
+              type="button"
+              id="btn-netgear-mode-single"
+              onclick="setNetgearScanMode('SINGLE')"
+              class="px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5 bg-indigo-600 text-white shadow-md"
+            >
+              <span>🎯 Single Switch by IP</span>
+            </button>
+            <button
+              type="button"
+              id="btn-netgear-mode-site"
+              onclick="setNetgearScanMode('SITE')"
+              class="px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5 text-slate-400 hover:text-slate-200"
+            >
+              <span>🏢 Site-Wide Scan</span>
+            </button>
+            <button
+              type="button"
+              id="btn-netgear-mode-fleet"
+              onclick="setNetgearScanMode('FLEET')"
+              class="px-3 py-1.5 rounded-lg transition font-bold flex items-center gap-1.5 text-slate-400 hover:text-slate-200"
+            >
+              <span>🌐 Entire Switch Fleet</span>
+            </button>
+          </div>
+
+          <!-- Scope Inputs -->
+          <div id="netgear-input-single" class="flex items-center gap-2 flex-1 max-w-md">
+            <input
+              type="text"
+              id="netgear-target-ip"
+              value="10.32.54.250"
+              placeholder="Target Switch IP..."
+              class="flex-1 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-indigo-500"
+            />
+          </div>
+
+          <div id="netgear-input-site" class="hidden flex items-center gap-2 flex-1 max-w-sm">
+            <span class="text-xs text-slate-400 font-mono font-bold whitespace-nowrap">Target Site:</span>
+            <select
+              id="netgear-target-site"
+              class="flex-1 px-3 py-1.5 bg-slate-900 border border-slate-800 rounded-xl text-xs text-white font-mono focus:outline-none focus:border-indigo-500"
+            >
+              <option value="LEEDS">LEEDS</option>
+              <option value="YORK">YORK</option>
+              <option value="NORTHWOOD">NORTHWOOD</option>
+              <option value="LICHFIELD">LICHFIELD</option>
+              <option value="DATACENTER">DATACENTER</option>
+            </select>
+          </div>
+
+          <!-- Run Button -->
+          <button
+            type="button"
+            id="btn-run-netgear-audit"
+            onclick="executeNetgearAudit()"
+            class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold font-mono rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2 cursor-pointer shrink-0"
+          >
+            <span>🚀 Run Netgear Audit</span>
+          </button>
+        </div>
+
+        <!-- Progress Bar -->
+        <div id="netgear-progress-area" class="hidden space-y-1.5 pt-1">
+          <div class="flex items-center justify-between text-xs font-mono">
+            <span id="netgear-progress-text" class="text-emerald-300 font-bold truncate mr-2">Auditing switches...</span>
+            <span id="netgear-progress-pct" class="text-slate-400">0%</span>
+          </div>
+          <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+            <div
+              id="netgear-progress-bar"
+              class="h-full bg-gradient-to-r from-indigo-500 via-emerald-400 to-cyan-400 transition-all duration-300"
+              style="width: 0%;"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Body -->
+      <div class="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar bg-slate-950/40">
+        <!-- Metric Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="bg-slate-900/80 border border-slate-800 rounded-xl p-3.5 flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-slate-400 font-mono font-bold uppercase">Candidate Multi-MAC Ports</div>
+              <div id="netgear-stat-total" class="text-xl font-bold font-mono text-white mt-0.5">0</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-slate-800 text-slate-300 border border-slate-700">
+              📊
+            </div>
+          </div>
+
+          <div class="bg-emerald-950/30 border border-emerald-800/50 rounded-xl p-3.5 flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-emerald-400 font-mono font-bold uppercase">Confirmed Netgear Switches</div>
+              <div id="netgear-stat-confirmed" class="text-xl font-bold font-mono text-emerald-300 mt-0.5">0</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              ✅
+            </div>
+          </div>
+
+          <div class="bg-amber-950/30 border border-amber-800/50 rounded-xl p-3.5 flex items-center justify-between">
+            <div>
+              <div class="text-[11px] text-amber-400 font-mono font-bold uppercase">Suspected Unmanaged Hubs</div>
+              <div id="netgear-stat-suspected" class="text-xl font-bold font-mono text-amber-300 mt-0.5">0</div>
+            </div>
+            <div class="p-2.5 rounded-xl bg-amber-500/20 text-amber-400 border border-amber-500/30">
+              ⚠️
+            </div>
+          </div>
+        </div>
+
+        <!-- Table View -->
+        <div id="netgear-results-container" class="border border-slate-800 rounded-xl overflow-hidden shadow">
+          <table class="w-full text-left text-xs font-mono">
+            <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px]">
+              <tr>
+                <th className="px-3.5 py-2.5">Site / Switch</th>
+                <th className="px-3.5 py-2.5">Port</th>
+                <th className="px-3.5 py-2.5">MAC Count</th>
+                <th className="px-3.5 py-2.5">LLDP &amp; OUI Fingerprint</th>
+                <th className="px-3.5 py-2.5">Detection Status</th>
+                <th className="px-3.5 py-2.5 text-right">EXOS Action</th>
+              </tr>
+            </thead>
+            <tbody id="netgear-results-tbody" class="divide-y divide-slate-800/80 bg-slate-900/80">
+              <tr>
+                <td colspan="6" class="text-center py-8 text-slate-500 text-xs font-mono">
+                  Select scope above and click <strong>Run Netgear Audit</strong> to scan ports.
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -5006,9 +5196,19 @@ WantedBy=multi-user.target</pre>
                 </a>
               </div>
 
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isSelected ? 'bg-indigo-500/30 text-indigo-200 border border-indigo-500/40' : 'bg-slate-800/80 text-slate-400 border border-slate-700/50'} font-mono shrink-0">
-                ${switchesInSite.length}
-              </span>
+              <div class="flex items-center gap-1 shrink-0">
+                <button
+                  type="button"
+                  onclick="event.stopPropagation(); openDiscoverSwitchModal();"
+                  class="w-5 h-5 rounded bg-emerald-500/20 hover:bg-emerald-600 text-emerald-300 hover:text-white flex items-center justify-center transition border border-emerald-500/30 text-[10px] font-bold opacity-80 hover:opacity-100"
+                  title="Add Device Card to ${site}"
+                >
+                  +
+                </button>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isSelected ? 'bg-indigo-500/30 text-indigo-200 border border-indigo-500/40' : 'bg-slate-800/80 text-slate-400 border border-slate-700/50'} font-mono shrink-0">
+                  ${switchesInSite.length}
+                </span>
+              </div>
             </div>
 
             ${isExpanded ? `
@@ -5026,6 +5226,14 @@ WantedBy=multi-user.target</pre>
                     <span class="text-[10px] text-slate-500 font-mono shrink-0">${sw.ip}</span>
                   </div>
                 `).join('')}
+                <button
+                  type="button"
+                  onclick="event.stopPropagation(); openDiscoverSwitchModal();"
+                  class="w-full mt-1.5 py-1 px-2 rounded-lg border border-dashed border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 hover:text-emerald-200 text-[10px] font-mono font-bold flex items-center justify-center gap-1 transition cursor-pointer"
+                  title="Add new device / switch card to ${site}"
+                >
+                  <span>+ Add Device to ${site}</span>
+                </button>
               </div>
             ` : ''}
           </div>

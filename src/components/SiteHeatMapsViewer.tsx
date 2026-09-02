@@ -91,15 +91,6 @@ export const SiteHeatMapsViewer: React.FC<SiteHeatMapsViewerProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2 flex-wrap">
-          {onSwitchToDiagram && (
-            <button
-              onClick={() => onSwitchToDiagram(selectedSite.siteName)}
-              className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold flex items-center gap-2 border border-slate-700 transition cursor-pointer"
-            >
-              <Network className="w-3.5 h-3.5 text-indigo-400" />
-              <span>View Network Diagram</span>
-            </button>
-          )}
           {onSelectSwitchForReplacement && (
             <button
               onClick={() => onSelectSwitchForReplacement(
